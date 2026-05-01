@@ -1,0 +1,181 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+/* ── Cyber-Industrial Theme ── */
+:root {
+  --background: #000000;
+  --foreground: #f5f5f5;
+  --card: #0d0d0d;
+  --card-foreground: #f5f5f5;
+  --popover: #0d0d0d;
+  --popover-foreground: #f5f5f5;
+  --primary: #ff0000;
+  --primary-foreground: #ffffff;
+  --secondary: #1a1a1a;
+  --secondary-foreground: #f5f5f5;
+  --muted: #1a1a1a;
+  --muted-foreground: #888888;
+  --accent: #ff0000;
+  --accent-foreground: #ffffff;
+  --destructive: #ff0000;
+  --destructive-foreground: #ffffff;
+  --border: #2a2a2a;
+  --input: #1a1a1a;
+  --ring: #ff0000;
+  --radius: 0.25rem;
+
+  /* brand tokens */
+  --brand-red: #ff0000;
+  --brand-red-dim: rgba(255, 0, 0, 0.15);
+  --brand-red-glow: rgba(255, 0, 0, 0.4);
+  --charcoal: #111111;
+  --charcoal-mid: #1a1a1a;
+  --charcoal-light: #2a2a2a;
+  --glass: rgba(255, 255, 255, 0.04);
+  --glass-border: rgba(255, 255, 255, 0.08);
+}
+
+@theme inline {
+  --font-sans: var(--font-rajdhani), 'Rajdhani', sans-serif;
+  --font-heading: var(--font-orbitron), 'Orbitron', sans-serif;
+  --font-mono: 'Geist Mono', monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 4px);
+  --radius-xl: calc(var(--radius) + 8px);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Rajdhani', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 0.05em;
+  }
+}
+
+/* Glassmorphism card */
+.glass-card {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Red glow utilities */
+.glow-red {
+  box-shadow: 0 0 20px var(--brand-red-glow), 0 0 60px rgba(255,0,0,0.15);
+}
+
+.glow-red-text {
+  text-shadow: 0 0 20px var(--brand-red-glow), 0 0 40px rgba(255,0,0,0.3);
+}
+
+/* Scan-line overlay */
+.scanlines::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.08) 2px,
+    rgba(0,0,0,0.08) 4px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Animated red border */
+@keyframes borderPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.border-pulse {
+  animation: borderPulse 2s ease-in-out infinite;
+}
+
+/* Ticker tape */
+@keyframes ticker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.ticker-tape {
+  animation: ticker 20s linear infinite;
+}
+
+/* Slide up reveal */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-slide-up {
+  animation: slideUp 0.6s ease-out forwards;
+}
+
+/* Cart badge pulse */
+@keyframes badgePulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+.badge-pulse {
+  animation: badgePulse 0.3s ease-out;
+}
+
+/* Before/After slider */
+.before-after-clip-left {
+  clip-path: inset(0 50% 0 0);
+}
+
+/* Grid lines background pattern */
+.cyber-grid {
+  background-image:
+    linear-gradient(rgba(255,0,0,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,0,0,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* Neon underline */
+.neon-underline {
+  position: relative;
+}
+.neon-underline::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: -4px;
+  width: 100%; height: 2px;
+  background: var(--brand-red);
+  box-shadow: 0 0 10px var(--brand-red-glow);
+}
