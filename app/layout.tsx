@@ -38,16 +38,17 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: 'Logitshop' }],
   openGraph: {
-    title: 'LOGITSHOP',
+    title: 'LOG‑it Diving Logbook & IDEST Accredited Scuba Services | LOGITSHOP',
     description:
-      'Premium products and expert maintenance services from Logitshop.',
+      'Since 1988, LOG‑it has been the prestigious UK diving logbook trusted by divers worldwide. Premium UK‑printed logbooks, IDEST‑accredited regulator & cylinder servicing, and expert scuba equipment care.',
     type: 'website',
     url: 'https://logitshop.com',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'LOGITSHOP',
-    description: 'Premium products and expert maintenance services.',
+    title: 'LOG‑it Diving Logbook & IDEST Accredited Scuba Services | LOGITSHOP',
+    description:
+      'Since 1988, LOG‑it has been the prestigious UK diving logbook trusted by divers worldwide. Premium UK‑printed logbooks, IDEST‑accredited regulator & cylinder servicing, and expert scuba equipment care.',
   },
   viewport: {
     width: 'device-width',
