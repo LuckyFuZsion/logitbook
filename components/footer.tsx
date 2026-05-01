@@ -25,7 +25,7 @@ export default function Footer() {
           </div>
 
           {/* Quick Links */}
-          <nav aria-label="Footer navigation — quick links">
+          <nav aria-label="Footer navigation - quick links">
             <h3
               className="text-xs font-black tracking-[0.2em] uppercase text-[var(--brand-red)] mb-4"
               style={{ fontFamily: 'var(--font-orbitron)' }}
@@ -48,7 +48,7 @@ export default function Footer() {
           </nav>
 
           {/* Services Links */}
-          <nav aria-label="Footer navigation — services">
+          <nav aria-label="Footer navigation - services">
             <h3
               className="text-xs font-black tracking-[0.2em] uppercase text-[var(--brand-red)] mb-4"
               style={{ fontFamily: 'var(--font-orbitron)' }}

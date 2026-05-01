@@ -175,10 +175,10 @@ export default function ServicesSection() {
                           )}
                         </td>
                         <td className="text-right py-4 px-4 font-bold text-white">
-                          {svc.standard ? `£${svc.standard.toFixed(2)}` : '—'}
+                          {svc.standard ? `£${svc.standard.toFixed(2)}` : '-'}
                         </td>
                         <td className="text-right py-4 px-4 font-bold text-[var(--brand-red)]">
-                          {svc.member ? `£${svc.member.toFixed(2)}` : '—'}
+                          {svc.member ? `£${svc.member.toFixed(2)}` : '-'}
                         </td>
                       </tr>
                     ))}

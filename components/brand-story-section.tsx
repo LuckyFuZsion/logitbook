@@ -95,7 +95,7 @@ export default function BrandStorySection() {
               Since 1988, LOG‑it has been the prestigious logbook for divers who value quality, durability, and heritage. Created by Kelvin Pearce, a passionate diver who believed every dive deserved to be remembered with pride.
             </p>
             <p className="text-white/65 leading-relaxed text-base">
-              For over three decades, LOG‑it has been trusted by divers across the UK, Ireland, Europe, the USA, New Zealand, and Antarctica. Each edition is printed in the UK by Henry Ling in Dorchester—a commitment to craftsmanship that remains uncompromising.
+              For over three decades, LOG‑it has been trusted by divers across the UK, Ireland, Europe, the USA, New Zealand, and Antarctica. Each edition is printed in the UK by Henry Ling in Dorchester-a commitment to craftsmanship that remains uncompromising.
             </p>
             <div className="flex flex-col gap-3 pt-2">
               {['Navy ink pages', 'Leather‑effect cover', 'UK manufactured', 'Proudly British'].map((point) => (
@@ -115,7 +115,7 @@ export default function BrandStorySection() {
             <div className="relative overflow-hidden" style={{ clipPath: 'polygon(0 0, 96% 0, 100% 4%, 100% 100%, 4% 100%, 0 96%)' }}>
               <img
                 src="/story-bg.jpg"
-                alt="Logitshop workshop — technicians at work"
+                alt="Logitshop workshop - technicians at work"
                 className="w-full aspect-[4/3] object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-tr from-black/50 to-transparent" aria-hidden="true" />

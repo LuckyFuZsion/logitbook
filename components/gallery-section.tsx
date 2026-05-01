@@ -37,12 +37,12 @@ function BeforeAfterSlider() {
       onMouseMove={onMouseMove}
       onTouchMove={onTouchMove}
       role="img"
-      aria-label="Before and after comparison slider — drag to reveal the difference"
+      aria-label="Before and after comparison slider - drag to reveal the difference"
     >
       {/* After image (full) */}
       <img
         src="/regulator-after.jpg"
-        alt="After — serviced regulator"
+        alt="After - serviced regulator"
         className="absolute inset-0 w-full h-full object-cover"
         draggable={false}
       />
@@ -55,7 +55,7 @@ function BeforeAfterSlider() {
       >
         <img
           src="/regulator-before.jpg"
-          alt="Before — corroded regulator"
+          alt="Before - corroded regulator"
           className="absolute inset-0 w-full h-full object-cover"
           draggable={false}
         />

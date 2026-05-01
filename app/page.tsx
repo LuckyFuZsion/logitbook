@@ -3,7 +3,6 @@
 import { useState, useCallback } from 'react'
 import Navigation from '@/components/navigation'
 import HeroSection from '@/components/hero-section'
-import AccreditationStrip from '@/components/accreditation-strip'
 import ShopSection, { type Product } from '@/components/shop-section'
 import ServicesSection from '@/components/services-section'
 import BrandStorySection from '@/components/brand-story-section'
@@ -51,7 +50,6 @@ export default function LogitshopPage() {
         return (
           <>
             <HeroSection onTabChange={setActiveTab} />
-            <AccreditationStrip />
           </>
         )
       case 'shop':
@@ -71,7 +69,6 @@ export default function LogitshopPage() {
         return (
           <>
             <HeroSection onTabChange={setActiveTab} />
-            <AccreditationStrip />
           </>
         )
     }

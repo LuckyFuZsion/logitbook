@@ -28,7 +28,7 @@ export default function HeroSection({ onTabChange }: HeroSectionProps) {
   return (
     <section
       className="relative min-h-screen flex flex-col overflow-hidden scanlines"
-      aria-label="Hero — Welcome to Logitshop"
+      aria-label="Hero - Welcome to Logitshop"
     >
       {/* Background video placeholder / fallback image */}
       <div className="absolute inset-0 z-0">
@@ -39,11 +39,11 @@ export default function HeroSection({ onTabChange }: HeroSectionProps) {
           muted
           loop
           playsInline
+          preload="metadata"
           aria-hidden="true"
           poster="/hero-bg.jpg"
         >
-          {/* Replace src with actual video URL */}
-          {/* <source src="/hero-loop.mp4" type="video/mp4" /> */}
+          <source src="/download%20(3).mp4" type="video/mp4" />
         </video>
         {/* Static fallback if no video */}
         <img

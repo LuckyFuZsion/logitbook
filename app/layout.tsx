@@ -17,7 +17,7 @@ const rajdhani = Rajdhani({
 export const metadata: Metadata = {
   title: 'Logitshop | Cyber-Industrial E-Commerce & Services',
   description:
-    'Logitshop — your fully accredited, cutting-edge destination for premium products and expert maintenance services. Mobile-first, futuristic, built for performance.',
+    'Logitshop - your fully accredited, cutting-edge destination for premium products and expert maintenance services. Mobile-first, futuristic, built for performance.',
   keywords: [
     'Logitshop',
     'cyber industrial shop',
