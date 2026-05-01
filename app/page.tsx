@@ -44,44 +44,6 @@ export default function LogitshopPage() {
     )
   }, [])
 
-  const renderSection = () => {
-    switch (activeTab) {
-      case 'home':
-        return (
-          <>
-            <HeroSection onTabChange={setActiveTab} />
-            <ShopSection
-              onAddToCart={handleAddToCart}
-              cartItems={cartProductIds}
-              bgClassName="bg-[var(--charcoal)]"
-            />
-            <ServicesSection bgClassName="bg-background" />
-            <BrandStorySection bgClassName="bg-[var(--charcoal)]" />
-            <GallerySection bgClassName="bg-background" />
-          </>
-        )
-      case 'shop':
-        return (
-          <ShopSection
-            onAddToCart={handleAddToCart}
-            cartItems={cartProductIds}
-          />
-        )
-      case 'services':
-        return <ServicesSection bgClassName="bg-background" />
-      case 'story':
-        return <BrandStorySection bgClassName="bg-background" />
-      case 'gallery':
-        return <GallerySection bgClassName="bg-background" />
-      default:
-        return (
-          <>
-            <HeroSection onTabChange={setActiveTab} />
-          </>
-        )
-    }
-  }
-
   return (
     <>
       <Navigation
@@ -92,7 +54,15 @@ export default function LogitshopPage() {
       />
 
       <main id="main-content" className="pb-16 md:pb-0">
-        {renderSection()}
+        <HeroSection onTabChange={setActiveTab} />
+        <ShopSection
+          onAddToCart={handleAddToCart}
+          cartItems={cartProductIds}
+          bgClassName="bg-[var(--charcoal)]"
+        />
+        <ServicesSection bgClassName="bg-background" />
+        <BrandStorySection bgClassName="bg-[var(--charcoal)]" />
+        <GallerySection bgClassName="bg-background" />
       </main>
 
       <Footer onTabChange={setActiveTab} />

@@ -31,6 +31,15 @@ export default function Navigation({ activeTab, onTabChange, cartCount, onCartOp
   const handleTab = (id: string) => {
     onTabChange(id)
     setMenuOpen(false)
+    if (typeof window === 'undefined') return
+    const el = document.getElementById(id)
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      window.location.hash = `#${id}`
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      window.location.hash = '#home'
+    }
   }
 
   return (
@@ -75,7 +84,7 @@ export default function Navigation({ activeTab, onTabChange, cartCount, onCartOp
                       ? 'text-[var(--brand-red)]'
                       : 'text-white/70 hover:text-white'
                   }`}
-                  aria-current={activeTab === tab.id ? 'page' : undefined}
+                  aria-current={activeTab === tab.id ? 'true' : undefined}
                   style={{ fontFamily: 'var(--font-rajdhani)' }}
                 >
                   {tab.label}
@@ -174,7 +183,7 @@ export default function Navigation({ activeTab, onTabChange, cartCount, onCartOp
                         ? 'text-[var(--brand-red)] bg-[var(--brand-red-dim)]'
                         : 'text-white/80 hover:text-white hover:bg-white/5'
                     }`}
-                    aria-current={activeTab === tab.id ? 'page' : undefined}
+                    aria-current={activeTab === tab.id ? 'true' : undefined}
                     style={{ fontFamily: 'var(--font-rajdhani)' }}
                   >
                     {tab.label}
@@ -201,7 +210,7 @@ export default function Navigation({ activeTab, onTabChange, cartCount, onCartOp
                     ? 'text-[var(--brand-red)]'
                     : 'text-white/50 hover:text-white/80'
                 }`}
-                aria-current={activeTab === tab.id ? 'page' : undefined}
+                aria-current={activeTab === tab.id ? 'true' : undefined}
                 style={{ fontFamily: 'var(--font-rajdhani)' }}
               >
                 {activeTab === tab.id && (
