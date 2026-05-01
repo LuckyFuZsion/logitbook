@@ -5,24 +5,24 @@
 
 /* ── Cyber-Industrial Theme ── */
 :root {
-  --background: #000000;
+  --background: #061a33;
   --foreground: #f5f5f5;
-  --card: #0d0d0d;
+  --card: #072041;
   --card-foreground: #f5f5f5;
-  --popover: #0d0d0d;
+  --popover: #072041;
   --popover-foreground: #f5f5f5;
   --primary: #ff0000;
   --primary-foreground: #ffffff;
-  --secondary: #1a1a1a;
+  --secondary: #0a254a;
   --secondary-foreground: #f5f5f5;
-  --muted: #1a1a1a;
+  --muted: #0a254a;
   --muted-foreground: #888888;
   --accent: #ff0000;
   --accent-foreground: #ffffff;
   --destructive: #ff0000;
   --destructive-foreground: #ffffff;
-  --border: #2a2a2a;
-  --input: #1a1a1a;
+  --border: rgba(245, 245, 245, 0.12);
+  --input: rgba(245, 245, 245, 0.08);
   --ring: #ff0000;
   --radius: 0.25rem;
 
@@ -30,6 +30,8 @@
   --brand-red: #ff0000;
   --brand-red-dim: rgba(255, 0, 0, 0.15);
   --brand-red-glow: rgba(255, 0, 0, 0.4);
+  --brand-blue: #0b2b5b;
+  --brand-blue-dim: rgba(11, 43, 91, 0.35);
   --charcoal: #111111;
   --charcoal-mid: #1a1a1a;
   --charcoal-light: #2a2a2a;

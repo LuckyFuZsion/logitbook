@@ -27,6 +27,7 @@ export default function HeroSection({ onTabChange }: HeroSectionProps) {
 
   return (
     <section
+      id="home"
       className="relative min-h-screen flex flex-col overflow-hidden scanlines"
       aria-label="Hero - Welcome to Logitshop"
     >
@@ -34,7 +35,7 @@ export default function HeroSection({ onTabChange }: HeroSectionProps) {
       <div className="absolute inset-0 z-0">
         <video
           ref={videoRef}
-          className="w-full h-full object-cover opacity-40"
+          className="w-full h-full object-cover opacity-[0.30]"
           autoPlay
           muted
           loop
@@ -49,13 +50,20 @@ export default function HeroSection({ onTabChange }: HeroSectionProps) {
         <img
           src="/hero-dive-scene.jpg"
           alt=""
-          className="absolute inset-0 w-full h-full object-cover opacity-50"
+          className="absolute inset-0 w-full h-full object-cover opacity-25"
           aria-hidden="true"
         />
         {/* Dark overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black" aria-hidden="true" />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              'linear-gradient(to bottom, rgba(11, 43, 91, 0.35) 0%, rgba(11, 43, 91, 0.15) 45%, rgba(0, 0, 0, 0.45) 100%)',
+          }}
+          aria-hidden="true"
+        />
         {/* Cyber grid overlay */}
-        <div className="absolute inset-0 cyber-grid opacity-60" aria-hidden="true" />
+        <div className="absolute inset-0 cyber-grid opacity-45" aria-hidden="true" />
         {/* Red corner accent */}
         <div
           className="absolute top-0 right-0 w-96 h-96 opacity-10"
@@ -68,25 +76,6 @@ export default function HeroSection({ onTabChange }: HeroSectionProps) {
 
       {/* Main Hero Content */}
       <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-4 pt-24 pb-16 md:pt-32 text-center">
-        {/* Pre-heading badge */}
-        <div
-          className={`inline-flex items-center gap-2 px-3 py-1.5 mb-6 border border-[var(--brand-red)]/50 bg-[var(--brand-red-dim)] rounded-sm transition-all duration-700 ${
-            loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-          }`}
-        >
-          <span
-            className="w-2 h-2 rounded-full bg-[var(--brand-red)] border-pulse"
-            aria-hidden="true"
-            style={{ boxShadow: '0 0 6px var(--brand-red-glow)' }}
-          />
-          <span
-            className="text-xs font-semibold tracking-[0.2em] uppercase text-[var(--brand-red)]"
-            style={{ fontFamily: 'var(--font-orbitron)' }}
-          >
-            Professional Diving Platform
-          </span>
-        </div>
-
         {/* Main Headline */}
         <h1
           className={`text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight text-white leading-none mb-4 text-balance transition-all duration-700 delay-100 ${
@@ -94,11 +83,8 @@ export default function HeroSection({ onTabChange }: HeroSectionProps) {
           }`}
           style={{ fontFamily: 'var(--font-orbitron)' }}
         >
-          <span className="block">THE LOGITBOOK</span>
-          <span
-            className="block text-[var(--brand-red)] glow-red-text"
-          >
-            EXPERIENCE
+          <span className="block">
+            LOGIT<span className="text-[var(--brand-red)]">SHOP</span>
           </span>
         </h1>
 
@@ -111,6 +97,19 @@ export default function HeroSection({ onTabChange }: HeroSectionProps) {
         >
           Professional-grade diving log, accredited servicing, and expert technical support for technical divers worldwide.
         </p>
+
+        <div
+          className={`flex justify-center mb-8 transition-all duration-700 delay-250 ${
+            loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+          }`}
+        >
+          <img
+            src="/IDEST_White-300x99.png"
+            alt="IDEST accredited"
+            className="h-8 sm:h-9 w-auto opacity-90"
+            loading="lazy"
+          />
+        </div>
 
         {/* CTA Buttons */}
         <div
@@ -137,30 +136,6 @@ export default function HeroSection({ onTabChange }: HeroSectionProps) {
           </button>
         </div>
 
-        {/* Stats */}
-        <div
-          className={`grid grid-cols-3 gap-8 mt-16 max-w-lg mx-auto w-full transition-all duration-700 delay-500 ${
-            loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
-          }`}
-        >
-          {[
-            { value: '500+', label: 'Dives Logged' },
-            { value: '10K+', label: 'Divers' },
-            { value: '20 Yrs', label: 'Accredited' },
-          ].map((stat) => (
-            <div key={stat.label} className="flex flex-col items-center gap-1">
-              <span
-                className="text-3xl md:text-4xl font-black text-[var(--brand-red)]"
-                style={{ fontFamily: 'var(--font-orbitron)' }}
-              >
-                {stat.value}
-              </span>
-              <span className="text-xs font-semibold tracking-widest uppercase text-white/50">
-                {stat.label}
-              </span>
-            </div>
-          ))}
-        </div>
       </div>
 
       {/* Ticker Tape */}

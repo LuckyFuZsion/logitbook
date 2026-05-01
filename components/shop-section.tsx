@@ -35,9 +35,10 @@ const CATEGORIES = ['Logitbooks']
 interface ShopSectionProps {
   onAddToCart: (product: Product) => void
   cartItems: number[]
+  bgClassName?: string
 }
 
-export default function ShopSection({ onAddToCart, cartItems }: ShopSectionProps) {
+export default function ShopSection({ onAddToCart, cartItems, bgClassName = 'bg-background' }: ShopSectionProps) {
   const [addedIds, setAddedIds] = useState<number[]>([])
 
   const filtered = PRODUCTS
@@ -53,7 +54,7 @@ export default function ShopSection({ onAddToCart, cartItems }: ShopSectionProps
   return (
     <section
       id="shop"
-      className="min-h-screen bg-background py-20 px-4"
+      className={`min-h-screen ${bgClassName} py-20 px-4`}
       aria-labelledby="shop-heading"
     >
       {/* JSON-LD: ItemList */}

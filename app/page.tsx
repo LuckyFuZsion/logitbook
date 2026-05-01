@@ -50,6 +50,14 @@ export default function LogitshopPage() {
         return (
           <>
             <HeroSection onTabChange={setActiveTab} />
+            <ShopSection
+              onAddToCart={handleAddToCart}
+              cartItems={cartProductIds}
+              bgClassName="bg-[var(--charcoal)]"
+            />
+            <ServicesSection bgClassName="bg-background" />
+            <BrandStorySection bgClassName="bg-[var(--charcoal)]" />
+            <GallerySection bgClassName="bg-background" />
           </>
         )
       case 'shop':
@@ -60,11 +68,11 @@ export default function LogitshopPage() {
           />
         )
       case 'services':
-        return <ServicesSection />
+        return <ServicesSection bgClassName="bg-background" />
       case 'story':
-        return <BrandStorySection />
+        return <BrandStorySection bgClassName="bg-background" />
       case 'gallery':
-        return <GallerySection />
+        return <GallerySection bgClassName="bg-background" />
       default:
         return (
           <>
@@ -87,7 +95,7 @@ export default function LogitshopPage() {
         {renderSection()}
       </main>
 
-      <Footer />
+      <Footer onTabChange={setActiveTab} />
 
       <CartDrawer
         open={cartOpen}

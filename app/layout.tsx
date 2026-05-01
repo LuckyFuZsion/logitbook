@@ -15,7 +15,7 @@ const rajdhani = Rajdhani({
 })
 
 export const metadata: Metadata = {
-  title: 'Logitshop | Cyber-Industrial E-Commerce & Services',
+  title: 'LOGITSHOP',
   description:
     'Logitshop - your fully accredited, cutting-edge destination for premium products and expert maintenance services. Mobile-first, futuristic, built for performance.',
   keywords: [
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: 'Logitshop' }],
   openGraph: {
-    title: 'Logitshop | Cyber-Industrial E-Commerce & Services',
+    title: 'LOGITSHOP',
     description:
       'Premium products and expert maintenance services from Logitshop.',
     type: 'website',
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Logitshop | Cyber-Industrial E-Commerce & Services',
+    title: 'LOGITSHOP',
     description: 'Premium products and expert maintenance services.',
   },
   viewport: {

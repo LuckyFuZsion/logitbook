@@ -3,11 +3,38 @@
 import { useState, useRef, useCallback } from 'react'
 import { ZoomIn } from 'lucide-react'
 
+function placeholderSrc(label: string) {
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800">
+      <defs>
+        <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#061a33"/>
+          <stop offset="1" stop-color="#0b2b5b"/>
+        </linearGradient>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#g)"/>
+      <rect x="48" y="48" width="1104" height="704" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="3"/>
+      <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
+            font-family="system-ui, -apple-system, Segoe UI, Roboto, Arial" font-size="56"
+            fill="rgba(255,255,255,0.85)" letter-spacing="2">
+        ${label}
+      </text>
+      <text x="50%" y="58%" dominant-baseline="middle" text-anchor="middle"
+            font-family="system-ui, -apple-system, Segoe UI, Roboto, Arial" font-size="24"
+            fill="rgba(255,255,255,0.55)" letter-spacing="4">
+        PLACEHOLDER IMAGE
+      </text>
+    </svg>
+  `.trim()
+
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`
+}
+
 const GALLERY_IMAGES = [
-  { src: '/gallery-1.jpg', alt: 'Serviced regulator first stage', caption: 'First Stage Service' },
-  { src: '/gallery-2.jpg', alt: 'Technical diving equipment organized', caption: 'Technical Setup' },
-  { src: '/gallery-3.jpg', alt: 'Certified divemaster with professional gear', caption: 'Expert Team' },
-  { src: '/gallery-4.jpg', alt: 'Cylinder hydrostatic test result', caption: 'Safety Test' },
+  { src: placeholderSrc('FIRST STAGE SERVICE'), alt: 'First stage service placeholder', caption: 'Placeholder Image - First Stage Service' },
+  { src: placeholderSrc('TECHNICAL SETUP'), alt: 'Technical setup placeholder', caption: 'Placeholder Image - Technical Setup' },
+  { src: placeholderSrc('EXPERT TEAM'), alt: 'Expert team placeholder', caption: 'Placeholder Image - Expert Team' },
+  { src: placeholderSrc('SAFETY TEST'), alt: 'Safety test placeholder', caption: 'Placeholder Image - Safety Test' },
 ]
 
 function BeforeAfterSlider() {
@@ -100,13 +127,13 @@ function BeforeAfterSlider() {
   )
 }
 
-export default function GallerySection() {
+export default function GallerySection({ bgClassName = 'bg-background' }: { bgClassName?: string }) {
   const [lightbox, setLightbox] = useState<null | (typeof GALLERY_IMAGES)[0]>(null)
 
   return (
     <section
       id="gallery"
-      className="min-h-screen bg-background py-20 px-4"
+      className={`min-h-screen ${bgClassName} py-20 px-4`}
       aria-labelledby="gallery-heading"
     >
       <div className="max-w-7xl mx-auto">

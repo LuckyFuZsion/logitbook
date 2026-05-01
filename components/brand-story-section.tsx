@@ -45,7 +45,7 @@ function useInView(threshold = 0.15) {
   return { ref, inView }
 }
 
-export default function BrandStorySection() {
+export default function BrandStorySection({ bgClassName = 'bg-background' }: { bgClassName?: string }) {
   const { ref: storyRef, inView: storyInView } = useInView()
   const { ref: timelineRef, inView: timelineInView } = useInView()
   const { ref: valuesRef, inView: valuesInView } = useInView()
@@ -53,7 +53,7 @@ export default function BrandStorySection() {
   return (
     <section
       id="story"
-      className="min-h-screen bg-background py-20 px-4 overflow-hidden"
+      className={`min-h-screen ${bgClassName} py-20 px-4 overflow-hidden`}
       aria-labelledby="story-heading"
     >
       <div className="max-w-7xl mx-auto">
@@ -114,8 +114,8 @@ export default function BrandStorySection() {
           <div className="order-1 md:order-2 relative">
             <div className="relative overflow-hidden" style={{ clipPath: 'polygon(0 0, 96% 0, 100% 4%, 100% 100%, 4% 100%, 0 96%)' }}>
               <img
-                src="/story-bg.jpg"
-                alt="Logitshop workshop - technicians at work"
+                src="/Screenshot%202026-05-01%20190505.png"
+                alt="Logitshop story image"
                 className="w-full aspect-[4/3] object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-tr from-black/50 to-transparent" aria-hidden="true" />
