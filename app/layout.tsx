@@ -18,6 +18,17 @@ export const metadata: Metadata = {
   title: 'LOGITSHOP',
   description:
     'Logitshop - your fully accredited, cutting-edge destination for premium products and expert maintenance services. Mobile-first, futuristic, built for performance.',
+  manifest: '/favicon_io%20(6)/site.webmanifest',
+  icons: {
+    icon: [
+      { url: '/favicon_io%20(6)/favicon.ico' },
+      { url: '/favicon_io%20(6)/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon_io%20(6)/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon_io%20(6)/android-chrome-192x192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/favicon_io%20(6)/android-chrome-512x512.png', sizes: '512x512', type: 'image/png' },
+    ],
+    apple: [{ url: '/favicon_io%20(6)/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
+  },
   keywords: [
     'Logitshop',
     'cyber industrial shop',
@@ -43,7 +54,7 @@ export const metadata: Metadata = {
     initialScale: 1,
     maximumScale: 5,
   },
-  themeColor: '#000000',
+  themeColor: '#061a33',
 }
 
 export default function RootLayout({

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { ShoppingCart, Menu, X, Zap } from 'lucide-react'
+import { ShoppingCart, Menu, X } from 'lucide-react'
 
 interface NavigationProps {
   activeTab: string
@@ -60,9 +60,10 @@ export default function Navigation({ activeTab, onTabChange, cartCount, onCartOp
             className="flex items-center gap-2 group"
             aria-label="Logitshop Home"
           >
-            <Zap
-              size={22}
-              className="text-[var(--brand-red)] group-hover:drop-shadow-[0_0_8px_var(--brand-red)] transition-all"
+            <img
+              src="/favicon_io%20(6)/android-chrome-192x192.png"
+              alt=""
+              className="h-9 w-9 rounded-sm group-hover:drop-shadow-[0_0_8px_var(--brand-red)] transition-all"
               aria-hidden="true"
             />
             <span
@@ -134,7 +135,12 @@ export default function Navigation({ activeTab, onTabChange, cartCount, onCartOp
             className="flex items-center gap-1.5"
             aria-label="Logitshop Home"
           >
-            <Zap size={18} className="text-[var(--brand-red)]" aria-hidden="true" />
+            <img
+              src="/favicon_io%20(6)/android-chrome-192x192.png"
+              alt=""
+              className="h-7 w-7 rounded-sm"
+              aria-hidden="true"
+            />
             <span
               className="text-base font-black tracking-widest text-white"
               style={{ fontFamily: 'var(--font-orbitron)' }}

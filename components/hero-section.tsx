@@ -83,8 +83,16 @@ export default function HeroSection({ onTabChange }: HeroSectionProps) {
           }`}
           style={{ fontFamily: 'var(--font-orbitron)' }}
         >
-          <span className="block">
-            LOGIT<span className="text-[var(--brand-red)]">SHOP</span>
+          <span className="inline-flex items-center justify-center gap-3">
+            <img
+              src="/favicon_io%20(6)/android-chrome-192x192.png"
+              alt=""
+              className="h-20 w-20 sm:h-24 sm:w-24 md:h-28 md:w-28 rounded-sm"
+              aria-hidden="true"
+            />
+            <span>
+              LOGIT<span className="text-[var(--brand-red)]">SHOP</span>
+            </span>
           </span>
         </h1>
 
