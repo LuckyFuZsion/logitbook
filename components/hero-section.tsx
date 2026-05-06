@@ -20,6 +20,16 @@ export default function HeroSection({ onTabChange }: HeroSectionProps) {
   const [loaded, setLoaded] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
 
+  const goTo = (id: string) => {
+    onTabChange(id)
+    if (typeof window === 'undefined') return
+    const el = document.getElementById(id)
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      window.location.hash = `#${id}`
+    }
+  }
+
   useEffect(() => {
     const timer = setTimeout(() => setLoaded(true), 100)
     return () => clearTimeout(timer)
@@ -126,18 +136,20 @@ export default function HeroSection({ onTabChange }: HeroSectionProps) {
           }`}
         >
           <button
-            onClick={() => onTabChange('shop')}
+            onClick={() => goTo('shop')}
             className="group flex items-center justify-center gap-2 px-8 py-4 bg-[var(--brand-red)] hover:bg-red-600 text-white font-bold tracking-widest uppercase text-sm transition-all duration-200 hover:glow-red"
             style={{ fontFamily: 'var(--font-orbitron)' }}
+            aria-label="Shop now - jump to shop section"
           >
             <ShoppingBag size={18} aria-hidden="true" />
             Shop Now
             <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" aria-hidden="true" />
           </button>
           <button
-            onClick={() => onTabChange('services')}
+            onClick={() => goTo('services')}
             className="group flex items-center justify-center gap-2 px-8 py-4 bg-transparent border border-white/30 hover:border-white/80 text-white font-bold tracking-widest uppercase text-sm transition-all duration-200"
             style={{ fontFamily: 'var(--font-orbitron)' }}
+            aria-label="Our services - jump to services section"
           >
             <Wrench size={18} aria-hidden="true" />
             Our Services
@@ -168,9 +180,9 @@ export default function HeroSection({ onTabChange }: HeroSectionProps) {
 
       {/* Scroll indicator */}
       <button
-        onClick={() => onTabChange('shop')}
+        onClick={() => goTo('shop')}
         className="absolute bottom-20 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-1 text-white/40 hover:text-white/80 transition-colors md:bottom-8"
-        aria-label="Scroll down to shop"
+        aria-label="Explore - jump to shop section"
       >
         <span className="text-xs tracking-widest uppercase" style={{ fontFamily: 'var(--font-rajdhani)' }}>
           Explore

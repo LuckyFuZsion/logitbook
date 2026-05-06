@@ -7,6 +7,7 @@ import ShopSection, { type Product } from '@/components/shop-section'
 import ServicesSection from '@/components/services-section'
 import BrandStorySection from '@/components/brand-story-section'
 import GallerySection from '@/components/gallery-section'
+import FaqSection from '@/components/faq-section'
 import CartDrawer from '@/components/cart-drawer'
 import Footer from '@/components/footer'
 
@@ -63,6 +64,7 @@ export default function LogitshopPage() {
         <ServicesSection bgClassName="bg-background" />
         <BrandStorySection bgClassName="bg-[var(--charcoal)]" />
         <GallerySection bgClassName="bg-background" />
+        <FaqSection bgClassName="bg-[var(--charcoal)]" />
       </main>
 
       <Footer onTabChange={setActiveTab} />
