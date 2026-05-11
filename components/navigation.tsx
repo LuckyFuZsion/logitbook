@@ -12,9 +12,10 @@ const TABS = [
   { id: 'home', label: 'Home' },
   { id: 'shop', label: 'Shop' },
   { id: 'services', label: 'Services' },
+  { id: 'testimonials', label: 'Testimonials' },
   { id: 'story', label: 'Our Story' },
   { id: 'gallery', label: 'Gallery' },
-]
+] as const
 
 export default function Navigation({ activeTab, onTabChange }: NavigationProps) {
   const [scrolled, setScrolled] = useState(false)
@@ -30,6 +31,14 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
     onTabChange(id)
     setMenuOpen(false)
     if (typeof window === 'undefined') return
+
+    const path = window.location.pathname
+    const onHome = path === '/' || path === ''
+    if (!onHome) {
+      window.location.assign(id === 'home' ? '/' : `/#${id}`)
+      return
+    }
+
     const el = document.getElementById(id)
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -170,12 +179,12 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
         className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-black/95 backdrop-blur-md border-t border-[var(--charcoal-light)]"
         aria-label="Bottom navigation"
       >
-        <ul className="flex items-center justify-around" role="list">
+        <ul className="flex items-stretch justify-around gap-0.5 px-0.5" role="list">
           {TABS.map((tab) => (
-            <li key={tab.id} className="flex-1">
+            <li key={tab.id} className="flex-1 min-w-0">
               <button
                 onClick={() => handleTab(tab.id)}
-                className={`w-full py-3 flex flex-col items-center gap-0.5 text-[10px] font-semibold tracking-widest uppercase transition-colors ${
+                className={`relative w-full py-2.5 flex flex-col items-center gap-0.5 text-[8px] sm:text-[9px] font-semibold tracking-tight sm:tracking-widest uppercase transition-colors ${
                   activeTab === tab.id
                     ? 'text-[var(--brand-red)]'
                     : 'text-white/50 hover:text-white/80'
@@ -185,12 +194,12 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
               >
                 {activeTab === tab.id && (
                   <span
-                    className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-[var(--brand-red)]"
+                    className="absolute top-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-[var(--brand-red)]"
                     style={{ boxShadow: '0 0 6px var(--brand-red-glow)' }}
                     aria-hidden="true"
                   />
                 )}
-                <span className="relative">{tab.label}</span>
+                <span className="relative text-center leading-tight px-0.5">{tab.label}</span>
               </button>
             </li>
           ))}

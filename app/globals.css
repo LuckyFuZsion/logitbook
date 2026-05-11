@@ -90,6 +90,16 @@
   }
 }
 
+@layer utilities {
+  /* Homepage section bands: alternate near-black vs site navy */
+  .section-strip-dark {
+    background-color: var(--charcoal);
+  }
+  .section-strip-blue {
+    background-color: var(--background);
+  }
+}
+
 /* Glassmorphism card */
 .glass-card {
   background: var(--glass);

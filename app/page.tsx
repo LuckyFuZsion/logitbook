@@ -51,8 +51,6 @@ export default function LogitshopPage() {
       <Navigation
         activeTab={activeTab}
         onTabChange={setActiveTab}
-        cartCount={cartCount}
-        onCartOpen={() => setCartOpen(true)}
       />
 
       <main id="main-content" className="pb-16 md:pb-0">
@@ -60,13 +58,13 @@ export default function LogitshopPage() {
         <ShopSection
           onAddToCart={handleAddToCart}
           cartItems={cartProductIds}
-          bgClassName="bg-[var(--charcoal)]"
+          bgClassName="section-strip-dark"
         />
-        <ServicesSection bgClassName="bg-background" />
-        <TestimonialsSection bgClassName="bg-[var(--charcoal)]" />
-        <BrandStorySection bgClassName="bg-background" />
-        <GallerySection bgClassName="bg-background" />
-        <FaqSection bgClassName="bg-[var(--charcoal)]" />
+        <ServicesSection bgClassName="section-strip-blue" />
+        <TestimonialsSection bgClassName="section-strip-dark" />
+        <BrandStorySection bgClassName="section-strip-blue" />
+        <GallerySection bgClassName="section-strip-dark" />
+        <FaqSection bgClassName="section-strip-blue" />
       </main>
 
       <Footer onTabChange={setActiveTab} />

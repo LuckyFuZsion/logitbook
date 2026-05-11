@@ -22,6 +22,13 @@ export default function Footer({ onTabChange }: FooterProps) {
 
   const goTo = (tab: string, hash?: string) => {
     onTabChange(tab)
+    if (typeof window === 'undefined') return
+    const path = window.location.pathname
+    const onHome = path === '/' || path === ''
+    if (!onHome) {
+      window.location.assign(tab === 'home' ? '/' : hash || `/#${tab}`)
+      return
+    }
     if (hash) window.location.hash = hash
   }
 
@@ -67,6 +74,7 @@ export default function Footer({ onTabChange }: FooterProps) {
                 { tab: 'home', hash: '#home', label: 'Home' },
                 { tab: 'shop', hash: '#shop', label: 'Shop' },
                 { tab: 'services', hash: '#services', label: 'Services' },
+                { tab: 'testimonials', hash: '#testimonials', label: 'Testimonials' },
                 { tab: 'story', hash: '#story', label: 'Our Story' },
                 { tab: 'gallery', hash: '#gallery', label: 'Gallery' },
               ].map(({ tab, hash, label }) => (

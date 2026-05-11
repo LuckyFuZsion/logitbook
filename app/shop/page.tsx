@@ -48,8 +48,6 @@ export default function ShopPage() {
       <Navigation
         activeTab={activeTab}
         onTabChange={setActiveTab}
-        cartCount={cartCount}
-        onCartOpen={() => setCartOpen(true)}
       />
 
       <main id="main-content" className="pb-16 md:pb-0">
