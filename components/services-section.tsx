@@ -1,75 +1,42 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import type { LucideIcon } from 'lucide-react'
 import {
-  Wrench,
-  Zap,
-  ArrowRight,
-  Droplet,
-  LifeBuoy,
+  Wrench, Zap, ArrowRight, Droplet, LifeBuoy,
+  Shield, Cpu, Settings, Anchor, Compass, Star,
 } from 'lucide-react'
+import type { ServicesData } from '@/lib/services-types'
+import { mergeServicesData } from '@/lib/services-defaults'
 
-const SERVICE_CATEGORIES = [
-  {
-    id: 'cylinders',
-    title: 'Cylinder Services',
-    icon: Droplet,
-    description: 'All cylinder services include valve service. O₂ fills not included. IDEST accredited.',
-    services: [
-      { name: 'Hydro (PIAT) test + air fill', standard: 64.0, member: 60.0 },
-      { name: 'Visual (PI) test + air fill', standard: 55.0, member: 50.0 },
-      { name: 'O₂ clean', standard: 25.0, member: 25.0 },
-      { name: 'Internal shot blast', standard: 18.0, member: 15.0 },
-      { name: 'Chemical clean', standard: 20.0, member: 18.0 },
-      { name: 'Twinset manifold surcharge', standard: 15.0, member: 10.0 },
-      { name: 'Test failure', standard: 18.0, member: 18.0 },
-      { name: 'External shot blast & repaint', standard: null, member: null, note: 'Price on request' },
-    ],
-  },
-  {
-    id: 'regulators',
-    title: 'Regulator Services',
-    icon: Wrench,
-    description: 'All regulator services include gauge check. Specialist brands: price on request. IDEST accredited.',
-    services: [
-      { name: '1st & 2nd stage service', standard: 100.0, member: 95.0 },
-      { name: '1st stage, 2nd stage & octo service', standard: 140.0, member: 130.0 },
-      { name: 'O₂ clean (mandatory if using 25%+ O₂)', standard: 25.0, member: 25.0 },
-      { name: 'SPG conformity check', standard: 10.0, member: 10.0, note: 'Free with gauge purchase' },
-      { name: 'Surcharge for heavily soiled equipment', standard: 15.0, member: 15.0 },
-      { name: 'Diagnostic fee', standard: 30.0, member: 30.0, note: 'Halved if service completed' },
-    ],
-  },
-  {
-    id: 'bcds',
-    title: 'BCD Services',
-    icon: Zap,
-    description: 'Complete BCD maintenance including pressure check and antibacterial bladder clean. IDEST accredited.',
-    services: [
-      { name: 'BCD service (incl. pressure check & antibacterial clean)', standard: 35.0, member: 31.0 },
-    ],
-  },
-  {
-    id: 'repairs',
-    title: 'Repairs & Custom Work',
-    icon: LifeBuoy,
-    description: 'Expert repair work and custom modifications for specialized diving equipment.',
-    services: [
-      { name: 'Repair work (per hour)', standard: 25.0, member: 20.0 },
-      { name: 'Custom work (per hour or individually priced)', standard: 25.0, member: 20.0 },
-      { name: 'Out-of-scope / additional hourly rate', standard: 25.0, member: 20.0 },
-    ],
-  },
-]
+const ICON_MAP: Record<string, LucideIcon> = {
+  Droplet, Wrench, Zap, LifeBuoy, Shield, Cpu, Settings, Anchor, Compass, Star,
+}
+
+function getIcon(name: string): LucideIcon {
+  return ICON_MAP[name] ?? Wrench
+}
 
 export default function ServicesSection({ bgClassName = 'bg-background' }: { bgClassName?: string }) {
+  const [data, setData] = useState<ServicesData | null>(null)
+
   useEffect(() => {
+    fetch('/api/services')
+      .then((r) => r.json())
+      .then((j: { data: ServicesData }) => setData(j.data))
+      .catch(() => setData(mergeServicesData(null)))
+  }, [])
+
+  useEffect(() => {
+    if (!data) return
     const targetId = window.location.hash.replace(/^#/, '')
     if (!targetId) return
     const el = document.getElementById(targetId)
     if (!el) return
     el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  }, [])
+  }, [data])
+
+  const categories = data?.categories ?? []
 
   return (
     <section
@@ -111,85 +78,156 @@ export default function ServicesSection({ bgClassName = 'bg-background' }: { bgC
           >
             ACCREDITED <span className="text-[var(--brand-red)]">SERVICES</span>
           </h2>
-          <div className="w-16 h-0.5 bg-[var(--brand-red)] mx-auto mb-6" style={{ boxShadow: '0 0 10px var(--brand-red-glow)' }} aria-hidden="true" />
+          <div
+            className="w-16 h-0.5 bg-[var(--brand-red)] mx-auto mb-6"
+            style={{ boxShadow: '0 0 10px var(--brand-red-glow)' }}
+            aria-hidden="true"
+          />
           <p className="max-w-xl mx-auto text-white/60 text-base leading-relaxed">
             IDEST accredited servicing for regulators, BCDs, cylinders, and technical diving systems.
           </p>
         </div>
 
-        {/* Service Categories & Pricing */}
-        <div className="space-y-16 mb-20">
-          {SERVICE_CATEGORIES.map(({ id, title, icon: Icon, description, services }) => (
-            <article id={id} key={id} className="border-b border-[var(--charcoal-light)] pb-12">
-              <div className="flex items-start gap-4 mb-6">
-                <div
-                  className="w-12 h-12 rounded-sm flex items-center justify-center bg-[var(--brand-red-dim)] border border-[var(--brand-red)]/30 shrink-0"
-                  aria-hidden="true"
-                >
-                  <Icon size={22} className="text-[var(--brand-red)]" />
+        {/* Skeleton while loading */}
+        {!data && (
+          <div className="space-y-16 mb-20 animate-pulse">
+            {[1, 2, 3, 4].map((n) => (
+              <div key={n} className="border-b border-[var(--charcoal-light)] pb-12">
+                <div className="flex items-start gap-4 mb-6">
+                  <div className="w-12 h-12 bg-white/10 rounded-sm shrink-0" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-6 bg-white/10 rounded w-48" />
+                    <div className="h-4 bg-white/5 rounded w-72" />
+                  </div>
                 </div>
-                <div>
-                  <h3
-                    className="text-2xl font-black text-white mb-1"
-                    style={{ fontFamily: 'var(--font-orbitron)' }}
-                  >
-                    {title}
-                  </h3>
-                  <p className="text-base text-white/65">{description}</p>
+                <div className="space-y-2">
+                  {[1, 2, 3].map((m) => (
+                    <div key={m} className="h-12 bg-white/5 rounded" />
+                  ))}
                 </div>
               </div>
+            ))}
+          </div>
+        )}
 
-              {/* Pricing Table */}
-              <div className="overflow-x-auto">
-                <table className="w-full text-base">
-                  <thead>
-                    <tr className="border-b border-[var(--charcoal-light)]">
-                      <th
-                        className="text-left py-3 px-4 font-bold text-white/80"
-                        style={{ fontFamily: 'var(--font-rajdhani)' }}
+        {/* Service Categories & Pricing */}
+        {data && (
+          <div className="space-y-16 mb-20">
+            {categories.map(({ id, title, icon, description, services }) => {
+              const Icon = getIcon(icon)
+              return (
+                <article key={id} id={id} className="border-b border-[var(--charcoal-light)] pb-12">
+                  <div className="flex items-start gap-4 mb-6">
+                    <div
+                      className="w-12 h-12 rounded-sm flex items-center justify-center bg-[var(--brand-red-dim)] border border-[var(--brand-red)]/30 shrink-0"
+                      aria-hidden="true"
+                    >
+                      <Icon size={22} className="text-[var(--brand-red)]" />
+                    </div>
+                    <div>
+                      <h3
+                        className="text-2xl font-black text-white mb-1"
+                        style={{ fontFamily: 'var(--font-orbitron)' }}
                       >
-                        Service
-                      </th>
-                      <th
-                        className="text-right py-3 px-4 font-bold text-[var(--brand-red)]"
-                        style={{ fontFamily: 'var(--font-rajdhani)' }}
+                        {title}
+                      </h3>
+                      <p className="text-base text-white/65">{description}</p>
+                    </div>
+                  </div>
+
+                  {/* Mobile list */}
+                  <div className="space-y-3 md:hidden">
+                    {services.map((svc) => (
+                      <div
+                        key={svc.id}
+                        className="glass-card border border-[var(--charcoal-light)] p-4 flex flex-col gap-3"
                       >
-                        Standard
-                      </th>
-                      <th
-                        className="text-right py-3 px-4 font-bold text-white/80"
-                        style={{ fontFamily: 'var(--font-rajdhani)' }}
-                      >
-                        Members
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {services.map((svc, idx) => (
-                      <tr
-                        key={idx}
-                        className="border-b border-[var(--charcoal-light)]/40 hover:bg-[var(--charcoal-light)]/5 transition-colors"
-                      >
-                        <td className="py-4 px-4 text-white/80">
-                          {svc.name}
+                        <div>
+                          <p className="text-white/90 font-bold">{svc.name}</p>
                           {svc.note && (
-                            <div className="text-sm text-white/55 mt-1 italic">{svc.note}</div>
+                            <p className="text-sm text-white/55 mt-1 italic">{svc.note}</p>
                           )}
-                        </td>
-                        <td className="text-right py-4 px-4 font-bold text-white">
-                          {svc.standard ? `£${svc.standard.toFixed(2)}` : '-'}
-                        </td>
-                        <td className="text-right py-4 px-4 font-bold text-[var(--brand-red)]">
-                          {svc.member ? `£${svc.member.toFixed(2)}` : '-'}
-                        </td>
-                      </tr>
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="rounded-sm border border-[var(--charcoal-light)] p-3">
+                            <p className="text-xs tracking-widest uppercase text-white/60 mb-1">
+                              Standard
+                            </p>
+                            <p className="text-white font-black tabular-nums">
+                              {svc.standard != null ? `£${svc.standard.toFixed(2)}` : '-'}
+                            </p>
+                          </div>
+                          <div className="rounded-sm border border-[var(--charcoal-light)] p-3">
+                            <p className="text-xs tracking-widest uppercase text-white/60 mb-1">
+                              Members
+                            </p>
+                            <p className="text-[var(--brand-red)] font-black tabular-nums">
+                              {svc.member != null ? `£${svc.member.toFixed(2)}` : '-'}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
                     ))}
-                  </tbody>
-                </table>
-              </div>
-            </article>
-          ))}
-        </div>
+                  </div>
+
+                  {/* Desktop table */}
+                  <div className="overflow-x-auto hidden md:block">
+                    <table className="w-full text-base min-w-[640px]">
+                      <colgroup>
+                        <col />
+                        <col className="w-36" />
+                        <col className="w-36" />
+                      </colgroup>
+                      <thead>
+                        <tr className="border-b border-[var(--charcoal-light)]">
+                          <th
+                            className="text-left py-3 px-4 font-bold text-white/80"
+                            style={{ fontFamily: 'var(--font-rajdhani)' }}
+                          >
+                            Service
+                          </th>
+                          <th
+                            className="text-right py-3 px-4 font-bold text-[var(--brand-red)] whitespace-nowrap tabular-nums"
+                            style={{ fontFamily: 'var(--font-rajdhani)' }}
+                          >
+                            Standard
+                          </th>
+                          <th
+                            className="text-right py-3 px-4 font-bold text-white/80 whitespace-nowrap tabular-nums"
+                            style={{ fontFamily: 'var(--font-rajdhani)' }}
+                          >
+                            Members
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {services.map((svc) => (
+                          <tr
+                            key={svc.id}
+                            className="border-b border-[var(--charcoal-light)]/40 hover:bg-[var(--charcoal-light)]/5 transition-colors"
+                          >
+                            <td className="py-4 px-4 text-white/80">
+                              {svc.name}
+                              {svc.note && (
+                                <div className="text-sm text-white/55 mt-1 italic">{svc.note}</div>
+                              )}
+                            </td>
+                            <td className="text-right py-4 px-4 font-bold text-white whitespace-nowrap tabular-nums">
+                              {svc.standard != null ? `£${svc.standard.toFixed(2)}` : '-'}
+                            </td>
+                            <td className="text-right py-4 px-4 font-bold text-[var(--brand-red)] whitespace-nowrap tabular-nums">
+                              {svc.member != null ? `£${svc.member.toFixed(2)}` : '-'}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </article>
+              )
+            })}
+          </div>
+        )}
 
         {/* Pricing Note & CTA Banner */}
         <div
@@ -199,19 +237,28 @@ export default function ServicesSection({ bgClassName = 'bg-background' }: { bgC
           <div className="cyber-grid absolute inset-0 opacity-40" aria-hidden="true" />
           <div className="relative z-10">
             <p className="text-white/70 mb-4 max-w-2xl mx-auto text-base">
-              <span className="font-bold text-white">All prices include VAT at 20%.</span> Specialist kits or increased kit costs will be confirmed before work begins.
+              <span className="font-bold text-white">
+                {data?.vatNote ??
+                  'All prices include VAT at 20%. Specialist kits or increased kit costs will be confirmed before work begins.'}
+              </span>
             </p>
             <p className="text-white/65 mb-6 max-w-2xl mx-auto text-base leading-relaxed">
-              <span className="font-bold text-white">Members pricing</span> applies to members of our partner dive club, where we are their preferred service provider.
-              {' '}
-              <a
-                href="https://binghamsac.co.uk"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-white underline underline-offset-4 decoration-white/30 hover:decoration-white/70 transition-colors"
-              >
-                binghamsac.co.uk
-              </a>
+              <span className="font-bold text-white">Members pricing</span>{' '}
+              {data?.membersNote ??
+                'applies to members of our partner dive club, where we are their preferred service provider.'}
+              {data?.clubUrl && (
+                <>
+                  {' '}
+                  <a
+                    href={data.clubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-white underline underline-offset-4 decoration-white/30 hover:decoration-white/70 transition-colors"
+                  >
+                    {data.clubUrl.replace(/^https?:\/\//, '')}
+                  </a>
+                </>
+              )}
             </p>
             <h3
               className="text-2xl md:text-3xl font-black text-white mb-3"
@@ -220,17 +267,18 @@ export default function ServicesSection({ bgClassName = 'bg-background' }: { bgC
               BECOME A <span className="text-[var(--brand-red)]">MEMBER</span>
             </h3>
             <p className="text-white/65 mb-6 max-w-md mx-auto text-base">
-              Members enjoy discounted servicing rates across all categories and priority 24/7 support for expeditions.
+              Members enjoy discounted servicing rates across all categories and priority 24/7 support
+              for expeditions.
             </p>
             <a
-              href="https://binghamsac.co.uk"
+              href={data?.clubUrl ?? 'https://binghamsac.co.uk'}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-8 py-3.5 bg-[var(--brand-red)] hover:bg-red-600 text-white font-bold tracking-widest uppercase text-sm transition-all duration-200 glow-red"
               style={{ fontFamily: 'var(--font-orbitron)' }}
-              aria-label="Join Bingham SAC to access members pricing"
+              aria-label={`Join ${data?.clubName ?? 'the club'} to access members pricing`}
             >
-              Join Bingham SAC <ArrowRight size={16} aria-hidden="true" />
+              Join {data?.clubName ?? 'Bingham SAC'} <ArrowRight size={16} aria-hidden="true" />
             </a>
           </div>
         </div>

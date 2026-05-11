@@ -10,6 +10,15 @@ next.user-config.*
 # Environment variables
 .env*.local
 
+# Firebase / GCP service account keys — never commit (use .env.local or a path outside the repo)
+*-firebase-adminsdk-*.json
+firebase-adminsdk*.json
+*-service-account*.json
+
+# Admin uploads (keep folder via .gitkeep)
+public/uploads/gallery/*
+!public/uploads/gallery/.gitkeep
+
 # Common ignores
 node_modules
 .next/

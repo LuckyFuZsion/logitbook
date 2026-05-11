@@ -11,8 +11,8 @@ interface CartDrawerProps {
   open: boolean
   onClose: () => void
   items: CartItem[]
-  onRemove: (id: number) => void
-  onQtyChange: (id: number, delta: number) => void
+  onRemove: (id: string) => void
+  onQtyChange: (id: string, delta: number) => void
 }
 
 export default function CartDrawer({ open, onClose, items, onRemove, onQtyChange }: CartDrawerProps) {
@@ -101,7 +101,7 @@ export default function CartDrawer({ open, onClose, items, onRemove, onQtyChange
                       className="text-sm font-black text-[var(--brand-red)]"
                       style={{ fontFamily: 'var(--font-orbitron)' }}
                     >
-                      ${(item.price * item.qty).toFixed(2)}
+                      £{(item.price * item.qty).toFixed(2)}
                     </span>
                     <div className="flex items-center gap-3 mt-1">
                       {/* Qty */}
@@ -148,7 +148,7 @@ export default function CartDrawer({ open, onClose, items, onRemove, onQtyChange
                 className="text-xl font-black text-white"
                 style={{ fontFamily: 'var(--font-orbitron)' }}
               >
-                ${total.toFixed(2)}
+                £{total.toFixed(2)}
               </span>
             </div>
             <p className="text-xs text-white/40">Taxes and shipping calculated at checkout.</p>

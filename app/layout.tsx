@@ -1,5 +1,6 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Orbitron, Rajdhani } from 'next/font/google'
+import { FirebaseWebInit } from '@/components/firebase-web-init'
 import './globals.css'
 
 const orbitron = Orbitron({
@@ -50,11 +51,12 @@ export const metadata: Metadata = {
     description:
       'Since 1988, LOG‑it has been the prestigious UK diving logbook trusted by divers worldwide. Premium UK‑printed logbooks, IDEST‑accredited regulator & cylinder servicing, and expert scuba equipment care.',
   },
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 5,
-  },
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
   themeColor: '#061a33',
 }
 
@@ -88,6 +90,7 @@ export default function RootLayout({
         className="font-sans antialiased bg-background text-foreground"
         style={{ fontFamily: 'var(--font-rajdhani), sans-serif' }}
       >
+        <FirebaseWebInit />
         {children}
       </body>
     </html>

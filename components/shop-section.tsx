@@ -1,55 +1,48 @@
 'use client'
 
-import { useState } from 'react'
-import { ShoppingCart, Star, BadgeCheck, Filter } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { ShoppingCart, BadgeCheck } from 'lucide-react'
+import type { StoreProduct } from '@/lib/store-types'
 
-export interface Product {
-  id: number
-  name: string
-  price: number
-  originalPrice?: number
-  rating: number
-  reviews: number
-  category: string
-  badge?: string
-  image: string
-  description: string
-}
-
-const PRODUCTS: Product[] = [
-  {
-    id: 1,
-    name: 'LOG-IT The Prestigious Diving Logbook',
-    price: 19.99,
-    rating: 5.0,
-    reviews: 387,
-    category: 'Logitbooks',
-    badge: 'BESTSELLER',
-    image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/logit-book-ynPPMUFbMDkSzwdAcYPExi5AosXLz2.webp',
-    description: 'The professional diving logbook trusted by technical divers worldwide. Premium bound format for recording dives, depth profiles, and expedition notes. 20+ books qualify for wholesale pricing.',
-  },
-]
-
-const CATEGORIES = ['Logitbooks']
+/** Normalized for cart + UI (primary image convenience field). */
+export type Product = StoreProduct & { image: string }
 
 interface ShopSectionProps {
   onAddToCart: (product: Product) => void
-  cartItems: number[]
+  cartItems: string[]
   bgClassName?: string
 }
 
+function normalizeProducts(raw: StoreProduct[]): Product[] {
+  return raw.map((p) => ({
+    ...p,
+    image: p.images[0] ?? '',
+  }))
+}
+
 export default function ShopSection({ onAddToCart, cartItems, bgClassName = 'bg-background' }: ShopSectionProps) {
-  const [addedIds, setAddedIds] = useState<number[]>([])
+  const [products, setProducts] = useState<Product[]>([])
+  const [loadError, setLoadError] = useState<string | null>(null)
 
-  const filtered = PRODUCTS
+  useEffect(() => {
+    let cancelled = false
+    fetch('/api/shop')
+      .then((r) => {
+        if (!r.ok) throw new Error('Could not load shop')
+        return r.json()
+      })
+      .then((json: { products: StoreProduct[] }) => {
+        if (!cancelled) setProducts(normalizeProducts(json.products ?? []))
+      })
+      .catch(() => {
+        if (!cancelled) setLoadError('Shop catalogue could not be loaded.')
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
-  const handleAdd = (product: Product) => {
-    onAddToCart(product)
-    setAddedIds((prev) => [...prev, product.id])
-    setTimeout(() => {
-      setAddedIds((prev) => prev.filter((id) => id !== product.id))
-    }, 1500)
-  }
+  const filtered = products
 
   return (
     <section
@@ -57,7 +50,6 @@ export default function ShopSection({ onAddToCart, cartItems, bgClassName = 'bg-
       className={`min-h-screen ${bgClassName} py-20 px-4`}
       aria-labelledby="shop-heading"
     >
-      {/* JSON-LD: ItemList */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -65,19 +57,20 @@ export default function ShopSection({ onAddToCart, cartItems, bgClassName = 'bg-
             '@context': 'https://schema.org',
             '@type': 'ItemList',
             name: 'Logitshop Products',
-            itemListElement: PRODUCTS.map((p, i) => ({
+            itemListElement: filtered.map((p, i) => ({
               '@type': 'ListItem',
               position: i + 1,
               item: {
                 '@type': 'Product',
                 name: p.name,
                 description: p.description,
+                image: p.images,
                 offers: {
                   '@type': 'Offer',
                   price: p.price,
                   priceCurrency: 'GBP',
                   availability: 'https://schema.org/InStock',
-                  url: 'https://buy.stripe.com/00g8yw5vdaC5bZK3cc',
+                  url: p.stripeUrl,
                 },
               },
             })),
@@ -86,7 +79,6 @@ export default function ShopSection({ onAddToCart, cartItems, bgClassName = 'bg-
       />
 
       <div className="max-w-7xl mx-auto">
-        {/* Section Header */}
         <div className="text-center mb-12">
           <p
             className="text-xs font-semibold tracking-[0.3em] uppercase text-[var(--brand-red)] mb-3"
@@ -104,23 +96,38 @@ export default function ShopSection({ onAddToCart, cartItems, bgClassName = 'bg-
           <div className="w-16 h-0.5 bg-[var(--brand-red)] mx-auto" style={{ boxShadow: '0 0 10px var(--brand-red-glow)' }} aria-hidden="true" />
         </div>
 
-        {/* Category Filter */}
         <div className="text-center mb-10">
           <p className="text-white/60 text-sm">Available exclusively through Logitshop</p>
         </div>
 
-        {/* Product Grid */}
+        {loadError && (
+          <p className="text-center text-red-400 text-sm mb-8" role="alert">
+            {loadError}
+          </p>
+        )}
+
+        {!loadError && filtered.length === 0 && (
+          <p className="text-center text-white/50 text-sm">No products configured.</p>
+        )}
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" role="list">
           {filtered.map((product) => {
+            const inCart = cartItems.includes(product.id)
             return (
               <article
                 key={product.id}
                 className="glass-card group relative flex flex-col overflow-hidden border border-[var(--charcoal-light)] hover:border-[var(--brand-red)]/50 transition-all duration-300"
                 role="listitem"
               >
-
-                {/* Image */}
                 <div className="relative overflow-hidden aspect-video bg-[var(--charcoal)] flex items-center justify-center">
+                  {product.badge && (
+                    <span
+                      className="absolute top-2 left-2 z-10 px-2 py-1 text-[9px] font-bold tracking-widest uppercase bg-[var(--brand-red)] text-white"
+                      style={{ fontFamily: 'var(--font-orbitron)' }}
+                    >
+                      {product.badge}
+                    </span>
+                  )}
                   <img
                     src={product.image}
                     alt={product.name}
@@ -128,9 +135,17 @@ export default function ShopSection({ onAddToCart, cartItems, bgClassName = 'bg-
                     loading="lazy"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" aria-hidden="true" />
+                  {product.images.length > 1 && (
+                    <span
+                      className="absolute bottom-2 right-2 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-black/70 text-white/90 border border-white/10"
+                      style={{ fontFamily: 'var(--font-orbitron)' }}
+                      aria-hidden="true"
+                    >
+                      +{product.images.length - 1} photos
+                    </span>
+                  )}
                 </div>
 
-                {/* Info */}
                 <div className="flex flex-col flex-1 p-4 gap-3">
                   <div className="flex items-start justify-between gap-2">
                     <div>
@@ -149,44 +164,49 @@ export default function ShopSection({ onAddToCart, cartItems, bgClassName = 'bg-
 
                   <p className="text-sm text-white/60 leading-relaxed">{product.description}</p>
 
-                  {/* Rating */}
-                  <div className="flex items-center gap-1.5" aria-label={`Rating: ${product.rating} out of 5`}>
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star
-                        key={i}
-                        size={12}
-                        className={i < Math.floor(product.rating) ? 'text-[var(--brand-red)] fill-[var(--brand-red)]' : 'text-white/20'}
-                        aria-hidden="true"
-                      />
-                    ))}
-                    <span className="text-xs text-white/50 ml-1">({product.reviews})</span>
-                  </div>
-
-                  {/* Price & CTA */}
-                  <div className="flex items-center justify-between mt-auto pt-2 border-t border-[var(--charcoal-light)]">
+                  <div className="flex items-center justify-between mt-auto pt-2 border-t border-[var(--charcoal-light)] flex-wrap gap-2">
                     <div className="flex items-baseline gap-2">
-                      <span
-                        className="text-xl font-black text-white"
-                        style={{ fontFamily: 'var(--font-orbitron)' }}
-                      >
+                      <span className="text-xl font-black text-white" style={{ fontFamily: 'var(--font-orbitron)' }}>
                         £{product.price.toFixed(2)}
                       </span>
+                      {product.originalPrice != null && product.originalPrice > product.price && (
+                        <span className="text-xs text-white/40 line-through">
+                          £{product.originalPrice.toFixed(2)}
+                        </span>
+                      )}
                       <span className="text-xs text-white/50">+ VAT & delivery</span>
                     </div>
-                    <a
-                      href="https://buy.stripe.com/00g8yw5vdaC5bZK3cc"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold tracking-widest uppercase bg-[var(--brand-red)] hover:bg-red-600 text-white transition-all duration-200 hover:glow-red"
-                      style={{ fontFamily: 'var(--font-orbitron)' }}
-                      aria-label={`Buy ${product.name}`}
-                    >
-                      <ShoppingCart size={13} aria-hidden="true" />
-                      Buy Now
-                    </a>
+                    <div className="flex items-center gap-2 flex-wrap justify-end">
+                      {inCart && (
+                        <span
+                          className="text-[10px] font-bold uppercase tracking-wider text-[var(--brand-red)]"
+                          style={{ fontFamily: 'var(--font-orbitron)' }}
+                        >
+                          In cart
+                        </span>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => onAddToCart(product)}
+                        className="px-3 py-2 text-[10px] font-bold tracking-widest uppercase border border-white/25 text-white/90 hover:bg-white/10 transition-colors"
+                        style={{ fontFamily: 'var(--font-orbitron)' }}
+                      >
+                        Add to cart
+                      </button>
+                      <a
+                        href={product.stripeUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold tracking-widest uppercase bg-[var(--brand-red)] hover:bg-red-600 text-white transition-all duration-200 hover:glow-red"
+                        style={{ fontFamily: 'var(--font-orbitron)' }}
+                        aria-label={`Buy ${product.name} on Stripe`}
+                      >
+                        <ShoppingCart size={13} aria-hidden="true" />
+                        Buy now
+                      </a>
+                    </div>
                   </div>
 
-                  {/* Wholesale Note */}
                   <p className="text-[10px] text-white/50 pt-2 border-t border-[var(--charcoal-light)]">
                     20+ books qualify for wholesale pricing. Contact us for details.
                   </p>

@@ -33,11 +33,11 @@ export default function LogitshopPage() {
     })
   }, [])
 
-  const handleRemove = useCallback((id: number) => {
+  const handleRemove = useCallback((id: string) => {
     setCartItems((prev) => prev.filter((i) => i.id !== id))
   }, [])
 
-  const handleQtyChange = useCallback((id: number, delta: number) => {
+  const handleQtyChange = useCallback((id: string, delta: number) => {
     setCartItems((prev) =>
       prev
         .map((i) => (i.id === id ? { ...i, qty: Math.max(0, i.qty + delta) } : i))
