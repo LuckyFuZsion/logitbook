@@ -28,6 +28,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <Link href="/admin/faq" className="text-white/60 hover:text-white">
           FAQs
         </Link>
+        <Link href="/admin/hero" className="text-white/60 hover:text-white">
+          Hero
+        </Link>
+        <Link href="/admin/testimonials" className="text-white/60 hover:text-white">
+          Reviews
+        </Link>
+        <Link href="/admin/story" className="text-white/60 hover:text-white">
+          Story
+        </Link>
+        <Link href="/admin/settings" className="text-white/60 hover:text-white">
+          Settings
+        </Link>
         <Link href="/admin/go-live" className="text-white/60 hover:text-white">
           Go-live
         </Link>

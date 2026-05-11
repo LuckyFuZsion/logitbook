@@ -26,6 +26,26 @@ const AREAS = [
     description: 'Add, edit, reorder, or delete FAQ questions. Updates the live page and schema.org JSON-LD instantly.',
   },
   {
+    href: '/admin/hero',
+    title: 'Hero',
+    description: 'Edit homepage hero sub-heading, CTA button labels & targets, and ticker tape items.',
+  },
+  {
+    href: '/admin/testimonials',
+    title: 'Reviews',
+    description: 'Add, edit, and reorder customer testimonials. Toggle featured to show on the homepage.',
+  },
+  {
+    href: '/admin/story',
+    title: 'Our Story',
+    description: 'Edit brand story text, feature bullets, timeline milestones, and company values.',
+  },
+  {
+    href: '/admin/settings',
+    title: 'Settings',
+    description: 'Contact details, business hours, and site-wide announcement banner. Updates footer and schema.org.',
+  },
+  {
     href: '/admin/go-live',
     title: 'Go-live',
     description: 'Checklist for domain, env, data, Stripe, Cloudinary, and launch QA.',
@@ -63,7 +83,7 @@ export default async function AdminIndexPage() {
         </div>
       </div>
 
-      <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" role="list">
+      <ul className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" role="list">
         {AREAS.map((area) => (
           <li key={area.href}>
             <Link

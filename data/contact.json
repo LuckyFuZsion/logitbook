@@ -1,0 +1,22 @@
+{
+  "businessName": "Logitshop",
+  "tagline": "IDEST accredited scuba services and professional diving logbooks. Built for performance. Certified for trust.",
+  "email": "info@logitshop.com",
+  "phone": "",
+  "instagram": "@logit.shop",
+  "instagramUrl": "https://www.instagram.com/logit.shop",
+  "address": {
+    "street": "12 Gloucester Road",
+    "city": "Grantham",
+    "county": "Lincolnshire",
+    "postcode": "NG31 8RJ",
+    "country": "UK"
+  },
+  "companyName": "Logitshop LTD",
+  "companyRegNumber": "15252219",
+  "vatInfo": "VAT Registered company 2023",
+  "copyrightLine1": "Copyright © 1998 LOG-it — All Rights Reserved.",
+  "copyrightLine2": "Copyright © 2026 logitshop.com — All Rights Reserved.",
+  "siteUrl": "https://logitshop.com",
+  "updatedAt": "2026-05-11T00:00:00.000Z"
+}

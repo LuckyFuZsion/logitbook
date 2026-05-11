@@ -1,6 +1,11 @@
 import type { Metadata, Viewport } from 'next'
 import { Orbitron, Rajdhani } from 'next/font/google'
 import { FirebaseWebInit } from '@/components/firebase-web-init'
+import { AnnouncementBanner } from '@/components/announcement-banner'
+import { mergeContactData } from '@/lib/contact-defaults'
+import { mergeHoursData } from '@/lib/hours-defaults'
+import { readContactFile } from '@/lib/contact-store'
+import { readHoursFile } from '@/lib/hours-store'
 import './globals.css'
 
 const orbitron = Orbitron({
@@ -60,36 +65,58 @@ export const viewport: Viewport = {
   themeColor: '#061a33',
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const [contact, hours] = await Promise.all([
+    readContactFile().then(mergeContactData),
+    readHoursFile().then(mergeHoursData),
+  ])
+
+  const localBusinessJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'LocalBusiness',
+    name: contact.businessName,
+    url: contact.siteUrl,
+    description: contact.tagline,
+    '@id': `${contact.siteUrl}/#business`,
+    priceRange: '££',
+    areaServed: 'Worldwide',
+    email: contact.email,
+    ...(contact.phone ? { telephone: contact.phone } : {}),
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: contact.address.street,
+      addressLocality: contact.address.city,
+      addressRegion: contact.address.county,
+      postalCode: contact.address.postcode,
+      addressCountry: contact.address.country,
+    },
+    openingHoursSpecification: hours.schedule
+      .filter((d) => !d.closed && d.open && d.close)
+      .map((d) => ({
+        '@type': 'OpeningHoursSpecification',
+        dayOfWeek: `https://schema.org/${d.day}`,
+        opens: d.open,
+        closes: d.close,
+      })),
+  }
+
   return (
     <html lang="en" className={`${orbitron.variable} ${rajdhani.variable} bg-background`}>
       <head>
-        {/* JSON-LD: LocalBusiness */}
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'LocalBusiness',
-              name: 'Logitshop',
-              url: 'https://logitshop.com',
-              description:
-                'Fully accredited e-commerce and maintenance services platform.',
-              '@id': 'https://logitshop.com/#business',
-              priceRange: '$$',
-              areaServed: 'Worldwide',
-            }),
-          }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}
         />
       </head>
       <body
         className="font-sans antialiased bg-background text-foreground"
         style={{ fontFamily: 'var(--font-rajdhani), sans-serif' }}
       >
+        <AnnouncementBanner />
         <FirebaseWebInit />
         {children}
       </body>

@@ -2,23 +2,21 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { ChevronDown, ShoppingBag, Wrench, ArrowRight } from 'lucide-react'
+import type { HeroData } from '@/lib/hero-types'
+import { DEFAULT_HERO } from '@/lib/hero-defaults'
 
 interface HeroSectionProps {
   onTabChange: (tab: string) => void
 }
 
-const TICKER_ITEMS = [
-  'PROFESSIONAL GRADE LOGITBOOK',
-  'IDEST ACCREDITED',
-  'CERTIFIED DIVING TECHNICIANS',
-  'REGULATOR & BCD SERVICING',
-  'UNDERWATER EQUIPMENT EXPERTS',
-  'DEEP WATER TESTED',
-]
-
 export default function HeroSection({ onTabChange }: HeroSectionProps) {
   const [loaded, setLoaded] = useState(false)
+  const [heroData, setHeroData] = useState<HeroData>(DEFAULT_HERO)
   const videoRef = useRef<HTMLVideoElement>(null)
+
+  useEffect(() => {
+    fetch('/api/hero').then(r => r.json()).then((j: { data: HeroData }) => setHeroData(j.data)).catch(() => {})
+  }, [])
 
   const goTo = (id: string) => {
     onTabChange(id)
@@ -113,7 +111,7 @@ export default function HeroSection({ onTabChange }: HeroSectionProps) {
           }`}
           style={{ fontFamily: 'var(--font-rajdhani)' }}
         >
-          Professional-grade diving log, accredited servicing, and expert technical support for technical divers worldwide.
+          {heroData.subheading}
         </p>
 
         <div
@@ -136,23 +134,21 @@ export default function HeroSection({ onTabChange }: HeroSectionProps) {
           }`}
         >
           <button
-            onClick={() => goTo('shop')}
+            onClick={() => goTo(heroData.cta1Target)}
             className="group flex items-center justify-center gap-2 px-8 py-4 bg-[var(--brand-red)] hover:bg-red-600 text-white font-bold tracking-widest uppercase text-sm transition-all duration-200 hover:glow-red"
             style={{ fontFamily: 'var(--font-orbitron)' }}
-            aria-label="Shop now - jump to shop section"
           >
             <ShoppingBag size={18} aria-hidden="true" />
-            Shop Now
+            {heroData.cta1Label}
             <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" aria-hidden="true" />
           </button>
           <button
-            onClick={() => goTo('services')}
+            onClick={() => goTo(heroData.cta2Target)}
             className="group flex items-center justify-center gap-2 px-8 py-4 bg-transparent border border-white/30 hover:border-white/80 text-white font-bold tracking-widest uppercase text-sm transition-all duration-200"
             style={{ fontFamily: 'var(--font-orbitron)' }}
-            aria-label="Our services - jump to services section"
           >
             <Wrench size={18} aria-hidden="true" />
-            Our Services
+            {heroData.cta2Label}
           </button>
         </div>
 
@@ -164,7 +160,7 @@ export default function HeroSection({ onTabChange }: HeroSectionProps) {
         aria-hidden="true"
       >
         <div className="flex ticker-tape whitespace-nowrap">
-          {[...TICKER_ITEMS, ...TICKER_ITEMS].map((item, i) => (
+          {[...heroData.tickerItems, ...heroData.tickerItems].map((item, i) => (
             <span key={i} className="flex items-center gap-6 px-6">
               <span
                 className="text-xs font-semibold tracking-[0.2em] uppercase text-[var(--brand-red)]"

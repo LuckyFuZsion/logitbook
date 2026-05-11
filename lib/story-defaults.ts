@@ -1,0 +1,51 @@
+import type { StoryData } from '@/lib/story-types'
+
+export const DEFAULT_STORY: StoryData = {
+  paragraph1:
+    'Since 1988, LOG\u2011it has been the prestigious logbook for divers who value quality, durability, and heritage. Created by Kelvin Pearce, a passionate diver who believed every dive deserved to be remembered with pride.',
+  paragraph2:
+    'For over three decades, LOG\u2011it has been trusted by divers across the UK, Ireland, Europe, the USA, New Zealand, and Antarctica. Each edition is printed in the UK by Henry Ling in Dorchester — a commitment to craftsmanship that remains uncompromising.',
+  bullets: ['Navy ink pages', 'Leather\u2011effect cover', 'UK manufactured', 'Proudly British'],
+  milestones: [
+    {
+      id: 'ms-1',
+      year: '1988',
+      title: 'Kelvin Pearce Creates LOG\u2011it',
+      description:
+        'A passionate diver from the 1980s created the first LOG\u2011it logbook to help divers record memories they could look back on for decades.',
+    },
+    {
+      id: 'ms-2',
+      year: '2006',
+      title: 'Janet & Justin Take Over',
+      description:
+        'Kelvin passed LOG\u2011it to Janet and Justin, who modernised the book while keeping its original spirit. They sold across UK, Ireland, and internationally.',
+    },
+    {
+      id: 'ms-3',
+      year: '2023',
+      title: 'Dan & Eve Era Begins',
+      description:
+        'On 30 September 2023, LOG\u2011it was taken over by Dan (Wheelsdan) and his wife Eve. As active divers and instructors, they remain committed to UK manufacturing and premium quality.',
+    },
+  ],
+  values: [
+    { id: 'v-1', icon: 'Target', title: 'Long\u2011Lasting', description: 'Hard\u2011wearing craftsmanship built to last decades.' },
+    { id: 'v-2', icon: 'TrendingUp', title: 'Premium Quality', description: 'Uncompromising materials and UK manufacturing.' },
+    { id: 'v-3', icon: 'Users', title: 'Community\u2011Driven', description: 'Divers can suggest improvements to the book.' },
+    { id: 'v-4', icon: 'Globe', title: 'UK Made', description: 'Printed in Dorchester by Henry Ling since day one.' },
+  ],
+  updatedAt: new Date(0).toISOString(),
+}
+
+export function mergeStoryData(raw: Partial<StoryData> | null | undefined): StoryData {
+  if (!raw || !raw.paragraph1) return { ...DEFAULT_STORY }
+  return {
+    paragraph1: raw.paragraph1 ?? DEFAULT_STORY.paragraph1,
+    paragraph2: raw.paragraph2 ?? DEFAULT_STORY.paragraph2,
+    bullets: Array.isArray(raw.bullets) ? raw.bullets : [...DEFAULT_STORY.bullets],
+    milestones: Array.isArray(raw.milestones) ? raw.milestones : DEFAULT_STORY.milestones,
+    values: Array.isArray(raw.values) ? raw.values : DEFAULT_STORY.values,
+    updatedAt: raw.updatedAt ?? DEFAULT_STORY.updatedAt,
+  }
+}

@@ -5,6 +5,7 @@ import Navigation from '@/components/navigation'
 import HeroSection from '@/components/hero-section'
 import ShopSection, { type Product } from '@/components/shop-section'
 import ServicesSection from '@/components/services-section'
+import TestimonialsSection from '@/components/testimonials-section'
 import BrandStorySection from '@/components/brand-story-section'
 import GallerySection from '@/components/gallery-section'
 import FaqSection from '@/components/faq-section'
@@ -62,7 +63,8 @@ export default function LogitshopPage() {
           bgClassName="bg-[var(--charcoal)]"
         />
         <ServicesSection bgClassName="bg-background" />
-        <BrandStorySection bgClassName="bg-[var(--charcoal)]" />
+        <TestimonialsSection bgClassName="bg-[var(--charcoal)]" />
+        <BrandStorySection bgClassName="bg-background" />
         <GallerySection bgClassName="bg-background" />
         <FaqSection bgClassName="bg-[var(--charcoal)]" />
       </main>

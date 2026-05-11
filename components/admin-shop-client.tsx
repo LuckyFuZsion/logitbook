@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import type { StoreProduct } from '@/lib/store-types'
 import { AdminSaveBar } from '@/components/admin-save-bar'
 import { ConfirmModal, type ConfirmModalProps } from '@/components/admin-confirm-modal'
@@ -55,6 +55,9 @@ export default function AdminShopClient({
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [confirm, setConfirm] = useState<Omit<ConfirmModalProps, 'onCancel'> | null>(null)
+  const [uploadingById, setUploadingById] = useState<Record<string, boolean>>({})
+  const [uploadErrById, setUploadErrById] = useState<Record<string, string | null>>({})
+  const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({})
 
   const baseline = useMemo(() => {
     const imageMap: Record<string, string> = {}
@@ -216,6 +219,61 @@ export default function AdminShopClient({
     setProducts((list) => list.map((p) => (p.id === id ? { ...p, ...patch } : p)))
   }
 
+  const removeImage = (productId: string, index: number) => {
+    setImageTextById((prev) => {
+      const lines = parseImageLines(prev[productId] ?? '')
+      lines.splice(index, 1)
+      return { ...prev, [productId]: lines.join('\n') }
+    })
+  }
+
+  const handleImageFiles = useCallback(
+    async (productId: string, files: FileList | null) => {
+      if (!files || files.length === 0) return
+      setUploadingById((prev) => ({ ...prev, [productId]: true }))
+      setUploadErrById((prev) => ({ ...prev, [productId]: null }))
+
+      const uploaded: string[] = []
+      const errors: string[] = []
+
+      for (const file of Array.from(files)) {
+        const fd = new FormData()
+        fd.append('file', file)
+        try {
+          const res = await fetch('/api/admin/upload?type=product', {
+            method: 'POST',
+            credentials: 'include',
+            body: fd,
+          })
+          const json = (await res.json()) as { url?: string; error?: string }
+          if (!res.ok) throw new Error(json.error ?? 'Upload failed')
+          if (json.url) uploaded.push(json.url)
+        } catch (e) {
+          errors.push(e instanceof Error ? e.message : 'Upload failed')
+        }
+      }
+
+      if (uploaded.length > 0) {
+        setImageTextById((prev) => {
+          const existing = (prev[productId] ?? '').trim()
+          const joined = existing ? existing + '\n' + uploaded.join('\n') : uploaded.join('\n')
+          return { ...prev, [productId]: joined }
+        })
+      }
+
+      setUploadErrById((prev) => ({
+        ...prev,
+        [productId]: errors.length > 0 ? errors.join(' · ') : null,
+      }))
+      setUploadingById((prev) => ({ ...prev, [productId]: false }))
+
+      // Reset the file input so the same files can be re-selected if needed
+      const input = fileInputRefs.current[productId]
+      if (input) input.value = ''
+    },
+    [],
+  )
+
   return (
     <div className={cn('max-w-4xl mx-auto px-4 py-12 text-white', isDirty && 'pb-28')}>
       <div className="flex flex-wrap items-center justify-between gap-4 mb-10">
@@ -231,8 +289,8 @@ export default function AdminShopClient({
             Hybrid shop
           </h1>
           <p className="text-white/50 text-sm mt-2 max-w-xl">
-            Paste Cloudinary image URLs (one per line). Each product has its own Stripe checkout or Payment Link for a
-            lightweight storefront without full ecommerce.
+            Upload images directly to Cloudinary or paste URLs manually. Each product has its own Stripe checkout or
+            Payment Link for a lightweight storefront without full ecommerce.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -420,17 +478,100 @@ export default function AdminShopClient({
               </label>
             </div>
 
-            <label className="block space-y-1">
-              <span className="text-[10px] font-bold tracking-widest uppercase text-white/60">
-                Image URLs (one per line, Cloudinary recommended)
-              </span>
-              <textarea
-                className="w-full min-h-[88px] px-3 py-2 bg-black/40 border border-white/15 text-sm text-white font-mono"
-                placeholder={'https://res.cloudinary.com/...'}
-                value={imageTextById[p.id] ?? ''}
-                onChange={(e) => setImageTextById((prev) => ({ ...prev, [p.id]: e.target.value }))}
-              />
-            </label>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-bold tracking-widest uppercase text-white/60">
+                  Images
+                </span>
+                <label className="cursor-pointer">
+                  <input
+                    ref={(el) => { fileInputRefs.current[p.id] = el }}
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp,image/gif"
+                    multiple
+                    className="sr-only"
+                    onChange={(e) => handleImageFiles(p.id, e.target.files)}
+                  />
+                  <span
+                    className={cn(
+                      'inline-flex items-center gap-1.5 px-3 py-1.5 border text-[10px] font-bold tracking-widest uppercase transition-colors',
+                      uploadingById[p.id]
+                        ? 'border-white/15 text-white/40 cursor-wait'
+                        : 'border-[var(--brand-red)]/60 text-[var(--brand-red)] hover:bg-[var(--brand-red)]/10 cursor-pointer',
+                    )}
+                    style={{ fontFamily: 'var(--font-orbitron)' }}
+                  >
+                    {uploadingById[p.id] ? (
+                      <>
+                        <svg className="w-3 h-3 animate-spin" viewBox="0 0 24 24" fill="none">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                        </svg>
+                        Uploading…
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                          <polyline points="17 8 12 3 7 8" />
+                          <line x1="12" y1="3" x2="12" y2="15" />
+                        </svg>
+                        Upload images
+                      </>
+                    )}
+                  </span>
+                </label>
+              </div>
+
+              {uploadErrById[p.id] && (
+                <p className="text-xs text-red-400">{uploadErrById[p.id]}</p>
+              )}
+
+              {/* Thumbnail preview strip */}
+              {parseImageLines(imageTextById[p.id] ?? '').length > 0 && (
+                <div className="flex flex-wrap gap-2 p-2 bg-black/20 border border-white/10">
+                  {parseImageLines(imageTextById[p.id] ?? '').map((url, imgIdx) => (
+                    <div key={imgIdx} className="relative group w-20 h-20 flex-shrink-0">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={url}
+                        alt={`Product image ${imgIdx + 1}`}
+                        className="w-full h-full object-cover border border-white/15"
+                        onError={(e) => {
+                          ;(e.currentTarget as HTMLImageElement).style.display = 'none'
+                        }}
+                      />
+                      {imgIdx === 0 && (
+                        <span className="absolute bottom-0 left-0 right-0 text-[8px] font-bold tracking-widest uppercase bg-black/70 text-white/70 text-center py-0.5">
+                          Primary
+                        </span>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => removeImage(p.id, imgIdx)}
+                        className="absolute top-0.5 right-0.5 w-5 h-5 bg-red-600 text-white text-xs font-bold leading-none rounded-sm opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+                        title="Remove image"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Manual URL textarea */}
+              <div className="space-y-1">
+                <span className="text-[10px] text-white/40 tracking-wide">
+                  Or paste URLs directly (one per line)
+                </span>
+                <textarea
+                  className="w-full min-h-[72px] px-3 py-2 bg-black/40 border border-white/15 text-sm text-white font-mono"
+                  placeholder={'https://res.cloudinary.com/...'}
+                  value={imageTextById[p.id] ?? ''}
+                  onChange={(e) => setImageTextById((prev) => ({ ...prev, [p.id]: e.target.value }))}
+                />
+              </div>
+            </div>
 
             <label className="block space-y-1">
               <span className="text-[10px] font-bold tracking-widest uppercase text-white/60">

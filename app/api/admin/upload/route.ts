@@ -3,9 +3,11 @@ import { promises as fs } from 'fs'
 import path from 'path'
 import { NextResponse } from 'next/server'
 import { getAdminSession } from '@/lib/admin-session'
-import { isCloudinaryConfigured, uploadGalleryImageFromBuffer } from '@/lib/cloudinary-server'
-
-const UPLOAD_DIR = path.join(process.cwd(), 'public', 'uploads', 'gallery')
+import {
+  isCloudinaryConfigured,
+  uploadGalleryImageFromBuffer,
+  uploadProductImageFromBuffer,
+} from '@/lib/cloudinary-server'
 
 const ALLOWED = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml'])
 
@@ -23,6 +25,9 @@ export async function POST(req: Request) {
   if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
+
+  const { searchParams } = new URL(req.url)
+  const uploadType = searchParams.get('type') === 'product' ? 'product' : 'gallery'
 
   const form = await req.formData()
   const file = form.get('file')
@@ -47,7 +52,10 @@ export async function POST(req: Request) {
 
   if (isCloudinaryConfigured()) {
     try {
-      const url = await uploadGalleryImageFromBuffer(buf)
+      const url =
+        uploadType === 'product'
+          ? await uploadProductImageFromBuffer(buf)
+          : await uploadGalleryImageFromBuffer(buf)
       return NextResponse.json({ url, destination: 'cloudinary' as const })
     } catch (e) {
       console.error(e)
@@ -55,11 +63,13 @@ export async function POST(req: Request) {
     }
   }
 
-  await fs.mkdir(UPLOAD_DIR, { recursive: true })
+  const subDir = uploadType === 'product' ? 'products' : 'gallery'
+  const uploadDir = path.join(process.cwd(), 'public', 'uploads', subDir)
+  await fs.mkdir(uploadDir, { recursive: true })
   const name = `${randomUUID()}${ext}`
-  const diskPath = path.join(UPLOAD_DIR, name)
+  const diskPath = path.join(uploadDir, name)
   await fs.writeFile(diskPath, buf)
 
-  const publicPath = `/uploads/gallery/${name}`
+  const publicPath = `/uploads/${subDir}/${name}`
   return NextResponse.json({ url: publicPath, destination: 'local' as const })
 }

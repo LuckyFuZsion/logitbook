@@ -79,8 +79,7 @@ export function isCloudinaryConfigured(): boolean {
   return readConfig() !== null
 }
 
-/** Upload a gallery image buffer; returns HTTPS delivery URL. Server-only. */
-export function uploadGalleryImageFromBuffer(buf: Buffer): Promise<string> {
+function uploadToFolder(buf: Buffer, folder: string): Promise<string> {
   const cfg = readConfig()
   if (!cfg) {
     return Promise.reject(new Error('Cloudinary is not configured'))
@@ -95,7 +94,7 @@ export function uploadGalleryImageFromBuffer(buf: Buffer): Promise<string> {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
       {
-        folder: 'logit/gallery',
+        folder,
         resource_type: 'image',
       },
       (err, result) => {
@@ -125,4 +124,14 @@ export function uploadGalleryImageFromBuffer(buf: Buffer): Promise<string> {
     )
     stream.end(buf)
   })
+}
+
+/** Upload a gallery image buffer; returns HTTPS delivery URL. Server-only. */
+export function uploadGalleryImageFromBuffer(buf: Buffer): Promise<string> {
+  return uploadToFolder(buf, 'logit/gallery')
+}
+
+/** Upload a product image buffer; returns HTTPS delivery URL. Server-only. */
+export function uploadProductImageFromBuffer(buf: Buffer): Promise<string> {
+  return uploadToFolder(buf, 'logit/products')
 }

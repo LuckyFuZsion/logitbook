@@ -1,13 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { ShoppingCart, Menu, X } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
 
 interface NavigationProps {
   activeTab: string
   onTabChange: (tab: string) => void
-  cartCount: number
-  onCartOpen: () => void
 }
 
 const TABS = [
@@ -18,7 +16,7 @@ const TABS = [
   { id: 'gallery', label: 'Gallery' },
 ]
 
-export default function Navigation({ activeTab, onTabChange, cartCount, onCartOpen }: NavigationProps) {
+export default function Navigation({ activeTab, onTabChange }: NavigationProps) {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
 
@@ -100,23 +98,6 @@ export default function Navigation({ activeTab, onTabChange, cartCount, onCartOp
               </li>
             ))}
           </ul>
-
-          {/* Cart */}
-          <button
-            onClick={onCartOpen}
-            className="relative p-2 text-white hover:text-[var(--brand-red)] transition-colors"
-            aria-label={`Shopping cart, ${cartCount} items`}
-          >
-            <ShoppingCart size={22} aria-hidden="true" />
-            {cartCount > 0 && (
-              <span
-                className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-[var(--brand-red)] text-white text-xs flex items-center justify-center font-bold badge-pulse"
-                aria-hidden="true"
-              >
-                {cartCount}
-              </span>
-            )}
-          </button>
         </nav>
       </header>
 
@@ -149,31 +130,14 @@ export default function Navigation({ activeTab, onTabChange, cartCount, onCartOp
             </span>
           </button>
 
-          <div className="flex items-center gap-3">
-            <button
-              onClick={onCartOpen}
-              className="relative p-1.5 text-white"
-              aria-label={`Cart, ${cartCount} items`}
-            >
-              <ShoppingCart size={20} aria-hidden="true" />
-              {cartCount > 0 && (
-                <span
-                  className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[var(--brand-red)] text-white text-[10px] flex items-center justify-center font-bold"
-                  aria-hidden="true"
-                >
-                  {cartCount}
-                </span>
-              )}
-            </button>
-            <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="p-1.5 text-white"
-              aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-              aria-expanded={menuOpen}
-            >
-              {menuOpen ? <X size={22} aria-hidden="true" /> : <Menu size={22} aria-hidden="true" />}
-            </button>
-          </div>
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="p-1.5 text-white"
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={menuOpen}
+          >
+            {menuOpen ? <X size={22} aria-hidden="true" /> : <Menu size={22} aria-hidden="true" />}
+          </button>
         </div>
 
         {/* Mobile Dropdown Menu */}

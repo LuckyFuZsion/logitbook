@@ -1,32 +1,15 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { Target, TrendingUp, Users, Globe } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
+import { Target, TrendingUp, Users, Globe, Shield, Zap, Anchor, Star, Heart, Award } from 'lucide-react'
+import type { StoryData } from '@/lib/story-types'
+import { DEFAULT_STORY } from '@/lib/story-defaults'
 
-const MILESTONES = [
-  {
-    year: '1988',
-    title: 'Kelvin Pearce Creates LOG‑it',
-    description: 'A passionate diver from the 1980s created the first LOG‑it logbook to help divers record memories they could look back on for decades.',
-  },
-  {
-    year: '2006',
-    title: 'Janet & Justin Take Over',
-    description: 'Kelvin passed LOG‑it to Janet and Justin, who modernised the book while keeping its original spirit. They sold across UK, Ireland, and internationally.',
-  },
-  {
-    year: '2023',
-    title: 'Dan & Eve Era Begins',
-    description: 'On 30 September 2023, LOG‑it was taken over by Dan (Wheelsdan) and his wife Eve. As active divers and instructors, they remain committed to UK manufacturing and premium quality.',
-  },
-]
-
-const VALUES = [
-  { icon: Target, title: 'Long‑Lasting', description: 'Hard‑wearing craftsmanship built to last decades.' },
-  { icon: TrendingUp, title: 'Premium Quality', description: 'Uncompromising materials and UK manufacturing.' },
-  { icon: Users, title: 'Community‑Driven', description: 'Divers can suggest improvements to the book.' },
-  { icon: Globe, title: 'UK Made', description: 'Printed in Dorchester by Henry Ling since day one.' },
-]
+const ICON_MAP: Record<string, LucideIcon> = {
+  Target, TrendingUp, Users, Globe, Shield, Zap, Anchor, Star, Heart, Award,
+}
+function getIcon(name: string): LucideIcon { return ICON_MAP[name] ?? Star }
 
 function useInView(threshold = 0.15) {
   const ref = useRef<HTMLDivElement>(null)
@@ -46,6 +29,11 @@ function useInView(threshold = 0.15) {
 }
 
 export default function BrandStorySection({ bgClassName = 'bg-background' }: { bgClassName?: string }) {
+  const [story, setStory] = useState<StoryData>(DEFAULT_STORY)
+  useEffect(() => {
+    fetch('/api/story').then(r => r.json()).then((j: { data: StoryData }) => setStory(j.data)).catch(() => {})
+  }, [])
+
   const { ref: storyRef, inView: storyInView } = useInView()
   const { ref: timelineRef, inView: timelineInView } = useInView()
   const { ref: valuesRef, inView: valuesInView } = useInView()
@@ -91,14 +79,10 @@ export default function BrandStorySection({ bgClassName = 'bg-background' }: { b
               <br />
               <span className="text-[var(--brand-red)]">LOGBOOK</span>
             </h3>
-            <p className="text-white/65 leading-relaxed text-base">
-              Since 1988, LOG‑it has been the prestigious logbook for divers who value quality, durability, and heritage. Created by Kelvin Pearce, a passionate diver who believed every dive deserved to be remembered with pride.
-            </p>
-            <p className="text-white/65 leading-relaxed text-base">
-              For over three decades, LOG‑it has been trusted by divers across the UK, Ireland, Europe, the USA, New Zealand, and Antarctica. Each edition is printed in the UK by Henry Ling in Dorchester-a commitment to craftsmanship that remains uncompromising.
-            </p>
+            <p className="text-white/65 leading-relaxed text-base">{story.paragraph1}</p>
+            <p className="text-white/65 leading-relaxed text-base">{story.paragraph2}</p>
             <div className="flex flex-col gap-3 pt-2">
-              {['Navy ink pages', 'Leather‑effect cover', 'UK manufactured', 'Proudly British'].map((point) => (
+              {story.bullets.map((point) => (
                 <div key={point} className="flex items-center gap-3 text-sm text-white/70">
                   <span
                     className="w-1.5 h-1.5 rounded-full bg-[var(--brand-red)] shrink-0"
@@ -147,9 +131,9 @@ export default function BrandStorySection({ bgClassName = 'bg-background' }: { b
             {/* Horizontal line on desktop */}
             <div className="hidden md:block absolute top-6 left-0 right-0 h-px bg-[var(--charcoal-light)]" aria-hidden="true" />
 
-            {MILESTONES.map(({ year, title, description }, i) => (
+            {story.milestones.map(({ id, year, title, description }, i) => (
               <li
-                key={year}
+                key={id}
                 className={`flex-1 relative pl-0 md:pl-0 transition-all duration-700 ${
                   timelineInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
                 }`}
@@ -180,7 +164,7 @@ export default function BrandStorySection({ bgClassName = 'bg-background' }: { b
                   </div>
                 </div>
                 {/* Vertical connector on mobile */}
-                {i < MILESTONES.length - 1 && (
+                {i < story.milestones.length - 1 && (
                   <div className="md:hidden absolute left-[5px] top-5 bottom-0 w-px bg-[var(--charcoal-light)]" aria-hidden="true" />
                 )}
               </li>
@@ -199,9 +183,11 @@ export default function BrandStorySection({ bgClassName = 'bg-background' }: { b
             WHAT WE <span className="text-[var(--brand-red)]">STAND FOR</span>
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {VALUES.map(({ icon: Icon, title, description }, i) => (
+            {story.values.map(({ id, icon, title, description }, i) => {
+              const Icon = getIcon(icon)
+              return (
               <div
-                key={title}
+                key={id}
                 className={`glass-card p-5 border border-[var(--charcoal-light)] hover:border-[var(--brand-red)]/40 flex flex-col items-center text-center gap-3 transition-all duration-700 ${
                   valuesInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
                 }`}
@@ -221,7 +207,8 @@ export default function BrandStorySection({ bgClassName = 'bg-background' }: { b
                 </h4>
                 <p className="text-xs text-white/55 leading-relaxed">{description}</p>
               </div>
-            ))}
+              )
+            })}
           </div>
         </div>
       </div>

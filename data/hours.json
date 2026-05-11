@@ -1,0 +1,13 @@
+{
+  "schedule": [
+    { "day": "Monday",    "open": "09:00", "close": "17:00", "closed": false },
+    { "day": "Tuesday",   "open": "09:00", "close": "17:00", "closed": false },
+    { "day": "Wednesday", "open": "09:00", "close": "17:00", "closed": false },
+    { "day": "Thursday",  "open": "09:00", "close": "17:00", "closed": false },
+    { "day": "Friday",    "open": "09:00", "close": "17:00", "closed": false },
+    { "day": "Saturday",  "open": "09:00", "close": "13:00", "closed": false },
+    { "day": "Sunday",    "open": "",      "close": "",      "closed": true  }
+  ],
+  "notes": "Appointments recommended. Contact us for urgent callouts.",
+  "updatedAt": "2026-05-11T00:00:00.000Z"
+}
