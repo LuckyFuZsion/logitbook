@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { StoreData, StoreProduct } from '@/lib/store-types'
+import { recordCmsAuditEntry } from '@/lib/cms-audit'
 import { getAdminSession } from '@/lib/admin-session'
 import { mergeStoreData } from '@/lib/store-defaults'
 import { readStoreFile, writeStoreFile } from '@/lib/store-store'
@@ -42,6 +43,8 @@ export async function PUT(req: Request) {
     return NextResponse.json({ error: 'products array required' }, { status: 400 })
   }
 
+  const previous = mergeStoreData(await readStoreFile())
+
   for (const p of body.products) {
     if (!p.id || typeof p.name !== 'string' || typeof p.description !== 'string') {
       return NextResponse.json({ error: 'Invalid product' }, { status: 400 })
@@ -73,6 +76,7 @@ export async function PUT(req: Request) {
     updatedAt: new Date().toISOString(),
   }
 
+  await recordCmsAuditEntry('shop', previous, next)
   await writeStoreFile(next)
   return NextResponse.json({ ok: true, data: mergeStoreData(next) })
 }

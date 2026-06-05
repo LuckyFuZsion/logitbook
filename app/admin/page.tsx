@@ -46,6 +46,11 @@ const AREAS = [
     description: 'Contact details, business hours, and site-wide announcement banner. Updates footer and schema.org.',
   },
   {
+    href: '/admin/audit',
+    title: 'Change log',
+    description: 'Firestore audit of every CMS save with before/after data. Revert a change if something went wrong.',
+  },
+  {
     href: '/admin/go-live',
     title: 'Go-live',
     description: 'Checklist for domain, env, data, Stripe, Cloudinary, and launch QA.',

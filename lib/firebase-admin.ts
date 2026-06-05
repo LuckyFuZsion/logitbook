@@ -30,6 +30,11 @@ export function getCmsCollectionId(): string {
   return process.env.FIRESTORE_CMS_COLLECTION?.trim() || 'cms'
 }
 
+/** Top-level collection for admin CMS audit entries (before/after snapshots). Default: `cms_audit_log`. */
+export function getAuditCollectionId(): string {
+  return process.env.FIRESTORE_AUDIT_COLLECTION?.trim() || 'cms_audit_log'
+}
+
 let cachedDb: Firestore | null | undefined
 
 function initApp() {

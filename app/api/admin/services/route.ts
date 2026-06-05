@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { ServicesData, ServiceCategory, ServiceItem } from '@/lib/services-types'
+import { recordCmsAuditEntry } from '@/lib/cms-audit'
 import { getAdminSession } from '@/lib/admin-session'
 import { mergeServicesData } from '@/lib/services-defaults'
 import { readServicesFile, writeServicesFile } from '@/lib/services-store'
@@ -53,6 +54,8 @@ export async function PUT(req: Request) {
     return NextResponse.json({ error: 'categories array required' }, { status: 400 })
   }
 
+  const previous = mergeServicesData(await readServicesFile())
+
   for (const cat of body.categories) {
     const err = validateCategory(cat)
     if (err) return NextResponse.json({ error: err }, { status: 400 })
@@ -77,6 +80,7 @@ export async function PUT(req: Request) {
     updatedAt: new Date().toISOString(),
   }
 
+  await recordCmsAuditEntry('services', previous, next)
   await writeServicesFile(next)
   return NextResponse.json({ ok: true, data: next })
 }

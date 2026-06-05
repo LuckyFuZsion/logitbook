@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Menu, X } from 'lucide-react'
+import { NAV_TEXT_LOGO_SRC, SITE_LOGO_ALT, SITE_LOGO_SRC } from '@/lib/site-logo'
 
 interface NavigationProps {
   activeTab: string
@@ -60,25 +61,24 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
         }`}
         role="banner"
       >
-        <nav className="max-w-7xl mx-auto px-6 flex items-center justify-between h-16" aria-label="Main navigation">
+        <nav className="max-w-7xl mx-auto px-6 flex items-center justify-between h-20" aria-label="Main navigation">
           {/* Logo */}
           <button
             onClick={() => handleTab('home')}
-            className="flex items-center gap-2 group"
+            className="flex items-center gap-2.5 group"
             aria-label="Logitshop Home"
           >
             <img
-              src="/favicon_io%20(6)/android-chrome-192x192.png"
-              alt=""
-              className="h-9 w-9 rounded-sm group-hover:drop-shadow-[0_0_8px_var(--brand-red)] transition-all"
-              aria-hidden="true"
+              src={SITE_LOGO_SRC}
+              alt={SITE_LOGO_ALT}
+              className="h-14 w-auto group-hover:drop-shadow-[0_0_8px_var(--brand-red)] transition-all"
             />
-            <span
-              className="text-xl font-black tracking-widest text-white"
-              style={{ fontFamily: 'var(--font-orbitron)' }}
-            >
-              LOGIT<span className="text-[var(--brand-red)]">SHOP</span>
-            </span>
+            <img
+              src={NAV_TEXT_LOGO_SRC}
+              alt=""
+              aria-hidden="true"
+              className="h-12 w-auto group-hover:drop-shadow-[0_0_8px_var(--brand-red)] transition-all"
+            />
           </button>
 
           {/* Tabs */}
@@ -119,24 +119,23 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
         }`}
         role="banner"
       >
-        <div className="flex items-center justify-between px-4 h-14">
+        <div className="flex items-center justify-between px-4 h-16">
           <button
             onClick={() => handleTab('home')}
-            className="flex items-center gap-1.5"
+            className="flex items-center gap-2"
             aria-label="Logitshop Home"
           >
             <img
-              src="/favicon_io%20(6)/android-chrome-192x192.png"
-              alt=""
-              className="h-7 w-7 rounded-sm"
-              aria-hidden="true"
+              src={SITE_LOGO_SRC}
+              alt={SITE_LOGO_ALT}
+              className="h-[2.625rem] w-auto"
             />
-            <span
-              className="text-base font-black tracking-widest text-white"
-              style={{ fontFamily: 'var(--font-orbitron)' }}
-            >
-              LOGIT<span className="text-[var(--brand-red)]">SHOP</span>
-            </span>
+            <img
+              src={NAV_TEXT_LOGO_SRC}
+              alt=""
+              aria-hidden="true"
+              className="h-9 w-auto"
+            />
           </button>
 
           <button

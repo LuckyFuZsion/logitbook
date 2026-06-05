@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { GalleryBeforeAfter, GalleryData } from '@/lib/gallery-types'
+import { recordCmsAuditEntry } from '@/lib/cms-audit'
 import { getAdminSession } from '@/lib/admin-session'
 import { mergeGalleryData } from '@/lib/gallery-defaults'
 import { readGalleryFile, writeGalleryFile } from '@/lib/gallery-store'
@@ -47,6 +48,8 @@ export async function PUT(req: Request) {
   if (!Array.isArray(body.grid)) {
     return NextResponse.json({ error: 'grid array required' }, { status: 400 })
   }
+
+  const previous = mergeGalleryData(await readGalleryFile())
 
   for (const item of body.grid) {
     if (
@@ -101,6 +104,7 @@ export async function PUT(req: Request) {
     updatedAt: new Date().toISOString(),
   }
 
+  await recordCmsAuditEntry('gallery', previous, next)
   await writeGalleryFile(next)
   return NextResponse.json({ ok: true, data: mergeGalleryData(next) })
 }

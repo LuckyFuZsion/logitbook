@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { FaqData, FaqItem } from '@/lib/faq-types'
+import { recordCmsAuditEntry } from '@/lib/cms-audit'
 import { getAdminSession } from '@/lib/admin-session'
 import { mergeFaqData } from '@/lib/faq-defaults'
 import { readFaqFile, writeFaqFile } from '@/lib/faq-store'
@@ -34,6 +35,8 @@ export async function PUT(req: Request) {
     return NextResponse.json({ error: 'items array required' }, { status: 400 })
   }
 
+  const previous = mergeFaqData(await readFaqFile())
+
   for (const item of body.items) {
     const err = validateItem(item)
     if (err) return NextResponse.json({ error: err }, { status: 400 })
@@ -44,6 +47,7 @@ export async function PUT(req: Request) {
     updatedAt: new Date().toISOString(),
   }
 
+  await recordCmsAuditEntry('faq', previous, next)
   await writeFaqFile(next)
   return NextResponse.json({ ok: true, data: next })
 }

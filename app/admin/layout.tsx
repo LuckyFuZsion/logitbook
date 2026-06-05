@@ -40,6 +40,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <Link href="/admin/settings" className="text-white/60 hover:text-white">
           Settings
         </Link>
+        <Link href="/admin/audit" className="text-white/60 hover:text-white">
+          Change log
+        </Link>
         <Link href="/admin/go-live" className="text-white/60 hover:text-white">
           Go-live
         </Link>

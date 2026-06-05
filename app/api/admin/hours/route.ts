@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { recordCmsAuditEntry } from '@/lib/cms-audit'
 import { getAdminSession } from '@/lib/admin-session'
 import { mergeHoursData } from '@/lib/hours-defaults'
 import { readHoursFile, writeHoursFile } from '@/lib/hours-store'
@@ -14,7 +15,9 @@ export async function PUT(req: Request) {
   let body: Partial<HoursData>
   try { body = await req.json() } catch { return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 }) }
   if (!Array.isArray(body.schedule)) return NextResponse.json({ error: 'schedule array required' }, { status: 400 })
+  const previous = mergeHoursData(await readHoursFile())
   const next = { ...mergeHoursData(body), updatedAt: new Date().toISOString() }
+  await recordCmsAuditEntry('hours', previous, next)
   await writeHoursFile(next)
   return NextResponse.json({ ok: true, data: next })
 }

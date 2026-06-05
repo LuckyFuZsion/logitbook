@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { recordCmsAuditEntry } from '@/lib/cms-audit'
 import { getAdminSession } from '@/lib/admin-session'
 import { mergeHeroData } from '@/lib/hero-defaults'
 import { readHeroFile, writeHeroFile } from '@/lib/hero-store'
@@ -14,7 +15,9 @@ export async function PUT(req: Request) {
   let body: Partial<HeroData>
   try { body = await req.json() } catch { return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 }) }
   if (!body.subheading) return NextResponse.json({ error: 'subheading required' }, { status: 400 })
+  const previous = mergeHeroData(await readHeroFile())
   const next = { ...mergeHeroData(body), updatedAt: new Date().toISOString() }
+  await recordCmsAuditEntry('hero', previous, next)
   await writeHeroFile(next)
   return NextResponse.json({ ok: true, data: next })
 }

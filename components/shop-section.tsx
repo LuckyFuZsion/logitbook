@@ -4,12 +4,10 @@ import { useState, useEffect } from 'react'
 import { ShoppingCart, BadgeCheck } from 'lucide-react'
 import type { StoreProduct } from '@/lib/store-types'
 
-/** Normalized for cart + UI (primary image convenience field). */
+/** Normalized for UI (primary image convenience field). */
 export type Product = StoreProduct & { image: string }
 
 interface ShopSectionProps {
-  onAddToCart: (product: Product) => void
-  cartItems: string[]
   bgClassName?: string
 }
 
@@ -20,7 +18,11 @@ function normalizeProducts(raw: StoreProduct[]): Product[] {
   }))
 }
 
-export default function ShopSection({ onAddToCart, cartItems, bgClassName = 'bg-background' }: ShopSectionProps) {
+function isPrestigiousLogbook(product: Product): boolean {
+  return product.id === 'logit-book-prestigious'
+}
+
+export default function ShopSection({ bgClassName = 'bg-background' }: ShopSectionProps) {
   const [products, setProducts] = useState<Product[]>([])
   const [loadError, setLoadError] = useState<string | null>(null)
 
@@ -111,9 +113,7 @@ export default function ShopSection({ onAddToCart, cartItems, bgClassName = 'bg-
         )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" role="list">
-          {filtered.map((product) => {
-            const inCart = cartItems.includes(product.id)
-            return (
+          {filtered.map((product) => (
               <article
                 key={product.id}
                 className="glass-card group relative flex flex-col overflow-hidden border border-[var(--charcoal-light)] hover:border-[var(--brand-red)]/50 transition-all duration-300"
@@ -164,35 +164,24 @@ export default function ShopSection({ onAddToCart, cartItems, bgClassName = 'bg-
 
                   <p className="text-sm text-white/60 leading-relaxed">{product.description}</p>
 
-                  <div className="flex items-center justify-between mt-auto pt-2 border-t border-[var(--charcoal-light)] flex-wrap gap-2">
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-xl font-black text-white" style={{ fontFamily: 'var(--font-orbitron)' }}>
-                        £{product.price.toFixed(2)}
-                      </span>
-                      {product.originalPrice != null && product.originalPrice > product.price && (
-                        <span className="text-xs text-white/40 line-through">
-                          £{product.originalPrice.toFixed(2)}
+                  <div className="mt-auto pt-2 border-t border-[var(--charcoal-light)] space-y-2">
+                    {isPrestigiousLogbook(product) && (
+                      <p className="text-[10px] text-white/50">
+                        20+ books qualify for wholesale pricing. Contact us for details.
+                      </p>
+                    )}
+                    <div className="flex items-center justify-between flex-wrap gap-2">
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-xl font-black text-white" style={{ fontFamily: 'var(--font-orbitron)' }}>
+                          £{product.price.toFixed(2)}
                         </span>
-                      )}
-                      <span className="text-xs text-white/50">+ VAT & delivery</span>
-                    </div>
-                    <div className="flex items-center gap-2 flex-wrap justify-end">
-                      {inCart && (
-                        <span
-                          className="text-[10px] font-bold uppercase tracking-wider text-[var(--brand-red)]"
-                          style={{ fontFamily: 'var(--font-orbitron)' }}
-                        >
-                          In cart
-                        </span>
-                      )}
-                      <button
-                        type="button"
-                        onClick={() => onAddToCart(product)}
-                        className="px-3 py-2 text-[10px] font-bold tracking-widest uppercase border border-white/25 text-white/90 hover:bg-white/10 transition-colors"
-                        style={{ fontFamily: 'var(--font-orbitron)' }}
-                      >
-                        Add to cart
-                      </button>
+                        {product.originalPrice != null && product.originalPrice > product.price && (
+                          <span className="text-xs text-white/40 line-through">
+                            £{product.originalPrice.toFixed(2)}
+                          </span>
+                        )}
+                        <span className="text-xs text-white/50">+ VAT & delivery</span>
+                      </div>
                       <a
                         href={product.stripeUrl}
                         target="_blank"
@@ -206,14 +195,9 @@ export default function ShopSection({ onAddToCart, cartItems, bgClassName = 'bg-
                       </a>
                     </div>
                   </div>
-
-                  <p className="text-[10px] text-white/50 pt-2 border-t border-[var(--charcoal-light)]">
-                    20+ books qualify for wholesale pricing. Contact us for details.
-                  </p>
                 </div>
               </article>
-            )
-          })}
+          ))}
         </div>
       </div>
     </section>

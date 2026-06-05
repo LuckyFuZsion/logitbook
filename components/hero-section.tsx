@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { ChevronDown, ShoppingBag, Wrench, ArrowRight } from 'lucide-react'
 import type { HeroData } from '@/lib/hero-types'
 import { DEFAULT_HERO } from '@/lib/hero-defaults'
+import { HERO_LOGO_SRC, SITE_LOGO_ALT } from '@/lib/site-logo'
 
 interface HeroSectionProps {
   onTabChange: (tab: string) => void
@@ -86,22 +87,15 @@ export default function HeroSection({ onTabChange }: HeroSectionProps) {
       <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-4 pt-24 pb-16 md:pt-32 text-center">
         {/* Main Headline */}
         <h1
-          className={`text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight text-white leading-none mb-4 text-balance transition-all duration-700 delay-100 ${
+          className={`mb-4 transition-all duration-700 delay-100 ${
             loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
-          style={{ fontFamily: 'var(--font-orbitron)' }}
         >
-          <span className="inline-flex items-center justify-center gap-3">
-            <img
-              src="/favicon_io%20(6)/android-chrome-192x192.png"
-              alt=""
-              className="h-20 w-20 sm:h-24 sm:w-24 md:h-28 md:w-28 rounded-sm"
-              aria-hidden="true"
-            />
-            <span>
-              LOGIT<span className="text-[var(--brand-red)]">SHOP</span>
-            </span>
-          </span>
+          <img
+            src={HERO_LOGO_SRC}
+            alt={SITE_LOGO_ALT}
+            className="mx-auto h-[17.6rem] sm:h-[22rem] md:h-[26.5rem] lg:h-[31rem] w-auto max-w-[min(100%,56rem)]"
+          />
         </h1>
 
         {/* Sub-heading */}
