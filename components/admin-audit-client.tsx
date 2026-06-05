@@ -3,8 +3,7 @@
 import Link from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
 import { History, RefreshCw, Undo2 } from 'lucide-react'
-import type { CmsAuditListEntry } from '@/lib/cms-audit'
-import { CMS_AUDIT_RESOURCE_LABEL } from '@/lib/cms-audit'
+import { CMS_AUDIT_RESOURCE_LABEL, type CmsAuditListEntry } from '@/lib/cms-audit-types'
 import { ConfirmModal } from '@/components/admin-confirm-modal'
 
 interface AuditApiResponse {

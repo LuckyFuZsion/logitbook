@@ -8,6 +8,11 @@ import type { ContactData } from '@/lib/contact-types'
 import { mergeFaqData } from '@/lib/faq-defaults'
 import { writeFaqFile } from '@/lib/faq-store'
 import type { FaqData } from '@/lib/faq-types'
+import {
+  type CmsAuditListEntry,
+  type CmsAuditResource,
+  isCmsAuditResource,
+} from '@/lib/cms-audit-types'
 import { getAuditCollectionId, getFirestoreDb } from '@/lib/firebase-admin'
 import { mergeGalleryData } from '@/lib/gallery-defaults'
 import { writeGalleryFile } from '@/lib/gallery-store'
@@ -31,46 +36,13 @@ import { mergeTestimonialsData } from '@/lib/testimonials-defaults'
 import { writeTestimonialsFile } from '@/lib/testimonials-store'
 import type { TestimonialsData } from '@/lib/testimonials-types'
 
-export const CMS_AUDIT_RESOURCES = [
-  'shop',
-  'gallery',
-  'services',
-  'faq',
-  'hero',
-  'testimonials',
-  'story',
-  'contact',
-  'hours',
-  'announcement',
-] as const
-
-export type CmsAuditResource = (typeof CMS_AUDIT_RESOURCES)[number]
-
-export function isCmsAuditResource(s: string): s is CmsAuditResource {
-  return (CMS_AUDIT_RESOURCES as readonly string[]).includes(s)
-}
-
-export const CMS_AUDIT_RESOURCE_LABEL: Record<CmsAuditResource, string> = {
-  shop: 'Shop',
-  gallery: 'Gallery',
-  services: 'Services',
-  faq: 'FAQs',
-  hero: 'Hero',
-  testimonials: 'Reviews',
-  story: 'Our story',
-  contact: 'Contact',
-  hours: 'Business hours',
-  announcement: 'Announcement',
-}
-
-export interface CmsAuditListEntry {
-  id: string
-  resource: CmsAuditResource
-  createdAt: string | null
-  revertedAt: string | null
-  previousData: unknown
-  newData: unknown
-}
+export {
+  CMS_AUDIT_RESOURCES,
+  CMS_AUDIT_RESOURCE_LABEL,
+  isCmsAuditResource,
+  type CmsAuditListEntry,
+  type CmsAuditResource,
+} from '@/lib/cms-audit-types'
 
 function stripUndefinedDeep(v: unknown): unknown {
   if (v === undefined) return undefined
