@@ -19,7 +19,7 @@ export const DEFAULT_CONTACT: ContactData = {
   vatInfo: 'VAT Registered company 2023',
   copyrightLine1: 'Copyright © 1998 LOG-it — All Rights Reserved.',
   copyrightLine2: 'Copyright © 2026 logitshop.com — All Rights Reserved.',
-  siteUrl: 'https://logitshop.com',
+  siteUrl: 'https://logitshop.vercel.app',
   updatedAt: new Date(0).toISOString(),
 }
 

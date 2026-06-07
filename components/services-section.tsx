@@ -8,6 +8,7 @@ import {
 } from 'lucide-react'
 import type { ServicesData } from '@/lib/services-types'
 import { mergeServicesData } from '@/lib/services-defaults'
+import { publicSiteUrl } from '@/lib/site-url'
 
 const ICON_MAP: Record<string, LucideIcon> = {
   Droplet, Wrench, Zap, LifeBuoy, Shield, Cpu, Settings, Anchor, Compass, Star,
@@ -54,7 +55,7 @@ export default function ServicesSection({ bgClassName = 'bg-background' }: { bgC
             provider: {
               '@type': 'Organization',
               name: 'Logitshop',
-              url: 'https://logitshop.com',
+              url: publicSiteUrl(),
             },
             serviceType: 'Scuba Equipment Maintenance and Servicing',
             areaServed: 'Worldwide',

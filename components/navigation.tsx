@@ -33,6 +33,11 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
     setMenuOpen(false)
     if (typeof window === 'undefined') return
 
+    if (id === 'shop') {
+      window.location.assign('/shop')
+      return
+    }
+
     const path = window.location.pathname
     const onHome = path === '/' || path === ''
     if (!onHome) {

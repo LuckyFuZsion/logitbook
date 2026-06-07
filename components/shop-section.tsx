@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { ShoppingCart, BadgeCheck } from 'lucide-react'
 import type { StoreProduct } from '@/lib/store-types'
@@ -9,6 +10,7 @@ export type Product = StoreProduct & { image: string }
 
 interface ShopSectionProps {
   bgClassName?: string
+  showReturnsNotice?: boolean
 }
 
 function normalizeProducts(raw: StoreProduct[]): Product[] {
@@ -22,7 +24,7 @@ function isPrestigiousLogbook(product: Product): boolean {
   return product.id === 'logit-book-prestigious'
 }
 
-export default function ShopSection({ bgClassName = 'bg-background' }: ShopSectionProps) {
+export default function ShopSection({ bgClassName = 'bg-background', showReturnsNotice = false }: ShopSectionProps) {
   const [products, setProducts] = useState<Product[]>([])
   const [loadError, setLoadError] = useState<string | null>(null)
 
@@ -199,6 +201,32 @@ export default function ShopSection({ bgClassName = 'bg-background' }: ShopSecti
               </article>
           ))}
         </div>
+
+        {showReturnsNotice && (
+          <aside
+            className="mt-16 max-w-3xl mx-auto p-6 border border-[var(--charcoal-light)] bg-[var(--charcoal)]/60 text-center"
+            aria-labelledby="shop-returns-heading"
+          >
+            <h3
+              id="shop-returns-heading"
+              className="text-sm font-black tracking-[0.2em] uppercase text-[var(--brand-red)] mb-3"
+              style={{ fontFamily: 'var(--font-orbitron)' }}
+            >
+              Returns &amp; refunds
+            </h3>
+            <p className="text-sm text-white/65 leading-relaxed mb-3">
+              Contact us within 14 days of purchase or receipt (whichever is later). We&apos;re happy to exchange or
+              refund on presentation of a valid receipt — goods must be returned within 30 days in original packaging.
+            </p>
+            <Link
+              href="/returns"
+              className="text-sm text-[var(--brand-red)] hover:text-red-400 underline underline-offset-4 decoration-[var(--brand-red)]/40 transition-colors"
+              style={{ fontFamily: 'var(--font-rajdhani)' }}
+            >
+              Read full return and refund policy
+            </Link>
+          </aside>
+        )}
       </div>
     </section>
   )

@@ -1,8 +1,5 @@
 import type { MetadataRoute } from 'next'
-
-function siteUrl() {
-  return process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/+$/, '') || 'https://logitshop.com'
-}
+import { siteUrl } from '@/lib/site-url'
 
 export default function robots(): MetadataRoute.Robots {
   const baseUrl = siteUrl()
@@ -11,10 +8,9 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/api/', '/_next/'],
+        disallow: ['/api/', '/_next/', '/admin/'],
       },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,
   }
 }
-

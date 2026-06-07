@@ -28,7 +28,7 @@ export default function ShopPage() {
           </div>
         </div>
 
-        <ShopSection bgClassName="bg-background" />
+        <ShopSection bgClassName="bg-background" showReturnsNotice />
       </main>
 
       <Footer onTabChange={setActiveTab} />

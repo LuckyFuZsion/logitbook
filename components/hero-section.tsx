@@ -22,6 +22,10 @@ export default function HeroSection({ onTabChange }: HeroSectionProps) {
   const goTo = (id: string) => {
     onTabChange(id)
     if (typeof window === 'undefined') return
+    if (id === 'shop') {
+      window.location.assign('/shop')
+      return
+    }
     const el = document.getElementById(id)
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' })

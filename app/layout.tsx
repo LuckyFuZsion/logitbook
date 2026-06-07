@@ -6,7 +6,10 @@ import { mergeContactData } from '@/lib/contact-defaults'
 import { mergeHoursData } from '@/lib/hours-defaults'
 import { readContactFile } from '@/lib/contact-store'
 import { readHoursFile } from '@/lib/hours-store'
+import { siteUrl } from '@/lib/site-url'
 import './globals.css'
+
+const canonicalSite = siteUrl()
 
 const orbitron = Orbitron({
   subsets: ['latin'],
@@ -21,6 +24,7 @@ const rajdhani = Rajdhani({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL(canonicalSite),
   title: 'LOGITSHOP',
   description:
     'Logitshop - your fully accredited, cutting-edge destination for premium products and expert maintenance services. Mobile-first, futuristic, built for performance.',
@@ -48,7 +52,7 @@ export const metadata: Metadata = {
     description:
       'Since 1988, LOG‑it has been the prestigious UK diving logbook trusted by divers worldwide. Premium UK‑printed logbooks, IDEST‑accredited regulator & cylinder servicing, and expert scuba equipment care.',
     type: 'website',
-    url: 'https://logitshop.com',
+    url: canonicalSite,
   },
   twitter: {
     card: 'summary_large_image',
@@ -79,9 +83,9 @@ export default async function RootLayout({
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
     name: contact.businessName,
-    url: contact.siteUrl,
+    url: canonicalSite,
     description: contact.tagline,
-    '@id': `${contact.siteUrl}/#business`,
+    '@id': `${canonicalSite}/#business`,
     priceRange: '££',
     areaServed: 'Worldwide',
     email: contact.email,

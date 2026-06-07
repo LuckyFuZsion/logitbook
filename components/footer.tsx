@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 import { Mail, MapPin, Instagram, Phone, Clock } from 'lucide-react'
 import type { ContactData } from '@/lib/contact-types'
 import type { HoursData } from '@/lib/hours-types'
@@ -24,6 +25,10 @@ export default function Footer({ onTabChange }: FooterProps) {
   const goTo = (tab: string, hash?: string) => {
     onTabChange(tab)
     if (typeof window === 'undefined') return
+    if (tab === 'shop') {
+      window.location.assign('/shop')
+      return
+    }
     const path = window.location.pathname
     const onHome = path === '/' || path === ''
     if (!onHome) {
@@ -76,17 +81,23 @@ export default function Footer({ onTabChange }: FooterProps) {
             <h3 className="text-sm font-black tracking-[0.2em] uppercase text-[var(--brand-red)] mb-4" style={{ fontFamily: 'var(--font-orbitron)' }}>Quick Links</h3>
             <ul className="flex flex-col gap-2">
               {[
-                { tab: 'home', hash: '#home', label: 'Home' },
-                { tab: 'shop', hash: '#shop', label: 'Shop' },
-                { tab: 'services', hash: '#services', label: 'Services' },
-                { tab: 'testimonials', hash: '#testimonials', label: 'Testimonials' },
-                { tab: 'story', hash: '#story', label: 'Our Story' },
-                { tab: 'gallery', hash: '#gallery', label: 'Gallery' },
-              ].map(({ tab, hash, label }) => (
+                { tab: 'home', hash: '#home', label: 'Home', href: undefined },
+                { tab: 'shop', hash: '#shop', label: 'Shop', href: '/shop' },
+                { tab: 'services', hash: '#services', label: 'Services', href: undefined },
+                { tab: 'testimonials', hash: '#testimonials', label: 'Testimonials', href: undefined },
+                { tab: 'story', hash: '#story', label: 'Our Story', href: undefined },
+                { tab: 'gallery', hash: '#gallery', label: 'Gallery', href: undefined },
+              ].map(({ tab, hash, label, href }) => (
                 <li key={tab}>
-                  <button type="button" onClick={() => goTo(tab, hash)} className="text-sm text-white/65 hover:text-white transition-colors tracking-wider" style={{ fontFamily: 'var(--font-rajdhani)' }}>
-                    {label}
-                  </button>
+                  {href ? (
+                    <Link href={href} className="text-sm text-white/65 hover:text-white transition-colors tracking-wider" style={{ fontFamily: 'var(--font-rajdhani)' }}>
+                      {label}
+                    </Link>
+                  ) : (
+                    <button type="button" onClick={() => goTo(tab, hash)} className="text-sm text-white/65 hover:text-white transition-colors tracking-wider" style={{ fontFamily: 'var(--font-rajdhani)' }}>
+                      {label}
+                    </button>
+                  )}
                 </li>
               ))}
             </ul>
@@ -151,6 +162,7 @@ export default function Footer({ onTabChange }: FooterProps) {
           </div>
           <div className="flex items-center gap-4">
             <a href="/privacy-policy" className="text-sm text-white/40 hover:text-white/70 transition-colors" style={{ fontFamily: 'var(--font-rajdhani)' }}>Privacy Policy</a>
+            <a href="/returns" className="text-sm text-white/40 hover:text-white/70 transition-colors" style={{ fontFamily: 'var(--font-rajdhani)' }}>Returns</a>
             <a href="#" className="text-sm text-white/40 hover:text-white/70 transition-colors" style={{ fontFamily: 'var(--font-rajdhani)' }}>Terms of Service</a>
             <a href="#" className="text-sm text-white/40 hover:text-white/70 transition-colors" style={{ fontFamily: 'var(--font-rajdhani)' }}>Cookie Policy</a>
           </div>
