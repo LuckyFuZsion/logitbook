@@ -146,38 +146,6 @@ export default function AdminShopClient({
     }
   }, [imageTextById, products, router])
 
-  const clearPublished = useCallback(async () => {
-    if (
-      !window.confirm(
-        'Remove all saved products from disk? The site will fall back to built-in default catalogue.',
-      )
-    ) {
-      return
-    }
-    setSaving(true)
-    setMessage(null)
-    setError(null)
-    try {
-      const res = await fetch('/api/admin/shop', {
-        method: 'PUT',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ products: [] }),
-      })
-      const json = await res.json()
-      if (!res.ok) {
-        setError(typeof json.error === 'string' ? json.error : 'Could not reset')
-        return
-      }
-      setMessage('Cleared saved products.')
-      router.refresh()
-    } catch {
-      setError('Could not reset')
-    } finally {
-      setSaving(false)
-    }
-  }, [router])
-
   const addProduct = () => {
     const p = newProduct()
     setProducts((list) => [...list, p])
@@ -322,15 +290,6 @@ export default function AdminShopClient({
             style={{ fontFamily: 'var(--font-orbitron)' }}
           >
             {saving ? 'Saving...' : isDirty ? 'Save changes' : 'Save'}
-          </button>
-          <button
-            type="button"
-            onClick={() => clearPublished()}
-            disabled={saving}
-            className="px-4 py-2 border border-white/25 text-white/90 text-xs font-bold tracking-widest uppercase hover:bg-white/5 disabled:opacity-50"
-            style={{ fontFamily: 'var(--font-orbitron)' }}
-          >
-            Clear saved products
           </button>
           <button
             type="button"
