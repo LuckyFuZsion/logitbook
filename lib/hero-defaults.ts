@@ -2,7 +2,7 @@ import type { HeroData } from '@/lib/hero-types'
 
 export const DEFAULT_HERO: HeroData = {
   subheading:
-    'Professional-grade diving log, accredited servicing, and expert technical support for technical divers worldwide.',
+    'Professional-grade diving log, accredited servicing, and expert technical support for technical divers.',
   cta1Label: 'Shop Now',
   cta1Target: 'shop',
   cta2Label: 'Our Services',

@@ -151,6 +151,10 @@
   animation: ticker 20s linear infinite;
 }
 
+.supplier-ticker {
+  animation: ticker 45s linear infinite;
+}
+
 /* Slide up reveal */
 @keyframes slideUp {
   from { opacity: 0; transform: translateY(30px); }

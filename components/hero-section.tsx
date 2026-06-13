@@ -5,6 +5,7 @@ import { ChevronDown, ShoppingBag, Wrench, ArrowRight } from 'lucide-react'
 import type { HeroData } from '@/lib/hero-types'
 import { DEFAULT_HERO } from '@/lib/hero-defaults'
 import { HERO_LOGO_SRC, SITE_LOGO_ALT } from '@/lib/site-logo'
+import { WhatsAppCta } from '@/components/whatsapp-cta'
 
 interface HeroSectionProps {
   onTabChange: (tab: string) => void
@@ -127,7 +128,7 @@ export default function HeroSection({ onTabChange }: HeroSectionProps) {
 
         {/* CTA Buttons */}
         <div
-          className={`flex flex-col sm:flex-row gap-4 justify-center transition-all duration-700 delay-300 ${
+          className={`flex flex-col sm:flex-row flex-wrap gap-4 justify-center transition-all duration-700 delay-300 ${
             loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
@@ -148,6 +149,7 @@ export default function HeroSection({ onTabChange }: HeroSectionProps) {
             <Wrench size={18} aria-hidden="true" />
             {heroData.cta2Label}
           </button>
+          <WhatsAppCta />
         </div>
 
       </div>
@@ -175,7 +177,7 @@ export default function HeroSection({ onTabChange }: HeroSectionProps) {
       {/* Scroll indicator */}
       <button
         onClick={() => goTo('shop')}
-        className="absolute bottom-20 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-1 text-white/40 hover:text-white/80 transition-colors md:bottom-8"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-1 text-white/40 hover:text-white/80 transition-colors"
         aria-label="Explore - jump to shop section"
       >
         <span className="text-xs tracking-widest uppercase" style={{ fontFamily: 'var(--font-rajdhani)' }}>

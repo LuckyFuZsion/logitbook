@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { ShoppingCart, BadgeCheck } from 'lucide-react'
 import type { StoreProduct } from '@/lib/store-types'
+import { productImageAlt } from '@/lib/product-image-alt'
 
 /** Normalized for UI (primary image convenience field). */
 export type Product = StoreProduct & { image: string }
@@ -11,6 +12,8 @@ export type Product = StoreProduct & { image: string }
 interface ShopSectionProps {
   bgClassName?: string
   showReturnsNotice?: boolean
+  /** Full cards on home; square tiles linking to product pages on /shop */
+  layout?: 'cards' | 'tiles'
 }
 
 function normalizeProducts(raw: StoreProduct[]): Product[] {
@@ -24,7 +27,11 @@ function isPrestigiousLogbook(product: Product): boolean {
   return product.id === 'logit-book-prestigious'
 }
 
-export default function ShopSection({ bgClassName = 'bg-background', showReturnsNotice = false }: ShopSectionProps) {
+export default function ShopSection({
+  bgClassName = 'bg-background',
+  showReturnsNotice = false,
+  layout = 'cards',
+}: ShopSectionProps) {
   const [products, setProducts] = useState<Product[]>([])
   const [loadError, setLoadError] = useState<string | null>(null)
 
@@ -100,10 +107,6 @@ export default function ShopSection({ bgClassName = 'bg-background', showReturns
           <div className="w-16 h-0.5 bg-[var(--brand-red)] mx-auto" style={{ boxShadow: '0 0 10px var(--brand-red-glow)' }} aria-hidden="true" />
         </div>
 
-        <div className="text-center mb-10">
-          <p className="text-white/60 text-sm">Available exclusively through Logitshop</p>
-        </div>
-
         {loadError && (
           <p className="text-center text-red-400 text-sm mb-8" role="alert">
             {loadError}
@@ -114,6 +117,48 @@ export default function ShopSection({ bgClassName = 'bg-background', showReturns
           <p className="text-center text-white/50 text-sm">No products configured.</p>
         )}
 
+        {layout === 'tiles' ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6" role="list">
+            {filtered.map((product) => (
+              <Link
+                key={product.id}
+                href={`/shop/${product.id}`}
+                className="group block"
+                role="listitem"
+              >
+                <article className="glass-card flex flex-col overflow-hidden border border-[var(--charcoal-light)] hover:border-[var(--brand-red)]/50 transition-all duration-300 h-full">
+                  <div className="relative aspect-square bg-[var(--charcoal)] flex items-center justify-center p-4">
+                    {product.badge && (
+                      <span
+                        className="absolute top-2 left-2 z-10 px-2 py-1 text-[9px] font-bold tracking-widest uppercase bg-[var(--brand-red)] text-white"
+                        style={{ fontFamily: 'var(--font-orbitron)' }}
+                      >
+                        {product.badge}
+                      </span>
+                    )}
+                    <img
+                      src={product.image}
+                      alt={productImageAlt(product.name)}
+                      className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1 p-4 text-center">
+                    <h3
+                      className="text-sm md:text-base font-bold text-white leading-tight line-clamp-2"
+                      style={{ fontFamily: 'var(--font-orbitron)' }}
+                    >
+                      {product.name}
+                    </h3>
+                    <p className="text-lg font-black text-[var(--brand-red)]" style={{ fontFamily: 'var(--font-orbitron)' }}>
+                      £{product.price.toFixed(2)}
+                    </p>
+                  </div>
+                </article>
+              </Link>
+            ))}
+          </div>
+        ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" role="list">
           {filtered.map((product) => (
               <article
@@ -132,7 +177,7 @@ export default function ShopSection({ bgClassName = 'bg-background', showReturns
                   )}
                   <img
                     src={product.image}
-                    alt={product.name}
+                    alt={productImageAlt(product.name)}
                     className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                     loading="lazy"
                   />
@@ -182,7 +227,7 @@ export default function ShopSection({ bgClassName = 'bg-background', showReturns
                             £{product.originalPrice.toFixed(2)}
                           </span>
                         )}
-                        <span className="text-xs text-white/50">+ VAT & delivery</span>
+                        <span className="text-xs text-white/50">+ delivery</span>
                       </div>
                       <a
                         href={product.stripeUrl}
@@ -201,6 +246,7 @@ export default function ShopSection({ bgClassName = 'bg-background', showReturns
               </article>
           ))}
         </div>
+        )}
 
         {showReturnsNotice && (
           <aside

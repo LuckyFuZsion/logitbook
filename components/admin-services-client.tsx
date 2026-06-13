@@ -15,10 +15,12 @@ import { AdminSaveBar } from '@/components/admin-save-bar'
 import { ConfirmModal, type ConfirmModalProps } from '@/components/admin-confirm-modal'
 import { cn } from '@/lib/utils'
 
-const ICON_OPTIONS = [
-  'Droplet', 'Wrench', 'Zap', 'LifeBuoy', 'Shield',
-  'Cpu', 'Settings', 'Anchor', 'Compass', 'Star',
-]
+const ICON_OPTIONS = Object.values({
+  cylinders: '/icons/cylinder.webp',
+  regulators: '/icons/regulator.webp',
+  bcds: '/icons/bcd.webp',
+  repairs: '/icons/repairs.webp',
+})
 
 function newCategoryId() {
   return `cat-${Date.now()}`
@@ -31,7 +33,7 @@ function newCategory(): ServiceCategory {
   return {
     id: newCategoryId(),
     title: 'New Category',
-    icon: 'Wrench',
+    icon: '/icons/repairs.webp',
     description: '',
     services: [],
   }

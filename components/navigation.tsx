@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Menu, X } from 'lucide-react'
-import { NAV_TEXT_LOGO_SRC, SITE_LOGO_ALT, SITE_LOGO_SRC } from '@/lib/site-logo'
+import { NAVBAR_LOGO_SRC, SITE_LOGO_ALT } from '@/lib/site-logo'
 
 interface NavigationProps {
   activeTab: string
@@ -74,15 +74,9 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
             aria-label="Logitshop Home"
           >
             <img
-              src={SITE_LOGO_SRC}
+              src={NAVBAR_LOGO_SRC}
               alt={SITE_LOGO_ALT}
               className="h-14 w-auto group-hover:drop-shadow-[0_0_8px_var(--brand-red)] transition-all"
-            />
-            <img
-              src={NAV_TEXT_LOGO_SRC}
-              alt=""
-              aria-hidden="true"
-              className="h-12 w-auto group-hover:drop-shadow-[0_0_8px_var(--brand-red)] transition-all"
             />
           </button>
 
@@ -131,15 +125,9 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
             aria-label="Logitshop Home"
           >
             <img
-              src={SITE_LOGO_SRC}
+              src={NAVBAR_LOGO_SRC}
               alt={SITE_LOGO_ALT}
               className="h-[2.625rem] w-auto"
-            />
-            <img
-              src={NAV_TEXT_LOGO_SRC}
-              alt=""
-              aria-hidden="true"
-              className="h-9 w-auto"
             />
           </button>
 
@@ -177,38 +165,6 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
           </nav>
         )}
       </header>
-
-      {/* ── Mobile Bottom Nav Bar ── */}
-      <nav
-        className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-black/95 backdrop-blur-md border-t border-[var(--charcoal-light)]"
-        aria-label="Bottom navigation"
-      >
-        <ul className="flex items-stretch justify-around gap-0.5 px-0.5" role="list">
-          {TABS.map((tab) => (
-            <li key={tab.id} className="flex-1 min-w-0">
-              <button
-                onClick={() => handleTab(tab.id)}
-                className={`relative w-full py-2.5 flex flex-col items-center gap-0.5 text-[8px] sm:text-[9px] font-semibold tracking-tight sm:tracking-widest uppercase transition-colors ${
-                  activeTab === tab.id
-                    ? 'text-[var(--brand-red)]'
-                    : 'text-white/50 hover:text-white/80'
-                }`}
-                aria-current={activeTab === tab.id ? 'true' : undefined}
-                style={{ fontFamily: 'var(--font-rajdhani)' }}
-              >
-                {activeTab === tab.id && (
-                  <span
-                    className="absolute top-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-[var(--brand-red)]"
-                    style={{ boxShadow: '0 0 6px var(--brand-red-glow)' }}
-                    aria-hidden="true"
-                  />
-                )}
-                <span className="relative text-center leading-tight px-0.5">{tab.label}</span>
-              </button>
-            </li>
-          ))}
-        </ul>
-      </nav>
     </>
   )
 }

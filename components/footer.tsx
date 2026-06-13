@@ -7,7 +7,7 @@ import type { ContactData } from '@/lib/contact-types'
 import type { HoursData } from '@/lib/hours-types'
 import { DEFAULT_CONTACT } from '@/lib/contact-defaults'
 import { DEFAULT_HOURS } from '@/lib/hours-defaults'
-import { FOOTER_TEXT_LOGO_SRC, SITE_LOGO_ALT, SITE_LOGO_SRC } from '@/lib/site-logo'
+import { NAVBAR_LOGO_SRC, SITE_LOGO_ALT } from '@/lib/site-logo'
 
 interface FooterProps {
   onTabChange: (tab: string) => void
@@ -59,15 +59,9 @@ export default function Footer({ onTabChange }: FooterProps) {
           <div className="lg:col-span-2 flex flex-col gap-4">
             <div className="flex items-center gap-2.5">
               <img
-                src={SITE_LOGO_SRC}
+                src={NAVBAR_LOGO_SRC}
                 alt={SITE_LOGO_ALT}
                 className="h-12 w-auto"
-              />
-              <img
-                src={FOOTER_TEXT_LOGO_SRC}
-                alt=""
-                aria-hidden="true"
-                className="h-10 w-auto"
               />
             </div>
             <p className="text-sm text-white/60 leading-relaxed">{contact.tagline}</p>

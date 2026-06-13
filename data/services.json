@@ -3,7 +3,7 @@
     {
       "id": "cylinders",
       "title": "Cylinder Services",
-      "icon": "Droplet",
+      "icon": "/icons/cylinder.webp",
       "description": "All cylinder services include valve service. O₂ fills not included. IDEST accredited.",
       "services": [
         { "id": "cyl-1", "name": "Hydro (PIAT) test + air fill", "standard": 64.0, "member": 60.0 },
@@ -19,7 +19,7 @@
     {
       "id": "regulators",
       "title": "Regulator Services",
-      "icon": "Wrench",
+      "icon": "/icons/regulator.webp",
       "description": "All regulator services include gauge check. Specialist brands: price on request. IDEST accredited.",
       "services": [
         { "id": "reg-1", "name": "1st & 2nd stage service", "standard": 100.0, "member": 95.0 },
@@ -33,7 +33,7 @@
     {
       "id": "bcds",
       "title": "BCD Services",
-      "icon": "Zap",
+      "icon": "/icons/bcd.webp",
       "description": "Complete BCD maintenance including pressure check and antibacterial bladder clean. IDEST accredited.",
       "services": [
         { "id": "bcd-1", "name": "BCD service (incl. pressure check & antibacterial clean)", "standard": 35.0, "member": 31.0 }
@@ -42,7 +42,7 @@
     {
       "id": "repairs",
       "title": "Repairs & Custom Work",
-      "icon": "LifeBuoy",
+      "icon": "/icons/repairs.webp",
       "description": "Expert repair work and custom modifications for specialized diving equipment.",
       "services": [
         { "id": "rep-1", "name": "Repair work (per hour)", "standard": 25.0, "member": 20.0 },

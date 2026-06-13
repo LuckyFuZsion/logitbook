@@ -1,21 +1,13 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import type { LucideIcon } from 'lucide-react'
-import {
-  Wrench, Zap, ArrowRight, Droplet, LifeBuoy,
-  Shield, Cpu, Settings, Anchor, Compass, Star,
-} from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import type { ServicesData } from '@/lib/services-types'
-import { mergeServicesData } from '@/lib/services-defaults'
+import { CATEGORY_ICON_BY_ID, mergeServicesData } from '@/lib/services-defaults'
 import { publicSiteUrl } from '@/lib/site-url'
 
-const ICON_MAP: Record<string, LucideIcon> = {
-  Droplet, Wrench, Zap, LifeBuoy, Shield, Cpu, Settings, Anchor, Compass, Star,
-}
-
-function getIcon(name: string): LucideIcon {
-  return ICON_MAP[name] ?? Wrench
+function getCategoryIconSrc(categoryId: string, icon?: string): string {
+  return CATEGORY_ICON_BY_ID[categoryId] ?? icon ?? '/icons/repairs.webp'
 }
 
 export default function ServicesSection({ bgClassName = 'bg-background' }: { bgClassName?: string }) {
@@ -114,16 +106,18 @@ export default function ServicesSection({ bgClassName = 'bg-background' }: { bgC
         {/* Service Categories & Pricing */}
         {data && (
           <div className="space-y-16 mb-20">
-            {categories.map(({ id, title, icon, description, services }) => {
-              const Icon = getIcon(icon)
-              return (
+            {categories.map(({ id, title, icon, description, services }) => (
                 <article key={id} id={id} className="border-b border-[var(--charcoal-light)] pb-12">
                   <div className="flex items-start gap-4 mb-6">
                     <div
-                      className="w-12 h-12 rounded-sm flex items-center justify-center bg-[var(--brand-red-dim)] border border-[var(--brand-red)]/30 shrink-0"
+                      className="w-12 h-12 rounded-sm flex items-center justify-center bg-[var(--brand-red-dim)] border border-[var(--brand-red)]/30 shrink-0 p-2"
                       aria-hidden="true"
                     >
-                      <Icon size={22} className="text-[var(--brand-red)]" />
+                      <img
+                        src={getCategoryIconSrc(id, icon)}
+                        alt=""
+                        className="h-full w-full object-contain"
+                      />
                     </div>
                     <div>
                       <h3
@@ -225,8 +219,7 @@ export default function ServicesSection({ bgClassName = 'bg-background' }: { bgC
                     </table>
                   </div>
                 </article>
-              )
-            })}
+            ))}
           </div>
         )}
 

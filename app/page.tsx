@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Navigation from '@/components/navigation'
 import HeroSection from '@/components/hero-section'
+import SupplierLogosCarousel from '@/components/supplier-logos-carousel'
 import ShopSection from '@/components/shop-section'
 import ServicesSection from '@/components/services-section'
 import TestimonialsSection from '@/components/testimonials-section'
@@ -21,8 +22,9 @@ export default function LogitshopPage() {
         onTabChange={setActiveTab}
       />
 
-      <main id="main-content" className="pb-16 md:pb-0">
+      <main id="main-content">
         <HeroSection onTabChange={setActiveTab} />
+        <SupplierLogosCarousel />
         <ShopSection bgClassName="section-strip-dark" />
         <ServicesSection bgClassName="section-strip-blue" />
         <TestimonialsSection bgClassName="section-strip-dark" />

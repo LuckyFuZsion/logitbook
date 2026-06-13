@@ -227,6 +227,26 @@ export default function AdminShopClient({
     })
   }
 
+  const moveImage = (productId: string, index: number, dir: -1 | 1) => {
+    setImageTextById((prev) => {
+      const lines = parseImageLines(prev[productId] ?? '')
+      const nextIndex = index + dir
+      if (nextIndex < 0 || nextIndex >= lines.length) return prev
+      ;[lines[index], lines[nextIndex]] = [lines[nextIndex], lines[index]]
+      return { ...prev, [productId]: lines.join('\n') }
+    })
+  }
+
+  const setPrimaryImage = (productId: string, index: number) => {
+    if (index === 0) return
+    setImageTextById((prev) => {
+      const lines = parseImageLines(prev[productId] ?? '')
+      const [selected] = lines.splice(index, 1)
+      lines.unshift(selected)
+      return { ...prev, [productId]: lines.join('\n') }
+    })
+  }
+
   const handleImageFiles = useCallback(
     async (productId: string, files: FileList | null) => {
       if (!files || files.length === 0) return
@@ -479,10 +499,15 @@ export default function AdminShopClient({
             </div>
 
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-bold tracking-widest uppercase text-white/60">
-                  Images
-                </span>
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <span className="text-[10px] font-bold tracking-widest uppercase text-white/60 block">
+                    Product images
+                  </span>
+                  <span className="text-[10px] text-white/40 tracking-wide">
+                    Upload multiple images — they appear in order on the product page carousel. First image is the shop tile.
+                  </span>
+                </div>
                 <label className="cursor-pointer">
                   <input
                     ref={(el) => { fileInputRefs.current[p.id] = el }}
@@ -529,31 +554,60 @@ export default function AdminShopClient({
 
               {/* Thumbnail preview strip */}
               {parseImageLines(imageTextById[p.id] ?? '').length > 0 && (
-                <div className="flex flex-wrap gap-2 p-2 bg-black/20 border border-white/10">
+                <div className="flex flex-wrap gap-3 p-3 bg-black/20 border border-white/10">
                   {parseImageLines(imageTextById[p.id] ?? '').map((url, imgIdx) => (
-                    <div key={imgIdx} className="relative group w-20 h-20 flex-shrink-0">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={url}
-                        alt={`Product image ${imgIdx + 1}`}
-                        className="w-full h-full object-cover border border-white/15"
-                        onError={(e) => {
-                          ;(e.currentTarget as HTMLImageElement).style.display = 'none'
-                        }}
-                      />
-                      {imgIdx === 0 && (
-                        <span className="absolute bottom-0 left-0 right-0 text-[8px] font-bold tracking-widest uppercase bg-black/70 text-white/70 text-center py-0.5">
-                          Primary
-                        </span>
-                      )}
-                      <button
-                        type="button"
-                        onClick={() => removeImage(p.id, imgIdx)}
-                        className="absolute top-0.5 right-0.5 w-5 h-5 bg-red-600 text-white text-xs font-bold leading-none rounded-sm opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
-                        title="Remove image"
-                      >
-                        ×
-                      </button>
+                    <div key={imgIdx} className="relative group w-24 space-y-1.5">
+                      <div className="relative h-24 w-24">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={url}
+                          alt={`Product image ${imgIdx + 1}`}
+                          className="h-full w-full object-cover border border-white/15"
+                          onError={(e) => {
+                            ;(e.currentTarget as HTMLImageElement).style.display = 'none'
+                          }}
+                        />
+                        {imgIdx === 0 && (
+                          <span className="absolute bottom-0 left-0 right-0 text-[8px] font-bold tracking-widest uppercase bg-black/70 text-white/70 text-center py-0.5">
+                            Shop tile
+                          </span>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => removeImage(p.id, imgIdx)}
+                          className="absolute top-0.5 right-0.5 w-5 h-5 bg-red-600 text-white text-xs font-bold leading-none rounded-sm opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+                          title="Remove image"
+                        >
+                          ×
+                        </button>
+                      </div>
+                      <div className="flex flex-wrap gap-1">
+                        <button
+                          type="button"
+                          onClick={() => moveImage(p.id, imgIdx, -1)}
+                          disabled={imgIdx === 0}
+                          className="text-[9px] px-1.5 py-0.5 border border-white/15 uppercase disabled:opacity-30"
+                        >
+                          ←
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => moveImage(p.id, imgIdx, 1)}
+                          disabled={imgIdx === parseImageLines(imageTextById[p.id] ?? '').length - 1}
+                          className="text-[9px] px-1.5 py-0.5 border border-white/15 uppercase disabled:opacity-30"
+                        >
+                          →
+                        </button>
+                        {imgIdx > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => setPrimaryImage(p.id, imgIdx)}
+                            className="text-[9px] px-1.5 py-0.5 border border-[var(--brand-red)]/40 text-[var(--brand-red)] uppercase"
+                          >
+                            Set primary
+                          </button>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>

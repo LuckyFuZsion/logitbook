@@ -1,11 +1,26 @@
 import type { ServicesData } from '@/lib/services-types'
 
+/** Service icon images keyed by category id — applied on read so CMS/Firestore cannot serve stale values. */
+export const CATEGORY_ICON_BY_ID: Record<string, string> = {
+  cylinders: '/icons/cylinder.webp',
+  regulators: '/icons/regulator.webp',
+  bcds: '/icons/bcd.webp',
+  repairs: '/icons/repairs.webp',
+}
+
+function applyCategoryIcons(categories: ServicesData['categories']): ServicesData['categories'] {
+  return categories.map((cat) => ({
+    ...cat,
+    icon: CATEGORY_ICON_BY_ID[cat.id] ?? cat.icon,
+  }))
+}
+
 export const DEFAULT_SERVICES_DATA: ServicesData = {
-  categories: [
+  categories: applyCategoryIcons([
     {
       id: 'cylinders',
       title: 'Cylinder Services',
-      icon: 'Droplet',
+      icon: '/icons/cylinder.webp',
       description:
         'All cylinder services include valve service. O₂ fills not included. IDEST accredited.',
       services: [
@@ -28,7 +43,7 @@ export const DEFAULT_SERVICES_DATA: ServicesData = {
     {
       id: 'regulators',
       title: 'Regulator Services',
-      icon: 'Wrench',
+      icon: '/icons/regulator.webp',
       description:
         'All regulator services include gauge check. Specialist brands: price on request. IDEST accredited.',
       services: [
@@ -70,7 +85,7 @@ export const DEFAULT_SERVICES_DATA: ServicesData = {
     {
       id: 'bcds',
       title: 'BCD Services',
-      icon: 'Zap',
+      icon: '/icons/bcd.webp',
       description:
         'Complete BCD maintenance including pressure check and antibacterial bladder clean. IDEST accredited.',
       services: [
@@ -85,7 +100,7 @@ export const DEFAULT_SERVICES_DATA: ServicesData = {
     {
       id: 'repairs',
       title: 'Repairs & Custom Work',
-      icon: 'LifeBuoy',
+      icon: '/icons/repairs.webp',
       description:
         'Expert repair work and custom modifications for specialized diving equipment.',
       services: [
@@ -104,7 +119,7 @@ export const DEFAULT_SERVICES_DATA: ServicesData = {
         },
       ],
     },
-  ],
+  ]),
   vatNote:
     'All prices include VAT at 20%. Specialist kits or increased kit costs will be confirmed before work begins.',
   membersNote:
@@ -119,7 +134,7 @@ export function mergeServicesData(raw: Partial<ServicesData> | null | undefined)
     return { ...DEFAULT_SERVICES_DATA }
   }
   return {
-    categories: raw.categories,
+    categories: applyCategoryIcons(raw.categories),
     vatNote: raw.vatNote ?? DEFAULT_SERVICES_DATA.vatNote,
     membersNote: raw.membersNote ?? DEFAULT_SERVICES_DATA.membersNote,
     clubUrl: raw.clubUrl ?? DEFAULT_SERVICES_DATA.clubUrl,

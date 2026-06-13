@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { Orbitron, Rajdhani } from 'next/font/google'
 import { FirebaseWebInit } from '@/components/firebase-web-init'
 import { AnnouncementBanner } from '@/components/announcement-banner'
+import { WhatsAppCta } from '@/components/whatsapp-cta'
 import { mergeContactData } from '@/lib/contact-defaults'
 import { mergeHoursData } from '@/lib/hours-defaults'
 import { readContactFile } from '@/lib/contact-store'
@@ -123,6 +124,7 @@ export default async function RootLayout({
         <AnnouncementBanner />
         <FirebaseWebInit />
         {children}
+        <WhatsAppCta variant="floating" />
       </body>
     </html>
   )
