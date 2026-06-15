@@ -10,7 +10,15 @@ import { mergeContactData } from '@/lib/contact-defaults'
 import { mergeHoursData } from '@/lib/hours-defaults'
 import { readContactFile } from '@/lib/contact-store'
 import { readHoursFile } from '@/lib/hours-store'
-import { SITE_DESCRIPTION, SITE_OG_IMAGE_ALT, SITE_OG_IMAGE_PATH, SITE_TITLE } from '@/lib/site-seo'
+import {
+  SITE_META_DESCRIPTION,
+  SITE_OG_DESCRIPTION,
+  SITE_OG_IMAGE_ALT,
+  SITE_OG_IMAGE_HEIGHT,
+  SITE_OG_IMAGE_PATH,
+  SITE_OG_IMAGE_WIDTH,
+  SITE_TITLE,
+} from '@/lib/site-seo'
 import { siteUrl } from '@/lib/site-url'
 import './globals.css'
 
@@ -36,7 +44,7 @@ export const metadata: Metadata = {
     default: SITE_TITLE,
     template: '%s | LOGITSHOP',
   },
-  description: SITE_DESCRIPTION,
+  description: SITE_META_DESCRIPTION,
   manifest: '/favicon_io%20(9)/site.webmanifest',
   icons: {
     icon: [
@@ -62,17 +70,24 @@ export const metadata: Metadata = {
   alternates: { canonical: canonicalSite },
   openGraph: {
     title: SITE_TITLE,
-    description: SITE_DESCRIPTION,
+    description: SITE_OG_DESCRIPTION,
     type: 'website',
     url: canonicalSite,
     siteName: 'LOGITSHOP',
     locale: 'en_GB',
-    images: [{ url: SITE_OG_IMAGE_PATH, alt: SITE_OG_IMAGE_ALT }],
+    images: [
+      {
+        url: SITE_OG_IMAGE_PATH,
+        width: SITE_OG_IMAGE_WIDTH,
+        height: SITE_OG_IMAGE_HEIGHT,
+        alt: SITE_OG_IMAGE_ALT,
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: SITE_TITLE,
-    description: SITE_DESCRIPTION,
+    description: SITE_OG_DESCRIPTION,
     images: [SITE_OG_IMAGE_PATH],
   },
 }
