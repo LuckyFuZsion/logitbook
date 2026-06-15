@@ -9,16 +9,19 @@ import { useIsDesktop } from '@/hooks/use-is-desktop'
 import { TestimonialCard } from '@/components/testimonial-card'
 import { TestimonialsCarousel } from '@/components/testimonials-carousel'
 import { SectionHeading } from '@/components/section-heading'
+import { SeoPageIntro } from '@/components/seo-page-intro'
 
 export default function TestimonialsSection({
   bgClassName = 'bg-background',
   layout = 'home',
   initialData,
+  showSeoIntro = false,
 }: {
   bgClassName?: string
   /** Home: mobile CTA + desktop featured grid. Page: full carousel. */
   layout?: 'home' | 'page'
   initialData?: TestimonialsData
+  showSeoIntro?: boolean
 }) {
   const isDesktop = useIsDesktop()
   const [data, setData] = useState<TestimonialsData | null>(initialData ?? null)
@@ -81,6 +84,14 @@ export default function TestimonialsSection({
             aria-hidden="true"
           />
         </div>
+
+        {showSeoIntro && (
+          <SeoPageIntro>
+            Read genuine reviews from divers who trust LOGITSHOP for IDEST-accredited regulator servicing,
+            cylinder testing and premium LOG-IT diving logbooks. Discover why recreational and technical
+            divers choose us for equipment care and UK-made dive logbooks.
+          </SeoPageIntro>
+        )}
 
         {data === null && layout === 'home' && isDesktop && (
           <div className="hidden md:grid md:grid-cols-3 gap-6 animate-pulse">

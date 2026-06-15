@@ -5,6 +5,7 @@ import type { FaqData } from '@/lib/faq-types'
 import { mergeFaqData } from '@/lib/faq-defaults'
 import { SectionMobileCollapse } from '@/components/section-mobile-collapse'
 import { SectionHeading } from '@/components/section-heading'
+import { SeoPageIntro } from '@/components/seo-page-intro'
 
 /* ──────── Answer renderer ──────── */
 
@@ -61,10 +62,12 @@ export default function FaqSection({
   bgClassName = 'bg-background',
   initialData,
   headingLevel = 'h2',
+  showSeoIntro = false,
 }: {
   bgClassName?: string
   initialData?: FaqData
   headingLevel?: 'h1' | 'h2'
+  showSeoIntro?: boolean
 }) {
   const [data, setData] = useState<FaqData | null>(initialData ?? null)
 
@@ -132,6 +135,14 @@ export default function FaqSection({
             aria-hidden="true"
           />
         </div>
+
+        {showSeoIntro && (
+          <SeoPageIntro>
+            Find answers about LOG-IT diving logbooks, IDEST-accredited regulator and cylinder servicing,
+            mail-in repairs, order delivery, wholesale logbook pricing and how to prepare your scuba
+            equipment before sending it to our Grantham workshop.
+          </SeoPageIntro>
+        )}
 
         {!data ? (
           <SectionMobileCollapse id="faq-content" expandLabel="View all questions">

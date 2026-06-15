@@ -19,6 +19,7 @@ import {
   SITE_OG_IMAGE_WIDTH,
   SITE_TITLE,
 } from '@/lib/site-seo'
+import { absoluteAssetUrl } from '@/lib/schema-utils'
 import { siteUrl } from '@/lib/site-url'
 import './globals.css'
 
@@ -112,13 +113,17 @@ export default async function RootLayout({
 
   const localBusinessJsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'LocalBusiness',
+    '@type': ['LocalBusiness', 'ProfessionalService'],
+    '@id': `${canonicalSite}/#business`,
     name: contact.businessName,
     url: canonicalSite,
+    image: absoluteAssetUrl(SITE_OG_IMAGE_PATH, canonicalSite),
     description: contact.tagline,
-    '@id': `${canonicalSite}/#business`,
     priceRange: '££',
-    areaServed: 'Worldwide',
+    areaServed: {
+      '@type': 'Country',
+      name: 'United Kingdom',
+    },
     email: contact.email,
     ...(contact.phone ? { telephone: contact.phone } : {}),
     address: {
@@ -133,7 +138,7 @@ export default async function RootLayout({
       .filter((d) => !d.closed && d.open && d.close)
       .map((d) => ({
         '@type': 'OpeningHoursSpecification',
-        dayOfWeek: `https://schema.org/${d.day}`,
+        dayOfWeek: d.day,
         opens: d.open,
         closes: d.close,
       })),

@@ -4,6 +4,7 @@ import { useState, useRef, useCallback, useEffect } from 'react'
 import { ZoomIn, ChevronLeft, ChevronRight, X } from 'lucide-react'
 import type { GalleryGridItem, GalleryBeforeAfter, ResolvedGalleryData } from '@/lib/gallery-types'
 import { SectionHeading } from '@/components/section-heading'
+import { SeoPageIntro } from '@/components/seo-page-intro'
 import {
   Carousel,
   CarouselContent,
@@ -513,10 +514,12 @@ export default function GallerySection({
   bgClassName = 'bg-background',
   initialData,
   headingLevel = 'h2',
+  showSeoIntro = false,
 }: {
   bgClassName?: string
   initialData?: ResolvedGalleryData
   headingLevel?: 'h1' | 'h2'
+  showSeoIntro?: boolean
 }) {
   const [data, setData] = useState<ResolvedGalleryData | null>(initialData ?? null)
   const [loadError, setLoadError] = useState<string | null>(null)
@@ -571,6 +574,14 @@ export default function GallerySection({
             aria-hidden="true"
           />
         </div>
+
+        {showSeoIntro && (
+          <SeoPageIntro>
+            Explore real before-and-after results from LOGITSHOP&apos;s IDEST-accredited scuba servicing.
+            See regulator overhauls, BCD repairs, cylinder inspections and restoration work completed
+            at our Grantham workshop for recreational and technical divers across the UK.
+          </SeoPageIntro>
+        )}
 
         <div className="mb-16 md:mb-20">
           <h3

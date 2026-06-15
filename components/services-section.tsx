@@ -5,8 +5,10 @@ import { ArrowRight } from 'lucide-react'
 import type { ServicesData } from '@/lib/services-types'
 import { CATEGORY_ICON_BY_ID, mergeServicesData } from '@/lib/services-defaults'
 import { publicSiteUrl } from '@/lib/site-url'
+import { buildServiceCatalogSchema } from '@/lib/schema-utils'
 import { SectionMobileCollapse } from '@/components/section-mobile-collapse'
 import { SectionHeading } from '@/components/section-heading'
+import { SeoPageIntro } from '@/components/seo-page-intro'
 
 function getCategoryIconSrc(categoryId: string, icon?: string): string {
   return CATEGORY_ICON_BY_ID[categoryId] ?? icon ?? '/icons/repairs.webp'
@@ -16,10 +18,12 @@ export default function ServicesSection({
   bgClassName = 'bg-background',
   initialData,
   headingLevel = 'h2',
+  showSeoIntro = false,
 }: {
   bgClassName?: string
   initialData?: ServicesData
   headingLevel?: 'h1' | 'h2'
+  showSeoIntro?: boolean
 }) {
   const [data, setData] = useState<ServicesData | null>(initialData ?? null)
 
@@ -52,17 +56,7 @@ export default function ServicesSection({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'Service',
-            provider: {
-              '@type': 'Organization',
-              name: 'Logitshop',
-              url: publicSiteUrl(),
-            },
-            serviceType: 'Scuba Equipment Maintenance and Servicing',
-            areaServed: 'Worldwide',
-          }),
+          __html: JSON.stringify(buildServiceCatalogSchema(publicSiteUrl())),
         }}
       />
 
@@ -92,6 +86,15 @@ export default function ServicesSection({
             IDEST accredited servicing for regulators, BCDs, cylinders, and technical diving systems.
           </p>
         </div>
+
+        {showSeoIntro && (
+          <SeoPageIntro>
+            LOGITSHOP provides IDEST-accredited scuba equipment servicing from our Grantham workshop.
+            We inspect, repair and pressure-test regulators, BCDs, cylinders and technical dive systems
+            for recreational and professional divers. Compare standard and member pricing below, or
+            contact us to book a mail-in service across the UK.
+          </SeoPageIntro>
+        )}
 
         <SectionMobileCollapse
           id="services-content"

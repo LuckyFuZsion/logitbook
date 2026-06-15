@@ -1,12 +1,12 @@
 import type { Metadata } from 'next'
 import {
-  SITE_OG_DESCRIPTION,
   SITE_OG_IMAGE_ALT,
   SITE_OG_IMAGE_HEIGHT,
   SITE_OG_IMAGE_PATH,
   SITE_OG_IMAGE_WIDTH,
 } from '@/lib/site-seo'
 import { siteUrl } from '@/lib/site-url'
+import { ogDescription as trimOgDescription } from '@/lib/meta-utils'
 
 export function buildPageMetadata({
   title,
@@ -28,7 +28,7 @@ export function buildPageMetadata({
   const ogImage = ogImagePath.startsWith('http')
     ? ogImagePath
     : `${baseUrl}${ogImagePath.startsWith('/') ? ogImagePath : `/${ogImagePath}`}`
-  const socialDescription = ogDescription ?? description
+  const socialDescription = trimOgDescription(ogDescription ?? description)
 
   return {
     title,

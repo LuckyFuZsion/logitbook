@@ -16,7 +16,7 @@ export default function FaqPage() {
         </div>
       </div>
 
-      <FaqSection bgClassName="bg-background" headingLevel="h1" />
+      <FaqSection bgClassName="bg-background" headingLevel="h1" showSeoIntro />
     </main>
   )
 }

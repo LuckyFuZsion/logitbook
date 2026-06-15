@@ -2,9 +2,9 @@ import type { Metadata } from 'next'
 import { buildPageMetadata } from '@/lib/seo-page-metadata'
 
 export const metadata: Metadata = buildPageMetadata({
-  title: 'Our Story | LOGITSHOP',
+  title: 'Our Story',
   description:
-    'Learn the LOG-IT story: a UK diving logbook heritage since 1988 and the people behind LOGITSHOP.',
+    'Learn the LOG-IT story: a UK diving logbook heritage since 1988, IDEST-accredited servicing, and the people behind LOGITSHOP in Grantham, Lincolnshire.',
   path: '/story',
 })
 

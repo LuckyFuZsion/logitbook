@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import type { StoreProduct } from '@/lib/store-types'
+import { metaDescription, ogDescription, pageTitleSegment } from '@/lib/meta-utils'
 import { siteUrl } from '@/lib/site-url'
 
 /** Resolve a catalogue image URL to an absolute URL for Open Graph / Twitter cards. */
@@ -14,19 +15,20 @@ export function storeProductPrimaryImageUrl(product: StoreProduct, baseUrl = sit
 export function buildStoreProductMetadata(product: StoreProduct, categoryTitle?: string): Metadata {
   const baseUrl = siteUrl()
   const canonical = `${baseUrl}/shop/${encodeURIComponent(product.id)}`
-  const title = product.name.trim()
-  const description = product.description.trim()
+  const title = pageTitleSegment(`${product.name} | Shop`, 48)
+  const description = metaDescription(product.description)
+  const socialDescription = ogDescription(product.description)
   const ogImage = storeProductPrimaryImageUrl(product, baseUrl)
   const categoryKeyword = categoryTitle ?? product.categoryId
 
   return {
-    title: `${title} | Shop | LOGITSHOP`,
+    title,
     description,
     alternates: { canonical },
     keywords: [categoryKeyword, product.name, 'LOGITSHOP', 'shop'].filter(Boolean),
     openGraph: {
       title,
-      description,
+      description: socialDescription,
       url: canonical,
       siteName: 'LOGITSHOP',
       type: 'website',
@@ -35,7 +37,7 @@ export function buildStoreProductMetadata(product: StoreProduct, categoryTitle?:
         ? [
             {
               url: ogImage,
-              alt: title,
+              alt: product.name,
             },
           ]
         : undefined,
@@ -43,7 +45,7 @@ export function buildStoreProductMetadata(product: StoreProduct, categoryTitle?:
     twitter: {
       card: 'summary_large_image',
       title,
-      description,
+      description: socialDescription,
       images: ogImage ? [ogImage] : undefined,
     },
     robots: { index: true, follow: true },
@@ -52,7 +54,7 @@ export function buildStoreProductMetadata(product: StoreProduct, categoryTitle?:
 
 export function buildStoreProductNotFoundMetadata(): Metadata {
   return {
-    title: 'Product not found | LOGITSHOP',
+    title: 'Product not found',
     robots: { index: false, follow: false },
   }
 }

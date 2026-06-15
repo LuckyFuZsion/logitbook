@@ -9,7 +9,9 @@ import { productImageAlt } from '@/lib/product-image-alt'
 import { ProductImageCarousel } from '@/components/product-image-carousel'
 import { useIsDesktop } from '@/hooks/use-is-desktop'
 import { publicSiteUrl } from '@/lib/site-url'
+import { buildProductSchemaItem } from '@/lib/schema-utils'
 import { SectionHeading } from '@/components/section-heading'
+import { SeoPageIntro } from '@/components/seo-page-intro'
 
 /** Normalized for UI (primary image convenience field). */
 export type Product = StoreProduct & { image: string }
@@ -108,23 +110,15 @@ export default function ShopSection({
           __html: JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'ItemList',
-            name: 'Logitshop Products',
+            name: 'LOGITSHOP Products',
             itemListElement: jsonLdProducts.map((p, i) => ({
               '@type': 'ListItem',
               position: i + 1,
-              item: {
-                '@type': 'Product',
-                name: p.name,
-                description: p.description,
-                image: p.images,
-                offers: {
-                  '@type': 'Offer',
-                  price: p.price,
-                  priceCurrency: 'GBP',
-                  availability: 'https://schema.org/InStock',
-                  url: `${publicSiteUrl()}/shop/${encodeURIComponent(p.id)}`,
-                },
-              },
+              item: buildProductSchemaItem(
+                p,
+                `${publicSiteUrl()}/shop/${encodeURIComponent(p.id)}`,
+                p.stripeUrl,
+              ),
             })),
           }),
         }}
@@ -148,6 +142,15 @@ export default function ShopSection({
           </SectionHeading>
           <div className="w-16 h-0.5 bg-[var(--brand-red)] mx-auto" style={{ boxShadow: '0 0 10px var(--brand-red-glow)' }} aria-hidden="true" />
         </div>
+
+        {layout === 'tiles' && (
+          <SeoPageIntro>
+            Browse our full catalogue of UK-made diving logbooks, regulator dust caps, cylinder accessories
+            and dive gear. Every product includes detailed specifications, pricing and secure checkout.
+            LOGITSHOP also provides IDEST-accredited regulator, BCD and cylinder servicing from our
+            Grantham workshop — mail-in repairs welcome across the UK.
+          </SeoPageIntro>
+        )}
 
         {loadError && (
           <p className="text-center text-red-400 text-sm mb-8" role="alert">

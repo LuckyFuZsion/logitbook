@@ -6,6 +6,7 @@ import { Target, TrendingUp, Users, Globe, Shield, Zap, Anchor, Star, Heart, Awa
 import type { StoryData } from '@/lib/story-types'
 import { DEFAULT_STORY } from '@/lib/story-defaults'
 import { SectionHeading } from '@/components/section-heading'
+import { SeoPageIntro } from '@/components/seo-page-intro'
 
 const ICON_MAP: Record<string, LucideIcon> = {
   Target, TrendingUp, Users, Globe, Shield, Zap, Anchor, Star, Heart, Award,
@@ -33,10 +34,12 @@ export default function BrandStorySection({
   bgClassName = 'bg-background',
   initialStory,
   headingLevel = 'h2',
+  showSeoIntro = false,
 }: {
   bgClassName?: string
   initialStory?: StoryData
   headingLevel?: 'h1' | 'h2'
+  showSeoIntro?: boolean
 }) {
   const [story, setStory] = useState<StoryData>(initialStory ?? DEFAULT_STORY)
   useEffect(() => {
@@ -73,6 +76,14 @@ export default function BrandStorySection({
           </SectionHeading>
           <div className="w-16 h-0.5 bg-[var(--brand-red)] mx-auto" style={{ boxShadow: '0 0 10px var(--brand-red-glow)' }} aria-hidden="true" />
         </div>
+
+        {showSeoIntro && (
+          <SeoPageIntro>
+            Since 1988, LOG-IT has been the prestigious UK diving logbook trusted by divers who value
+            quality and heritage. Today LOGITSHOP combines that legacy with IDEST-accredited scuba
+            servicing, premium UK-printed logbooks and expert equipment care from our Grantham base.
+          </SeoPageIntro>
+        )}
 
         {/* Main Story Block */}
         <div

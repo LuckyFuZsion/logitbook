@@ -3,6 +3,8 @@ import { ShoppingCart } from 'lucide-react'
 import type { StoreProduct } from '@/lib/store-types'
 import { ProductImageCarousel } from '@/components/product-image-carousel'
 import { ShopRelatedProducts } from '@/components/shop-related-products'
+import { buildProductSchema } from '@/lib/schema-utils'
+import { siteUrl } from '@/lib/site-url'
 
 function isPrestigiousLogbook(product: StoreProduct): boolean {
   return product.id === 'logit-book-prestigious'
@@ -98,20 +100,13 @@ export function ShopProductView({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'Product',
-            name: product.name,
-            description: product.description,
-            image: product.images,
-            offers: {
-              '@type': 'Offer',
-              price: product.price,
-              priceCurrency: 'GBP',
-              availability: 'https://schema.org/InStock',
-              url: product.stripeUrl,
-            },
-          }),
+          __html: JSON.stringify(
+            buildProductSchema(
+              product,
+              `${siteUrl()}/shop/${encodeURIComponent(product.id)}`,
+              product.stripeUrl,
+            ),
+          ),
         }}
       />
     </div>

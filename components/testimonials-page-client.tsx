@@ -25,7 +25,7 @@ export default function TestimonialsPageClient({
         </div>
       </div>
 
-      <TestimonialsSection bgClassName="bg-background" layout="page" initialData={initialData} />
+      <TestimonialsSection bgClassName="bg-background" layout="page" initialData={initialData} showSeoIntro />
     </TestimonialsPageShell>
   )
 }
