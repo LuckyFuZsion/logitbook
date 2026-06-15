@@ -1,10 +1,19 @@
 'use client'
 
+import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
 import { ChevronDown, ShoppingBag, Wrench, ArrowRight } from 'lucide-react'
 import type { HeroData } from '@/lib/hero-types'
 import { DEFAULT_HERO } from '@/lib/hero-defaults'
-import { HERO_LOGO_SRC, SITE_LOGO_ALT } from '@/lib/site-logo'
+import {
+  HERO_LOGO_HEIGHT,
+  HERO_LOGO_SRC,
+  HERO_LOGO_WIDTH,
+  IDEST_BADGE_HEIGHT,
+  IDEST_BADGE_SRC,
+  IDEST_BADGE_WIDTH,
+  SITE_LOGO_ALT,
+} from '@/lib/site-logo'
 import { WhatsAppCta } from '@/components/whatsapp-cta'
 
 interface HeroSectionProps {
@@ -115,9 +124,13 @@ export default function HeroSection({ onTabChange, initialHero }: HeroSectionPro
             loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
-          <img
+          <Image
             src={HERO_LOGO_SRC}
             alt={`${SITE_LOGO_ALT} — IDEST accredited scuba servicing and diving logbooks`}
+            width={HERO_LOGO_WIDTH}
+            height={HERO_LOGO_HEIGHT}
+            priority
+            sizes="(max-width: 640px) 90vw, (max-width: 1024px) 70vw, 896px"
             className="mx-auto h-[17.6rem] sm:h-[22rem] md:h-[26.5rem] lg:h-[31rem] w-auto max-w-[min(100%,56rem)]"
           />
         </h1>
@@ -137,11 +150,14 @@ export default function HeroSection({ onTabChange, initialHero }: HeroSectionPro
             loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
-          <img
-            src="/IDEST_White-300x99.png"
+          <Image
+            src={IDEST_BADGE_SRC}
             alt="IDEST accredited"
+            width={IDEST_BADGE_WIDTH}
+            height={IDEST_BADGE_HEIGHT}
+            priority
+            sizes="120px"
             className="h-8 sm:h-9 w-auto opacity-90"
-            loading="lazy"
           />
         </div>
 

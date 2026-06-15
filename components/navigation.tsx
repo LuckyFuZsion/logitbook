@@ -1,8 +1,14 @@
 'use client'
 
+import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { Menu, X } from 'lucide-react'
-import { NAVBAR_LOGO_SRC, SITE_LOGO_ALT } from '@/lib/site-logo'
+import {
+  NAVBAR_LOGO_HEIGHT,
+  NAVBAR_LOGO_SRC,
+  NAVBAR_LOGO_WIDTH,
+  SITE_LOGO_ALT,
+} from '@/lib/site-logo'
 
 interface NavigationProps {
   activeTab: string
@@ -77,9 +83,13 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
             className="flex items-center gap-2.5 group"
             aria-label="Logitshop Home"
           >
-            <img
+            <Image
               src={NAVBAR_LOGO_SRC}
               alt={SITE_LOGO_ALT}
+              width={NAVBAR_LOGO_WIDTH}
+              height={NAVBAR_LOGO_HEIGHT}
+              priority
+              sizes="224px"
               className="h-14 w-auto group-hover:drop-shadow-[0_0_8px_var(--brand-red)] transition-all"
             />
           </button>
@@ -128,9 +138,13 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
             className="flex items-center gap-2"
             aria-label="Logitshop Home"
           >
-            <img
+            <Image
               src={NAVBAR_LOGO_SRC}
               alt={SITE_LOGO_ALT}
+              width={NAVBAR_LOGO_WIDTH}
+              height={NAVBAR_LOGO_HEIGHT}
+              priority
+              sizes="168px"
               className="h-[2.625rem] w-auto"
             />
           </button>

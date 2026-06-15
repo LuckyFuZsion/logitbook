@@ -3,6 +3,10 @@ export interface SupplierLogo {
   name: string
 }
 
+/** Intrinsic pixel size of supplier logo assets (square WebP). */
+export const SUPPLIER_LOGO_WIDTH = 833
+export const SUPPLIER_LOGO_HEIGHT = 833
+
 export const SUPPLIER_LOGOS: SupplierLogo[] = [
   { src: '/SupplierLogos/Ap-Diving-Logo.webp', name: 'AP Diving' },
   { src: '/SupplierLogos/Beaver-Logo.webp', name: 'Beaver' },

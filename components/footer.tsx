@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Mail, MapPin, Instagram, Phone, Clock } from 'lucide-react'
@@ -7,7 +8,15 @@ import type { ContactData } from '@/lib/contact-types'
 import type { HoursData } from '@/lib/hours-types'
 import { DEFAULT_CONTACT } from '@/lib/contact-defaults'
 import { DEFAULT_HOURS } from '@/lib/hours-defaults'
-import { NAVBAR_LOGO_SRC, SITE_LOGO_ALT } from '@/lib/site-logo'
+import {
+  IDEST_BADGE_HEIGHT,
+  IDEST_BADGE_SRC,
+  IDEST_BADGE_WIDTH,
+  NAVBAR_LOGO_HEIGHT,
+  NAVBAR_LOGO_SRC,
+  NAVBAR_LOGO_WIDTH,
+  SITE_LOGO_ALT,
+} from '@/lib/site-logo'
 
 interface FooterProps {
   onTabChange: (tab: string) => void
@@ -69,15 +78,27 @@ export default function Footer({ onTabChange, initialContact, initialHours }: Fo
           {/* Brand — spans 2 cols on lg */}
           <div className="lg:col-span-2 flex flex-col gap-4">
             <div className="flex items-center gap-2.5">
-              <img
+              <Image
                 src={NAVBAR_LOGO_SRC}
                 alt={SITE_LOGO_ALT}
+                width={NAVBAR_LOGO_WIDTH}
+                height={NAVBAR_LOGO_HEIGHT}
+                loading="lazy"
+                sizes="192px"
                 className="h-12 w-auto"
               />
             </div>
             <p className="text-sm text-white/60 leading-relaxed">{contact.tagline}</p>
             <div className="pt-1">
-              <img src="/IDEST_White-300x99.png" alt="IDEST accreditation" className="h-8 w-auto opacity-90" loading="lazy" />
+              <Image
+                src={IDEST_BADGE_SRC}
+                alt="IDEST accreditation"
+                width={IDEST_BADGE_WIDTH}
+                height={IDEST_BADGE_HEIGHT}
+                loading="lazy"
+                sizes="120px"
+                className="h-8 w-auto opacity-90"
+              />
             </div>
           </div>
 

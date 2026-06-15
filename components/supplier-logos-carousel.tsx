@@ -1,4 +1,9 @@
-import { SUPPLIER_LOGOS } from '@/lib/supplier-logos'
+import Image from 'next/image'
+import {
+  SUPPLIER_LOGO_HEIGHT,
+  SUPPLIER_LOGO_WIDTH,
+  SUPPLIER_LOGOS,
+} from '@/lib/supplier-logos'
 
 function supplierLogoAlt(name: string) {
   return `${name} logo`
@@ -29,12 +34,15 @@ export default function SupplierLogosCarousel() {
               aria-hidden={isDuplicate || undefined}
             >
               <div className="flex h-12 md:h-14 w-full items-center justify-center">
-                <img
+                <Image
                   src={logo.src}
                   alt={supplierLogoAlt(logo.name)}
-                  className="max-h-full max-w-full object-contain opacity-75 brightness-110"
+                  width={SUPPLIER_LOGO_WIDTH}
+                  height={SUPPLIER_LOGO_HEIGHT}
                   loading="lazy"
+                  sizes="(max-width: 768px) 112px, 144px"
                   draggable={false}
+                  className="max-h-full max-w-full object-contain opacity-75 brightness-110"
                 />
               </div>
               <p
