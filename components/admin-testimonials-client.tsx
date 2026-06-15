@@ -5,6 +5,10 @@ import { useCallback, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ChevronDown, ChevronUp, Plus, Star, Trash2, GripVertical } from 'lucide-react'
 import type { TestimonialsData, Testimonial } from '@/lib/testimonials-types'
+import {
+  countFeaturedReviews,
+  HOME_FEATURED_REVIEWS_LIMIT,
+} from '@/lib/testimonials-utils'
 import { AdminSaveBar } from '@/components/admin-save-bar'
 import { ConfirmModal, type ConfirmModalProps } from '@/components/admin-confirm-modal'
 
@@ -23,11 +27,12 @@ function StarPicker({ value, onChange }: { value: number; onChange: (n: number) 
 }
 
 function TestimonialRow({
-  item, index, total, onUpdate, requestDelete, onMoveUp, onMoveDown,
+  item, index, total, onUpdate, requestDelete, onMoveUp, onMoveDown, featuredCount,
 }: {
   item: Testimonial; index: number; total: number
   onUpdate: (u: Testimonial) => void; requestDelete: () => void
   onMoveUp: () => void; onMoveDown: () => void
+  featuredCount: number
 }) {
   const [open, setOpen] = useState(false)
   const inputCls = 'w-full bg-transparent border border-white/15 text-white text-sm px-3 py-1.5 focus:outline-none focus:border-white/40'
@@ -79,8 +84,19 @@ function TestimonialRow({
               <input className={inputCls} value={item.date ?? ''} placeholder="2026-01" onChange={(e) => onUpdate({ ...item, date: e.target.value || undefined })} />
             </div>
             <label className="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" checked={item.featured} onChange={(e) => onUpdate({ ...item, featured: e.target.checked })} className="accent-[var(--brand-red)] w-4 h-4" />
-              <span className="text-sm text-white/70">Featured on homepage</span>
+              <input
+                type="checkbox"
+                checked={item.featured}
+                disabled={!item.featured && featuredCount >= HOME_FEATURED_REVIEWS_LIMIT}
+                onChange={(e) => onUpdate({ ...item, featured: e.target.checked })}
+                className="accent-[var(--brand-red)] w-4 h-4 disabled:opacity-40"
+              />
+              <span className="text-sm text-white/70">
+                Featured on homepage
+                {!item.featured && featuredCount >= HOME_FEATURED_REVIEWS_LIMIT && (
+                  <span className="text-white/40"> (max {HOME_FEATURED_REVIEWS_LIMIT})</span>
+                )}
+              </span>
             </label>
           </div>
         </div>
@@ -119,28 +135,43 @@ export default function AdminTestimonialsClient({
     setConfirm({ title: 'Delete review?', description: it.name ? `"${it.name}"'s review will be removed.` : 'This review will be removed.', confirmLabel: 'Delete', onConfirm: () => deleteItem(idx) })
   }
 
+  const featuredCount = countFeaturedReviews(items)
+
   const handleSave = useCallback(async () => {
     setSaving(true); setError(null); setMessage(null)
     const empty = items.findIndex((x) => !x.name.trim() || !x.text.trim())
     if (empty !== -1) { setError(`Review #${empty + 1} needs both a name and review text.`); setSaving(false); return }
+    if (featuredCount > HOME_FEATURED_REVIEWS_LIMIT) {
+      setError(`No more than ${HOME_FEATURED_REVIEWS_LIMIT} reviews can be featured on the homepage.`)
+      setSaving(false)
+      return
+    }
     const res = await fetch('/api/admin/testimonials', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items }) })
     const json = await res.json()
     setSaving(false)
     if (!res.ok) { setError(json.error ?? 'Save failed') } else { setMessage('Saved.'); router.refresh() }
-  }, [items, router])
+  }, [featuredCount, items, router])
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 pb-28 text-white">
       <div className="mb-8">
         <Link href="/admin" className="text-[10px] font-bold tracking-widest uppercase text-white/40 hover:text-white/80 transition-colors mb-2 inline-block" style={{ fontFamily: 'var(--font-orbitron)' }}>← Admin</Link>
         <h1 className="text-2xl font-black text-white mb-1" style={{ fontFamily: 'var(--font-orbitron)' }}>TESTIMONIALS</h1>
-        <p className="text-sm text-white/50">{items.length} review{items.length !== 1 ? 's' : ''}. Tick &ldquo;Featured&rdquo; to show on homepage.</p>
+        <p className="text-sm text-white/50">
+          {items.length} review{items.length !== 1 ? 's' : ''}. Mark up to{' '}
+          {HOME_FEATURED_REVIEWS_LIMIT} as featured for the homepage (desktop). All reviews appear on the{' '}
+          <span className="text-white/70">/testimonials</span> page.
+        </p>
+        <p className="text-xs text-white/40 mt-2">
+          Featured on homepage: {countFeaturedReviews(items)}/{HOME_FEATURED_REVIEWS_LIMIT}
+        </p>
       </div>
       {error && <div className="mb-4 border border-red-500/40 bg-red-500/10 text-red-300 text-sm px-4 py-3">{error}</div>}
       {message && !isDirty && <div className="mb-4 border border-green-500/40 bg-green-500/10 text-green-300 text-sm px-4 py-3">{message}</div>}
       <div className="space-y-2 mb-4">
         {items.map((item, idx) => (
           <TestimonialRow key={item.id} item={item} index={idx} total={items.length}
+            featuredCount={featuredCount}
             onUpdate={(u) => update(idx, u)} requestDelete={() => requestDelete(idx)}
             onMoveUp={() => move(idx, -1)} onMoveDown={() => move(idx, 1)} />
         ))}

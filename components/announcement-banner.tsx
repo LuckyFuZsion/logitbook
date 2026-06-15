@@ -10,16 +10,17 @@ const STYLE_CLASSES = {
   promo:   'bg-[var(--brand-red)]/90 border-[var(--brand-red)]/50 text-white',
 }
 
-export function AnnouncementBanner() {
-  const [data, setData] = useState<AnnouncementData | null>(null)
+export function AnnouncementBanner({ initialData }: { initialData?: AnnouncementData }) {
+  const [data, setData] = useState<AnnouncementData | null>(initialData ?? null)
   const [dismissed, setDismissed] = useState(false)
 
   useEffect(() => {
+    if (initialData) return
     fetch('/api/announcement')
       .then((r) => r.json())
       .then((j: { data: AnnouncementData }) => setData(j.data))
       .catch(() => {})
-  }, [])
+  }, [initialData])
 
   /* Check localStorage dismissal keyed to this announcement's content */
   useEffect(() => {

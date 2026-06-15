@@ -10,11 +10,15 @@ function stripTrailingSlash(value: string): string {
 
 /**
  * Canonical site origin for sitemap, robots, metadata, and JSON-LD (server).
- * Priority: NEXT_PUBLIC_SITE_URL → Vercel deployment host → staging URL.
+ * Priority: NEXT_PUBLIC_SITE_URL → production staging URL → preview VERCEL_URL.
  */
 export function siteUrl(): string {
   const fromEnv = process.env.NEXT_PUBLIC_SITE_URL
   if (fromEnv) return stripTrailingSlash(fromEnv)
+
+  if (process.env.VERCEL_ENV === 'production') {
+    return STAGING_SITE_URL
+  }
 
   const vercel = process.env.VERCEL_URL
   if (vercel) return `https://${stripTrailingSlash(vercel)}`

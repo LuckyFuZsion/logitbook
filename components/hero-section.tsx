@@ -4,20 +4,31 @@ import { useEffect, useRef, useState } from 'react'
 import { ChevronDown, ShoppingBag, Wrench, ArrowRight } from 'lucide-react'
 import type { HeroData } from '@/lib/hero-types'
 import { DEFAULT_HERO } from '@/lib/hero-defaults'
-import { HERO_LOGO_SRC, SITE_LOGO_ALT } from '@/lib/site-logo'
+import { HERO_LOGO_SRC } from '@/lib/site-logo'
 import { WhatsAppCta } from '@/components/whatsapp-cta'
 
 interface HeroSectionProps {
   onTabChange: (tab: string) => void
+  initialHero?: HeroData
 }
 
-export default function HeroSection({ onTabChange }: HeroSectionProps) {
+export default function HeroSection({ onTabChange, initialHero }: HeroSectionProps) {
   const [loaded, setLoaded] = useState(false)
-  const [heroData, setHeroData] = useState<HeroData>(DEFAULT_HERO)
+  const [heroData, setHeroData] = useState<HeroData>(initialHero ?? DEFAULT_HERO)
+  const [playVideo, setPlayVideo] = useState(true)
   const videoRef = useRef<HTMLVideoElement>(null)
 
   useEffect(() => {
+    if (initialHero) return
     fetch('/api/hero').then(r => r.json()).then((j: { data: HeroData }) => setHeroData(j.data)).catch(() => {})
+  }, [initialHero])
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const update = () => setPlayVideo(!mq.matches)
+    update()
+    mq.addEventListener('change', update)
+    return () => mq.removeEventListener('change', update)
   }, [])
 
   const goTo = (id: string) => {
@@ -47,20 +58,29 @@ export default function HeroSection({ onTabChange }: HeroSectionProps) {
     >
       {/* Background video placeholder / fallback image */}
       <div className="absolute inset-0 z-0">
-        <video
-          ref={videoRef}
-          className="w-full h-full object-cover opacity-[0.30]"
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="metadata"
-          aria-hidden="true"
-          poster="/hero-bg.jpg"
-        >
-          <source src="/download%20(3).mp4" type="video/mp4" />
-        </video>
-        {/* Static fallback if no video */}
+        {playVideo ? (
+          <video
+            ref={videoRef}
+            className="w-full h-full object-cover opacity-[0.30]"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            aria-hidden="true"
+            poster="/hero-bg.jpg"
+          >
+            <source src="/download%20(3).mp4" type="video/mp4" />
+          </video>
+        ) : (
+          <img
+            src="/hero-bg.jpg"
+            alt=""
+            className="w-full h-full object-cover opacity-[0.30]"
+            aria-hidden="true"
+          />
+        )}
+        {/* Static fallback under video */}
         <img
           src="/hero-dive-scene.jpg"
           alt=""
@@ -96,9 +116,13 @@ export default function HeroSection({ onTabChange }: HeroSectionProps) {
             loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
+          <span className="sr-only">
+            LOG-IT diving logbook and IDEST accredited scuba services
+          </span>
           <img
             src={HERO_LOGO_SRC}
-            alt={SITE_LOGO_ALT}
+            alt=""
+            aria-hidden="true"
             className="mx-auto h-[17.6rem] sm:h-[22rem] md:h-[26.5rem] lg:h-[31rem] w-auto max-w-[min(100%,56rem)]"
           />
         </h1>

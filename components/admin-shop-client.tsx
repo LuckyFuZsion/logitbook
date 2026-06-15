@@ -348,7 +348,12 @@ export default function AdminShopClient({
           </h1>
           <p className="text-white/50 text-sm mt-2 max-w-xl">
             Upload images directly to Cloudinary or paste URLs manually. Each product has its own Stripe checkout or
-            Payment Link for a lightweight storefront without full ecommerce.
+            Payment Link for a lightweight storefront without full ecommerce. The home page shows up to three featured
+            products on desktop; mobile visitors are directed to{' '}
+            <Link href="/shop" className="text-[var(--brand-red)] underline underline-offset-2">
+              /shop
+            </Link>
+            .
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -608,6 +613,15 @@ export default function AdminShopClient({
                   onChange={(e) => patch(p.id, { badge: e.target.value || undefined })}
                   placeholder="BESTSELLER"
                 />
+              </label>
+              <label className="flex items-center gap-2 self-end pb-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={p.featuredOnHome === true}
+                  onChange={(e) => patch(p.id, { featuredOnHome: e.target.checked || undefined })}
+                  className="accent-[var(--brand-red)] w-4 h-4"
+                />
+                <span className="text-[10px] font-bold tracking-widest uppercase text-white/60">Show on home</span>
               </label>
             </div>
 

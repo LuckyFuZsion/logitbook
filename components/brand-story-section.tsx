@@ -28,11 +28,18 @@ function useInView(threshold = 0.15) {
   return { ref, inView }
 }
 
-export default function BrandStorySection({ bgClassName = 'bg-background' }: { bgClassName?: string }) {
-  const [story, setStory] = useState<StoryData>(DEFAULT_STORY)
+export default function BrandStorySection({
+  bgClassName = 'bg-background',
+  initialStory,
+}: {
+  bgClassName?: string
+  initialStory?: StoryData
+}) {
+  const [story, setStory] = useState<StoryData>(initialStory ?? DEFAULT_STORY)
   useEffect(() => {
+    if (initialStory) return
     fetch('/api/story').then(r => r.json()).then((j: { data: StoryData }) => setStory(j.data)).catch(() => {})
-  }, [])
+  }, [initialStory])
 
   const { ref: storyRef, inView: storyInView } = useInView()
   const { ref: timelineRef, inView: timelineInView } = useInView()

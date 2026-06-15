@@ -1,12 +1,16 @@
 import type { Metadata, Viewport } from 'next'
 import { Orbitron, Rajdhani } from 'next/font/google'
+import { Analytics } from '@vercel/analytics/react'
 import { FirebaseWebInit } from '@/components/firebase-web-init'
 import { AnnouncementBanner } from '@/components/announcement-banner'
 import { WhatsAppCta } from '@/components/whatsapp-cta'
+import { mergeAnnouncementData } from '@/lib/announcement-defaults'
+import { readAnnouncementFile } from '@/lib/announcement-store'
 import { mergeContactData } from '@/lib/contact-defaults'
 import { mergeHoursData } from '@/lib/hours-defaults'
 import { readContactFile } from '@/lib/contact-store'
 import { readHoursFile } from '@/lib/hours-store'
+import { SITE_DESCRIPTION, SITE_OG_IMAGE_PATH, SITE_TITLE } from '@/lib/site-seo'
 import { siteUrl } from '@/lib/site-url'
 import './globals.css'
 
@@ -15,20 +19,24 @@ const canonicalSite = siteUrl()
 const orbitron = Orbitron({
   subsets: ['latin'],
   variable: '--font-orbitron',
-  weight: ['400', '500', '600', '700', '800', '900'],
+  weight: ['600', '700', '800'],
+  display: 'swap',
 })
 
 const rajdhani = Rajdhani({
   subsets: ['latin'],
   variable: '--font-rajdhani',
-  weight: ['300', '400', '500', '600', '700'],
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
 })
 
 export const metadata: Metadata = {
   metadataBase: new URL(canonicalSite),
-  title: 'LOGITSHOP',
-  description:
-    'Logitshop - your fully accredited, cutting-edge destination for premium products and expert maintenance services. Mobile-first, futuristic, built for performance.',
+  title: {
+    default: SITE_TITLE,
+    template: '%s | LOGITSHOP',
+  },
+  description: SITE_DESCRIPTION,
   manifest: '/favicon_io%20(9)/site.webmanifest',
   icons: {
     icon: [
@@ -41,25 +49,30 @@ export const metadata: Metadata = {
     apple: [{ url: '/favicon_io%20(9)/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
   },
   keywords: [
-    'Logitshop',
-    'cyber industrial shop',
-    'premium products',
-    'maintenance services',
-    'accredited services',
+    'LOG-IT',
+    'diving logbook',
+    'LOGITSHOP',
+    'IDEST',
+    'scuba servicing',
+    'regulator service',
+    'diving accessories',
   ],
-  authors: [{ name: 'Logitshop' }],
+  authors: [{ name: 'LOGITSHOP' }],
+  alternates: { canonical: canonicalSite },
   openGraph: {
-    title: 'LOG‑it Diving Logbook & IDEST Accredited Scuba Services | LOGITSHOP',
-    description:
-      'Since 1988, LOG‑it has been the prestigious UK diving logbook trusted by divers worldwide. Premium UK‑printed logbooks, IDEST‑accredited regulator & cylinder servicing, and expert scuba equipment care.',
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
     type: 'website',
     url: canonicalSite,
+    siteName: 'LOGITSHOP',
+    locale: 'en_GB',
+    images: [{ url: SITE_OG_IMAGE_PATH, alt: SITE_TITLE }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'LOG‑it Diving Logbook & IDEST Accredited Scuba Services | LOGITSHOP',
-    description:
-      'Since 1988, LOG‑it has been the prestigious UK diving logbook trusted by divers worldwide. Premium UK‑printed logbooks, IDEST‑accredited regulator & cylinder servicing, and expert scuba equipment care.',
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: [SITE_OG_IMAGE_PATH],
   },
 }
 
@@ -75,9 +88,10 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const [contact, hours] = await Promise.all([
+  const [contact, hours, announcement] = await Promise.all([
     readContactFile().then(mergeContactData),
     readHoursFile().then(mergeHoursData),
+    readAnnouncementFile().then(mergeAnnouncementData),
   ])
 
   const localBusinessJsonLd = {
@@ -121,10 +135,11 @@ export default async function RootLayout({
         className="font-sans antialiased bg-background text-foreground"
         style={{ fontFamily: 'var(--font-rajdhani), sans-serif' }}
       >
-        <AnnouncementBanner />
+        <AnnouncementBanner initialData={announcement} />
         <FirebaseWebInit />
         {children}
         <WhatsAppCta variant="floating" />
+        <Analytics />
       </body>
     </html>
   )

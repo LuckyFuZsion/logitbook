@@ -4,6 +4,7 @@ import { getAdminSession } from '@/lib/admin-session'
 import { mergeTestimonialsData } from '@/lib/testimonials-defaults'
 import { readTestimonialsFile, writeTestimonialsFile } from '@/lib/testimonials-store'
 import type { TestimonialsData } from '@/lib/testimonials-types'
+import { HOME_FEATURED_REVIEWS_LIMIT, countFeaturedReviews } from '@/lib/testimonials-utils'
 
 export async function GET() {
   if (!await getAdminSession()) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -18,6 +19,12 @@ export async function PUT(req: Request) {
   const previous = mergeTestimonialsData(await readTestimonialsFile())
   for (const t of body.items) {
     if (!t.id || !t.name || !t.text) return NextResponse.json({ error: 'Each testimonial needs id, name, and text' }, { status: 400 })
+  }
+  if (countFeaturedReviews(body.items) > HOME_FEATURED_REVIEWS_LIMIT) {
+    return NextResponse.json(
+      { error: `No more than ${HOME_FEATURED_REVIEWS_LIMIT} reviews can be featured on the homepage` },
+      { status: 400 },
+    )
   }
   const next = { ...mergeTestimonialsData(body), updatedAt: new Date().toISOString() }
   await recordCmsAuditEntry('testimonials', previous, next)

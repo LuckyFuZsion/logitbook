@@ -11,22 +11,33 @@ import { NAVBAR_LOGO_SRC, SITE_LOGO_ALT } from '@/lib/site-logo'
 
 interface FooterProps {
   onTabChange: (tab: string) => void
+  initialContact?: ContactData
+  initialHours?: HoursData
 }
 
-export default function Footer({ onTabChange }: FooterProps) {
-  const [contact, setContact] = useState<ContactData>(DEFAULT_CONTACT)
-  const [hours, setHours] = useState<HoursData>(DEFAULT_HOURS)
+export default function Footer({ onTabChange, initialContact, initialHours }: FooterProps) {
+  const [contact, setContact] = useState<ContactData>(initialContact ?? DEFAULT_CONTACT)
+  const [hours, setHours] = useState<HoursData>(initialHours ?? DEFAULT_HOURS)
 
   useEffect(() => {
-    fetch('/api/contact').then(r => r.json()).then((j: { data: ContactData }) => setContact(j.data)).catch(() => {})
-    fetch('/api/hours').then(r => r.json()).then((j: { data: HoursData }) => setHours(j.data)).catch(() => {})
-  }, [])
+    if (initialContact && initialHours) return
+    if (!initialContact) {
+      fetch('/api/contact').then(r => r.json()).then((j: { data: ContactData }) => setContact(j.data)).catch(() => {})
+    }
+    if (!initialHours) {
+      fetch('/api/hours').then(r => r.json()).then((j: { data: HoursData }) => setHours(j.data)).catch(() => {})
+    }
+  }, [initialContact, initialHours])
 
   const goTo = (tab: string, hash?: string) => {
     onTabChange(tab)
     if (typeof window === 'undefined') return
     if (tab === 'shop') {
       window.location.assign('/shop')
+      return
+    }
+    if (tab === 'testimonials') {
+      window.location.assign('/testimonials')
       return
     }
     const path = window.location.pathname
@@ -78,7 +89,7 @@ export default function Footer({ onTabChange }: FooterProps) {
                 { tab: 'home', hash: '#home', label: 'Home', href: undefined },
                 { tab: 'shop', hash: '#shop', label: 'Shop', href: '/shop' },
                 { tab: 'services', hash: '#services', label: 'Services', href: undefined },
-                { tab: 'testimonials', hash: '#testimonials', label: 'Testimonials', href: undefined },
+                { tab: 'testimonials', hash: '#testimonials', label: 'Testimonials', href: '/testimonials' },
                 { tab: 'story', hash: '#story', label: 'Our Story', href: undefined },
                 { tab: 'gallery', hash: '#gallery', label: 'Gallery', href: undefined },
               ].map(({ tab, hash, label, href }) => (

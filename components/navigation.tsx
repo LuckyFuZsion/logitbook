@@ -37,6 +37,10 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
       window.location.assign('/shop')
       return
     }
+    if (id === 'testimonials') {
+      window.location.assign('/testimonials')
+      return
+    }
 
     const path = window.location.pathname
     const onHome = path === '/' || path === ''

@@ -5,20 +5,28 @@ import { ArrowRight } from 'lucide-react'
 import type { ServicesData } from '@/lib/services-types'
 import { CATEGORY_ICON_BY_ID, mergeServicesData } from '@/lib/services-defaults'
 import { publicSiteUrl } from '@/lib/site-url'
+import { SectionMobileCollapse } from '@/components/section-mobile-collapse'
 
 function getCategoryIconSrc(categoryId: string, icon?: string): string {
   return CATEGORY_ICON_BY_ID[categoryId] ?? icon ?? '/icons/repairs.webp'
 }
 
-export default function ServicesSection({ bgClassName = 'bg-background' }: { bgClassName?: string }) {
-  const [data, setData] = useState<ServicesData | null>(null)
+export default function ServicesSection({
+  bgClassName = 'bg-background',
+  initialData,
+}: {
+  bgClassName?: string
+  initialData?: ServicesData
+}) {
+  const [data, setData] = useState<ServicesData | null>(initialData ?? null)
 
   useEffect(() => {
+    if (initialData) return
     fetch('/api/services')
       .then((r) => r.json())
       .then((j: { data: ServicesData }) => setData(j.data))
       .catch(() => setData(mergeServicesData(null)))
-  }, [])
+  }, [initialData])
 
   useEffect(() => {
     if (!data) return
@@ -34,7 +42,7 @@ export default function ServicesSection({ bgClassName = 'bg-background' }: { bgC
   return (
     <section
       id="services"
-      className={`min-h-screen ${bgClassName} py-20 px-4`}
+      className={`min-h-0 md:min-h-screen ${bgClassName} py-20 px-4`}
       aria-labelledby="services-heading"
     >
       {/* JSON-LD: Service Catalog */}
@@ -81,32 +89,35 @@ export default function ServicesSection({ bgClassName = 'bg-background' }: { bgC
           </p>
         </div>
 
-        {/* Skeleton while loading */}
-        {!data && (
-          <div className="space-y-16 mb-20 animate-pulse">
-            {[1, 2, 3, 4].map((n) => (
-              <div key={n} className="border-b border-[var(--charcoal-light)] pb-12">
-                <div className="flex items-start gap-4 mb-6">
-                  <div className="w-12 h-12 bg-white/10 rounded-sm shrink-0" />
-                  <div className="flex-1 space-y-2">
-                    <div className="h-6 bg-white/10 rounded w-48" />
-                    <div className="h-4 bg-white/5 rounded w-72" />
+        <SectionMobileCollapse
+          id="services-content"
+          expandLabel="View all services & pricing"
+          expandOnHashIds={categories.map((c) => c.id)}
+        >
+          {!data && (
+            <div className="space-y-16 mb-20 animate-pulse">
+              {[1, 2, 3, 4].map((n) => (
+                <div key={n} className="border-b border-[var(--charcoal-light)] pb-12">
+                  <div className="flex items-start gap-4 mb-6">
+                    <div className="w-12 h-12 bg-white/10 rounded-sm shrink-0" />
+                    <div className="flex-1 space-y-2">
+                      <div className="h-6 bg-white/10 rounded w-48" />
+                      <div className="h-4 bg-white/5 rounded w-72" />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    {[1, 2, 3].map((m) => (
+                      <div key={m} className="h-12 bg-white/5 rounded" />
+                    ))}
                   </div>
                 </div>
-                <div className="space-y-2">
-                  {[1, 2, 3].map((m) => (
-                    <div key={m} className="h-12 bg-white/5 rounded" />
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
 
-        {/* Service Categories & Pricing */}
-        {data && (
-          <div className="space-y-16 mb-20">
-            {categories.map(({ id, title, icon, description, services }) => (
+          {data && (
+            <div className="space-y-16 mb-20">
+              {categories.map(({ id, title, icon, description, services }) => (
                 <article key={id} id={id} className="border-b border-[var(--charcoal-light)] pb-12">
                   <div className="flex items-start gap-4 mb-6">
                     <div
@@ -219,9 +230,10 @@ export default function ServicesSection({ bgClassName = 'bg-background' }: { bgC
                     </table>
                   </div>
                 </article>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+        </SectionMobileCollapse>
 
         {/* Pricing Note & CTA Banner */}
         <div

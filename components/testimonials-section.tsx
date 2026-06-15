@@ -1,68 +1,60 @@
 'use client'
 
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import { Star, Quote } from 'lucide-react'
-import type { TestimonialsData, Testimonial } from '@/lib/testimonials-types'
+import { ArrowRight } from 'lucide-react'
+import type { TestimonialsData } from '@/lib/testimonials-types'
+import { getHomeFeaturedReviews } from '@/lib/testimonials-utils'
+import { useIsDesktop } from '@/hooks/use-is-desktop'
+import { TestimonialCard } from '@/components/testimonial-card'
+import { TestimonialsCarousel } from '@/components/testimonials-carousel'
 
-function StarRating({ rating }: { rating: number }) {
-  return (
-    <div className="flex gap-0.5" aria-label={`${rating} out of 5 stars`}>
-      {[1, 2, 3, 4, 5].map((n) => (
-        <Star
-          key={n}
-          size={14}
-          className={n <= rating ? 'text-amber-400 fill-amber-400' : 'text-white/20'}
-          aria-hidden="true"
-        />
-      ))}
-    </div>
-  )
-}
-
-function TestimonialCard({ item }: { item: Testimonial }) {
-  const dateLabel = item.date
-    ? (() => {
-        const [y, m] = item.date.split('-')
-        if (y && m) return new Date(parseInt(y), parseInt(m) - 1).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })
-        return item.date
-      })()
-    : null
-
-  return (
-    <article className="glass-card border border-[var(--charcoal-light)] p-6 flex flex-col gap-4 hover:border-[var(--brand-red)]/30 transition-colors duration-300">
-      <Quote size={20} className="text-[var(--brand-red)] opacity-60 shrink-0" aria-hidden="true" />
-      <p className="text-white/75 leading-relaxed text-sm flex-1" style={{ fontFamily: 'var(--font-rajdhani)' }}>
-        &ldquo;{item.text}&rdquo;
-      </p>
-      <div className="flex items-end justify-between gap-3 mt-auto pt-2 border-t border-white/10">
-        <div>
-          <p className="text-white font-bold text-sm" style={{ fontFamily: 'var(--font-orbitron)' }}>{item.name}</p>
-          {item.role && <p className="text-white/50 text-xs mt-0.5">{item.role}</p>}
-          {dateLabel && <p className="text-white/35 text-xs mt-0.5">{dateLabel}</p>}
-        </div>
-        <StarRating rating={item.rating} />
-      </div>
-    </article>
-  )
-}
-
-export default function TestimonialsSection({ bgClassName = 'bg-background' }: { bgClassName?: string }) {
-  const [data, setData] = useState<TestimonialsData | null>(null)
+export default function TestimonialsSection({
+  bgClassName = 'bg-background',
+  layout = 'home',
+  initialData,
+}: {
+  bgClassName?: string
+  /** Home: mobile CTA + desktop featured grid. Page: full carousel. */
+  layout?: 'home' | 'page'
+  initialData?: TestimonialsData
+}) {
+  const isDesktop = useIsDesktop()
+  const [data, setData] = useState<TestimonialsData | null>(initialData ?? null)
 
   useEffect(() => {
+    if (initialData) return
     fetch('/api/testimonials')
       .then((r) => r.json())
       .then((j: { data: TestimonialsData }) => setData(j.data))
       .catch(() => {})
-  }, [])
+  }, [initialData])
 
-  const featured = data?.items.filter((t) => t.featured) ?? []
-  if (data !== null && featured.length === 0) return null
+  const items = data?.items ?? []
+  const featuredHome = getHomeFeaturedReviews(items)
+
+  const showHomeDesktop = layout === 'home' && isDesktop && featuredHome.length > 0
+  const showHomeMobileCta = layout === 'home' && !isDesktop
+  const showPageCarousel = layout === 'page' && items.length > 0
+
+  if (layout === 'home' && data !== null && !showHomeDesktop && !showHomeMobileCta) {
+    return null
+  }
+
+  if (layout === 'page' && data !== null && items.length === 0) {
+    return (
+      <section className={`${bgClassName} py-20 px-4`} aria-labelledby="testimonials-heading">
+        <div className="max-w-7xl mx-auto text-center">
+          <p className="text-white/50 text-sm">No reviews published yet.</p>
+        </div>
+      </section>
+    )
+  }
 
   return (
     <section
-      id="testimonials"
-      className={`${bgClassName} py-20 px-4`}
+      id={layout === 'home' ? 'testimonials' : undefined}
+      className={`${layout === 'home' ? 'min-h-0 md:min-h-0' : 'min-h-screen'} ${bgClassName} py-20 px-4`}
       aria-labelledby="testimonials-heading"
     >
       <div className="max-w-7xl mx-auto">
@@ -87,22 +79,60 @@ export default function TestimonialsSection({ bgClassName = 'bg-background' }: {
           />
         </div>
 
-        {/* Skeleton while loading */}
-        {data === null && (
-          <div className="grid md:grid-cols-3 gap-6 animate-pulse">
+        {data === null && layout === 'home' && isDesktop && (
+          <div className="hidden md:grid md:grid-cols-3 gap-6 animate-pulse">
             {[1, 2, 3].map((k) => (
               <div key={k} className="border border-[var(--charcoal-light)] p-6 h-48 bg-white/3" />
             ))}
           </div>
         )}
 
-        {data !== null && (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featured.map((item) => (
-              <TestimonialCard key={item.id} item={item} />
-            ))}
+        {showHomeMobileCta && (
+          <div className="md:hidden text-center px-2">
+            <p
+              className="text-sm text-white/65 leading-relaxed mb-8 max-w-md mx-auto"
+              style={{ fontFamily: 'var(--font-rajdhani)' }}
+            >
+              {items.length > 0
+                ? 'Read what divers say about our logbooks and IDEST-accredited servicing.'
+                : 'Customer reviews will appear here soon.'}
+            </p>
+            {items.length > 0 && (
+              <Link
+                href="/testimonials"
+                className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-[var(--brand-red)] hover:bg-red-600 text-white font-bold tracking-widest uppercase text-sm transition-all duration-200 hover:glow-red"
+                style={{ fontFamily: 'var(--font-orbitron)' }}
+              >
+                Read all reviews
+                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" aria-hidden="true" />
+              </Link>
+            )}
           </div>
         )}
+
+        {showHomeDesktop && (
+          <>
+            <div className="hidden md:grid md:grid-cols-3 gap-6">
+              {featuredHome.map((item) => (
+                <TestimonialCard key={item.id} item={item} />
+              ))}
+            </div>
+            {items.length > featuredHome.length && (
+              <div className="mt-12 text-center hidden md:block">
+                <Link
+                  href="/testimonials"
+                  className="group inline-flex items-center justify-center gap-2 px-8 py-4 border border-[var(--brand-red)] text-[var(--brand-red)] hover:bg-[var(--brand-red)] hover:text-white font-bold tracking-widest uppercase text-sm transition-all duration-200"
+                  style={{ fontFamily: 'var(--font-orbitron)' }}
+                >
+                  Read all reviews
+                  <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" aria-hidden="true" />
+                </Link>
+              </div>
+            )}
+          </>
+        )}
+
+        {showPageCarousel && <TestimonialsCarousel items={items} />}
       </div>
     </section>
   )

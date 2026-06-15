@@ -3,10 +3,11 @@
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { ArrowRight, BadgeCheck } from 'lucide-react'
-import type { StoreCategory, StoreProduct } from '@/lib/store-types'
+import type { StoreCategory, StoreData, StoreProduct } from '@/lib/store-types'
 import { getCategoryTitle } from '@/lib/store-category-utils'
 import { productImageAlt } from '@/lib/product-image-alt'
 import { ProductImageCarousel } from '@/components/product-image-carousel'
+import { useIsDesktop } from '@/hooks/use-is-desktop'
 import { publicSiteUrl } from '@/lib/site-url'
 
 /** Normalized for UI (primary image convenience field). */
@@ -19,6 +20,12 @@ interface ShopSectionProps {
   layout?: 'cards' | 'tiles'
   /** Show category filter pills (shop page) */
   showCategoryFilter?: boolean
+  /** Max products on home cards layout (featured first, then catalog order) */
+  homePreviewLimit?: number
+  /** Link to full /shop index below home cards */
+  showShopAllLink?: boolean
+  /** Server-provided catalogue — skips client fetch when set */
+  initialStore?: StoreData
 }
 
 function normalizeProducts(raw: StoreProduct[]): Product[] {
@@ -32,18 +39,32 @@ function isPrestigiousLogbook(product: Product): boolean {
   return product.id === 'logit-book-prestigious'
 }
 
+function homeDisplayProducts(products: Product[], limit: number): Product[] {
+  const featured = products.filter((p) => p.featuredOnHome === true)
+  const source = featured.length > 0 ? featured : products
+  return source.slice(0, limit)
+}
+
 export default function ShopSection({
   bgClassName = 'bg-background',
   showReturnsNotice = false,
   layout = 'cards',
   showCategoryFilter = false,
+  homePreviewLimit = 3,
+  showShopAllLink: showShopAllLinkProp,
+  initialStore,
 }: ShopSectionProps) {
-  const [categories, setCategories] = useState<StoreCategory[]>([])
-  const [products, setProducts] = useState<Product[]>([])
+  const showShopAllLink = showShopAllLinkProp ?? layout === 'cards'
+  const isDesktop = useIsDesktop()
+  const [categories, setCategories] = useState<StoreCategory[]>(initialStore?.categories ?? [])
+  const [products, setProducts] = useState<Product[]>(() =>
+    initialStore ? normalizeProducts(initialStore.products) : [],
+  )
   const [activeCategoryId, setActiveCategoryId] = useState<string | null>(null)
   const [loadError, setLoadError] = useState<string | null>(null)
 
   useEffect(() => {
+    if (initialStore) return
     let cancelled = false
     fetch('/api/shop')
       .then((r) => {
@@ -62,16 +83,21 @@ export default function ShopSection({
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [initialStore])
 
   const filtered = activeCategoryId
     ? products.filter((p) => p.categoryId === activeCategoryId)
     : products
 
+  const displayProducts =
+    layout === 'cards' ? homeDisplayProducts(filtered, homePreviewLimit) : filtered
+
+  const jsonLdProducts = displayProducts
+
   return (
     <section
       id="shop"
-      className={`min-h-screen ${bgClassName} py-20 px-4`}
+      className={`${layout === 'cards' ? 'min-h-0 md:min-h-screen' : 'min-h-screen'} ${bgClassName} py-20 px-4`}
       aria-labelledby="shop-heading"
     >
       <script
@@ -81,7 +107,7 @@ export default function ShopSection({
             '@context': 'https://schema.org',
             '@type': 'ItemList',
             name: 'Logitshop Products',
-            itemListElement: filtered.map((p, i) => ({
+            itemListElement: jsonLdProducts.map((p, i) => ({
               '@type': 'ListItem',
               position: i + 1,
               item: {
@@ -126,9 +152,15 @@ export default function ShopSection({
           </p>
         )}
 
-        {!loadError && filtered.length === 0 && (
+        {!loadError && displayProducts.length === 0 && layout !== 'cards' && (
           <p className="text-center text-white/50 text-sm">
             {activeCategoryId ? 'No products in this category.' : 'No products configured.'}
+          </p>
+        )}
+
+        {!loadError && displayProducts.length === 0 && layout === 'cards' && (
+          <p className="text-center text-white/50 text-sm hidden md:block">
+            No products configured.
           </p>
         )}
 
@@ -179,7 +211,7 @@ export default function ShopSection({
                 className="group block h-full"
                 role="listitem"
               >
-                <article className="glass-card flex flex-col overflow-hidden border border-[var(--charcoal-light)] hover:border-[var(--brand-red)]/50 transition-all duration-300 h-full">
+                <article className="glass-card flex flex-col border border-[var(--charcoal-light)] hover:border-[var(--brand-red)]/50 transition-all duration-300 h-full">
                   <div className="relative aspect-square bg-[var(--charcoal)] flex items-center justify-center p-4">
                     {product.badge && (
                       <span
@@ -196,9 +228,9 @@ export default function ShopSection({
                       loading="lazy"
                     />
                   </div>
-                  <div className="flex flex-col gap-1 p-4 text-center flex-1">
+                  <div className="flex flex-col gap-1 p-3 sm:p-4 text-center flex-1">
                     <h3
-                      className="text-sm md:text-base font-bold text-white leading-tight line-clamp-2 min-h-[2.5rem]"
+                      className="text-xs sm:text-sm md:text-base font-bold text-white leading-snug break-words"
                       style={{ fontFamily: 'var(--font-orbitron)' }}
                     >
                       {product.name}
@@ -212,8 +244,29 @@ export default function ShopSection({
             ))}
           </div>
         ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch" role="list">
-          {filtered.map((product) => {
+        <>
+        {showShopAllLink && !loadError && (
+          <div className="md:hidden text-center px-2">
+            <p
+              className="text-sm text-white/65 leading-relaxed mb-8 max-w-md mx-auto"
+              style={{ fontFamily: 'var(--font-rajdhani)' }}
+            >
+              Browse our full range of diving logbooks and scuba accessories in the shop.
+            </p>
+            <Link
+              href="/shop"
+              className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-[var(--brand-red)] hover:bg-red-600 text-white font-bold tracking-widest uppercase text-sm transition-all duration-200 hover:glow-red"
+              style={{ fontFamily: 'var(--font-orbitron)' }}
+            >
+              Shop all Items
+              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" aria-hidden="true" />
+            </Link>
+          </div>
+        )}
+
+        {isDesktop && (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch" role="list">
+          {displayProducts.map((product) => {
             const productHref = `/shop/${product.id}`
             const images = product.images.filter(Boolean)
 
@@ -302,6 +355,26 @@ export default function ShopSection({
             )
           })}
         </div>
+        )}
+        </>
+        )}
+
+        {showShopAllLink && layout === 'cards' && !loadError && products.length > 0 && (
+          <div className="mt-12 text-center hidden md:block">
+            {displayProducts.length < products.length && (
+              <p className="text-sm text-white/50 mb-4" style={{ fontFamily: 'var(--font-rajdhani)' }}>
+                Browse the full catalogue
+              </p>
+            )}
+            <Link
+              href="/shop"
+              className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-[var(--brand-red)] hover:bg-red-600 text-white font-bold tracking-widest uppercase text-sm transition-all duration-200 hover:glow-red"
+              style={{ fontFamily: 'var(--font-orbitron)' }}
+            >
+              Shop all Items
+              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" aria-hidden="true" />
+            </Link>
+          </div>
         )}
 
         {showReturnsNotice && (

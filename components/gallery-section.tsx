@@ -508,11 +508,18 @@ function Lightbox({
 
 /* ──────── Main section ──────── */
 
-export default function GallerySection({ bgClassName = 'bg-background' }: { bgClassName?: string }) {
-  const [data, setData] = useState<ResolvedGalleryData | null>(null)
+export default function GallerySection({
+  bgClassName = 'bg-background',
+  initialData,
+}: {
+  bgClassName?: string
+  initialData?: ResolvedGalleryData
+}) {
+  const [data, setData] = useState<ResolvedGalleryData | null>(initialData ?? null)
   const [loadError, setLoadError] = useState<string | null>(null)
 
   useEffect(() => {
+    if (initialData) return
     let cancelled = false
     fetch('/api/gallery')
       .then((r) => {
@@ -526,7 +533,7 @@ export default function GallerySection({ bgClassName = 'bg-background' }: { bgCl
         if (!cancelled) setLoadError('Gallery could not be loaded.')
       })
     return () => { cancelled = true }
-  }, [])
+  }, [initialData])
 
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
 

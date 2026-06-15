@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import type { FaqData } from '@/lib/faq-types'
 import { mergeFaqData } from '@/lib/faq-defaults'
+import { SectionMobileCollapse } from '@/components/section-mobile-collapse'
 
 /* ──────── Answer renderer ──────── */
 
@@ -55,15 +56,22 @@ function FaqSkeleton() {
 
 /* ──────── Main section ──────── */
 
-export default function FaqSection({ bgClassName = 'bg-background' }: { bgClassName?: string }) {
-  const [data, setData] = useState<FaqData | null>(null)
+export default function FaqSection({
+  bgClassName = 'bg-background',
+  initialData,
+}: {
+  bgClassName?: string
+  initialData?: FaqData
+}) {
+  const [data, setData] = useState<FaqData | null>(initialData ?? null)
 
   useEffect(() => {
+    if (initialData) return
     fetch('/api/faq')
       .then((r) => r.json())
       .then((j: { data: FaqData }) => setData(j.data))
       .catch(() => setData(mergeFaqData(null)))
-  }, [])
+  }, [initialData])
 
   const items = data?.items ?? []
 
@@ -88,7 +96,7 @@ export default function FaqSection({ bgClassName = 'bg-background' }: { bgClassN
   return (
     <section
       id="faq"
-      className={`min-h-screen ${bgClassName} py-20 px-4`}
+      className={`min-h-0 md:min-h-screen ${bgClassName} py-20 px-4`}
       aria-labelledby="faq-heading"
     >
       {/* Live FAQPage schema — updates whenever CMS data changes */}
@@ -122,35 +130,39 @@ export default function FaqSection({ bgClassName = 'bg-background' }: { bgClassN
         </div>
 
         {!data ? (
-          <FaqSkeleton />
+          <SectionMobileCollapse id="faq-content" expandLabel="View all questions">
+            <FaqSkeleton />
+          </SectionMobileCollapse>
         ) : (
-          <div className="space-y-3">
-            {items.map((f) => (
-              <details
-                key={f.id}
-                className="glass-card border border-[var(--charcoal-light)] p-5 group"
-              >
-                <summary
-                  className="cursor-pointer list-none flex items-start justify-between gap-6 text-white font-bold"
-                  style={{ fontFamily: 'var(--font-orbitron)' }}
+          <SectionMobileCollapse id="faq-content" expandLabel="View all questions">
+            <div className="space-y-3">
+              {items.map((f) => (
+                <details
+                  key={f.id}
+                  className="glass-card border border-[var(--charcoal-light)] p-5 group"
                 >
-                  <span className="text-base md:text-lg">{f.question}</span>
-                  <span
-                    className="text-[var(--brand-red)] group-open:rotate-45 transition-transform select-none"
-                    aria-hidden="true"
+                  <summary
+                    className="cursor-pointer list-none flex items-start justify-between gap-6 text-white font-bold"
+                    style={{ fontFamily: 'var(--font-orbitron)' }}
                   >
-                    +
-                  </span>
-                </summary>
-                <div
-                  className="mt-4 text-white/70 text-base leading-relaxed"
-                  style={{ fontFamily: 'var(--font-rajdhani)' }}
-                >
-                  {formatAnswer(f.answer)}
-                </div>
-              </details>
-            ))}
-          </div>
+                    <span className="text-base md:text-lg">{f.question}</span>
+                    <span
+                      className="text-[var(--brand-red)] group-open:rotate-45 transition-transform select-none"
+                      aria-hidden="true"
+                    >
+                      +
+                    </span>
+                  </summary>
+                  <div
+                    className="mt-4 text-white/70 text-base leading-relaxed"
+                    style={{ fontFamily: 'var(--font-rajdhani)' }}
+                  >
+                    {formatAnswer(f.answer)}
+                  </div>
+                </details>
+              ))}
+            </div>
+          </SectionMobileCollapse>
         )}
       </div>
     </section>

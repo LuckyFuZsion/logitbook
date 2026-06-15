@@ -18,6 +18,7 @@ export const DEFAULT_PRODUCTS: StoreProduct[] = [
     description:
       'The professional diving logbook trusted by technical divers worldwide. Premium bound format for recording dives, depth profiles, and expedition notes. 20+ books qualify for wholesale pricing.',
     stripeUrl: 'https://buy.stripe.com/00g8yw5vdaC5bZK3cc',
+    featuredOnHome: true,
   },
 ]
 
@@ -73,6 +74,7 @@ function sanitizeProduct(p: RawStoreProduct, categories: StoreCategory[]): Store
     badge: p.badge,
     images: p.images ?? [],
     stripeUrl: p.stripeUrl!,
+    featuredOnHome: p.featuredOnHome,
   }
 }
 

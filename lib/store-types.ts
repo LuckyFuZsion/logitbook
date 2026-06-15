@@ -19,6 +19,8 @@ export interface StoreProduct {
   images: string[]
   /** Stripe Payment Link or Checkout URL for this SKU */
   stripeUrl: string
+  /** When true, product may appear in the home page catalogue preview (max 6). */
+  featuredOnHome?: boolean
 }
 
 export interface StoreData {
