@@ -28,7 +28,7 @@ export default function ServicesPage() {
           </div>
         </div>
 
-        <ServicesSection bgClassName="bg-background" />
+        <ServicesSection bgClassName="bg-background" headingLevel="h1" />
       </main>
 
       <Footer onTabChange={setActiveTab} />

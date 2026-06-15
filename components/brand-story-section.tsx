@@ -5,6 +5,7 @@ import type { LucideIcon } from 'lucide-react'
 import { Target, TrendingUp, Users, Globe, Shield, Zap, Anchor, Star, Heart, Award } from 'lucide-react'
 import type { StoryData } from '@/lib/story-types'
 import { DEFAULT_STORY } from '@/lib/story-defaults'
+import { SectionHeading } from '@/components/section-heading'
 
 const ICON_MAP: Record<string, LucideIcon> = {
   Target, TrendingUp, Users, Globe, Shield, Zap, Anchor, Star, Heart, Award,
@@ -31,9 +32,11 @@ function useInView(threshold = 0.15) {
 export default function BrandStorySection({
   bgClassName = 'bg-background',
   initialStory,
+  headingLevel = 'h2',
 }: {
   bgClassName?: string
   initialStory?: StoryData
+  headingLevel?: 'h1' | 'h2'
 }) {
   const [story, setStory] = useState<StoryData>(initialStory ?? DEFAULT_STORY)
   useEffect(() => {
@@ -60,13 +63,14 @@ export default function BrandStorySection({
           >
             Who We Are
           </p>
-          <h2
+          <SectionHeading
+            as={headingLevel}
             id="story-heading"
             className="text-4xl md:text-5xl font-black text-white mb-4 text-balance"
             style={{ fontFamily: 'var(--font-orbitron)' }}
           >
             OUR <span className="text-[var(--brand-red)]">STORY</span>
-          </h2>
+          </SectionHeading>
           <div className="w-16 h-0.5 bg-[var(--brand-red)] mx-auto" style={{ boxShadow: '0 0 10px var(--brand-red-glow)' }} aria-hidden="true" />
         </div>
 

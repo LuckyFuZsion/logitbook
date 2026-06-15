@@ -3,6 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { ZoomIn, ChevronLeft, ChevronRight, X } from 'lucide-react'
 import type { GalleryGridItem, GalleryBeforeAfter, ResolvedGalleryData } from '@/lib/gallery-types'
+import { SectionHeading } from '@/components/section-heading'
 import {
   Carousel,
   CarouselContent,
@@ -511,9 +512,11 @@ function Lightbox({
 export default function GallerySection({
   bgClassName = 'bg-background',
   initialData,
+  headingLevel = 'h2',
 }: {
   bgClassName?: string
   initialData?: ResolvedGalleryData
+  headingLevel?: 'h1' | 'h2'
 }) {
   const [data, setData] = useState<ResolvedGalleryData | null>(initialData ?? null)
   const [loadError, setLoadError] = useState<string | null>(null)
@@ -554,13 +557,14 @@ export default function GallerySection({
           >
             Proven Results
           </p>
-          <h2
+          <SectionHeading
+            as={headingLevel}
             id="gallery-heading"
             className="text-4xl md:text-5xl font-black text-white mb-4 text-balance"
             style={{ fontFamily: 'var(--font-orbitron)' }}
           >
             SERVICE <span className="text-[var(--brand-red)]">SHOWCASE</span>
-          </h2>
+          </SectionHeading>
           <div
             className="w-16 h-0.5 bg-[var(--brand-red)] mx-auto mb-6"
             style={{ boxShadow: '0 0 10px var(--brand-red-glow)' }}

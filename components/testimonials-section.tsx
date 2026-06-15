@@ -8,6 +8,7 @@ import { getHomeFeaturedReviews } from '@/lib/testimonials-utils'
 import { useIsDesktop } from '@/hooks/use-is-desktop'
 import { TestimonialCard } from '@/components/testimonial-card'
 import { TestimonialsCarousel } from '@/components/testimonials-carousel'
+import { SectionHeading } from '@/components/section-heading'
 
 export default function TestimonialsSection({
   bgClassName = 'bg-background',
@@ -36,6 +37,7 @@ export default function TestimonialsSection({
   const showHomeDesktop = layout === 'home' && isDesktop && featuredHome.length > 0
   const showHomeMobileCta = layout === 'home' && !isDesktop
   const showPageCarousel = layout === 'page' && items.length > 0
+  const headingLevel = layout === 'page' ? 'h1' : 'h2'
 
   if (layout === 'home' && data !== null && !showHomeDesktop && !showHomeMobileCta) {
     return null
@@ -65,13 +67,14 @@ export default function TestimonialsSection({
           >
             What Divers Say
           </p>
-          <h2
+          <SectionHeading
+            as={headingLevel}
             id="testimonials-heading"
             className="text-4xl md:text-5xl font-black text-white mb-4 text-balance"
             style={{ fontFamily: 'var(--font-orbitron)' }}
           >
             CUSTOMER <span className="text-[var(--brand-red)]">REVIEWS</span>
-          </h2>
+          </SectionHeading>
           <div
             className="w-16 h-0.5 bg-[var(--brand-red)] mx-auto"
             style={{ boxShadow: '0 0 10px var(--brand-red-glow)' }}

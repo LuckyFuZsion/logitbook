@@ -28,7 +28,7 @@ export default function StoryPage() {
           </div>
         </div>
 
-        <BrandStorySection bgClassName="bg-background" />
+        <BrandStorySection bgClassName="bg-background" headingLevel="h1" />
       </main>
 
       <Footer onTabChange={setActiveTab} />

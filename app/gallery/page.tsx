@@ -28,7 +28,7 @@ export default function GalleryPage() {
           </div>
         </div>
 
-        <GallerySection bgClassName="bg-background" />
+        <GallerySection bgClassName="bg-background" headingLevel="h1" />
       </main>
 
       <Footer onTabChange={setActiveTab} />

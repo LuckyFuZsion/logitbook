@@ -6,6 +6,7 @@ import type { ServicesData } from '@/lib/services-types'
 import { CATEGORY_ICON_BY_ID, mergeServicesData } from '@/lib/services-defaults'
 import { publicSiteUrl } from '@/lib/site-url'
 import { SectionMobileCollapse } from '@/components/section-mobile-collapse'
+import { SectionHeading } from '@/components/section-heading'
 
 function getCategoryIconSrc(categoryId: string, icon?: string): string {
   return CATEGORY_ICON_BY_ID[categoryId] ?? icon ?? '/icons/repairs.webp'
@@ -14,9 +15,11 @@ function getCategoryIconSrc(categoryId: string, icon?: string): string {
 export default function ServicesSection({
   bgClassName = 'bg-background',
   initialData,
+  headingLevel = 'h2',
 }: {
   bgClassName?: string
   initialData?: ServicesData
+  headingLevel?: 'h1' | 'h2'
 }) {
   const [data, setData] = useState<ServicesData | null>(initialData ?? null)
 
@@ -72,13 +75,14 @@ export default function ServicesSection({
           >
             Expert Solutions
           </p>
-          <h2
+          <SectionHeading
+            as={headingLevel}
             id="services-heading"
             className="text-4xl md:text-5xl font-black text-white mb-4 text-balance"
             style={{ fontFamily: 'var(--font-orbitron)' }}
           >
             ACCREDITED <span className="text-[var(--brand-red)]">SERVICES</span>
-          </h2>
+          </SectionHeading>
           <div
             className="w-16 h-0.5 bg-[var(--brand-red)] mx-auto mb-6"
             style={{ boxShadow: '0 0 10px var(--brand-red-glow)' }}
@@ -126,7 +130,7 @@ export default function ServicesSection({
                     >
                       <img
                         src={getCategoryIconSrc(id, icon)}
-                        alt=""
+                        alt={`${title} icon`}
                         className="h-full w-full object-contain"
                       />
                     </div>

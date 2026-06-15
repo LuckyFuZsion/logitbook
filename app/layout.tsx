@@ -10,7 +10,7 @@ import { mergeContactData } from '@/lib/contact-defaults'
 import { mergeHoursData } from '@/lib/hours-defaults'
 import { readContactFile } from '@/lib/contact-store'
 import { readHoursFile } from '@/lib/hours-store'
-import { SITE_DESCRIPTION, SITE_OG_IMAGE_PATH, SITE_TITLE } from '@/lib/site-seo'
+import { SITE_DESCRIPTION, SITE_OG_IMAGE_ALT, SITE_OG_IMAGE_PATH, SITE_TITLE } from '@/lib/site-seo'
 import { siteUrl } from '@/lib/site-url'
 import './globals.css'
 
@@ -49,13 +49,14 @@ export const metadata: Metadata = {
     apple: [{ url: '/favicon_io%20(9)/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
   },
   keywords: [
-    'LOG-IT',
-    'diving logbook',
     'LOGITSHOP',
-    'IDEST',
-    'scuba servicing',
-    'regulator service',
-    'diving accessories',
+    'IDEST scuba servicing',
+    'regulator service UK',
+    'cylinder testing',
+    'BCD servicing',
+    'scuba equipment',
+    'diving logbook',
+    'dive accessories',
   ],
   authors: [{ name: 'LOGITSHOP' }],
   alternates: { canonical: canonicalSite },
@@ -66,7 +67,7 @@ export const metadata: Metadata = {
     url: canonicalSite,
     siteName: 'LOGITSHOP',
     locale: 'en_GB',
-    images: [{ url: SITE_OG_IMAGE_PATH, alt: SITE_TITLE }],
+    images: [{ url: SITE_OG_IMAGE_PATH, alt: SITE_OG_IMAGE_ALT }],
   },
   twitter: {
     card: 'summary_large_image',

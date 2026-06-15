@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import type { FaqData } from '@/lib/faq-types'
 import { mergeFaqData } from '@/lib/faq-defaults'
 import { SectionMobileCollapse } from '@/components/section-mobile-collapse'
+import { SectionHeading } from '@/components/section-heading'
 
 /* ──────── Answer renderer ──────── */
 
@@ -59,9 +60,11 @@ function FaqSkeleton() {
 export default function FaqSection({
   bgClassName = 'bg-background',
   initialData,
+  headingLevel = 'h2',
 }: {
   bgClassName?: string
   initialData?: FaqData
+  headingLevel?: 'h1' | 'h2'
 }) {
   const [data, setData] = useState<FaqData | null>(initialData ?? null)
 
@@ -115,13 +118,14 @@ export default function FaqSection({
           >
             Helpful Answers
           </p>
-          <h2
+          <SectionHeading
+            as={headingLevel}
             id="faq-heading"
             className="text-4xl md:text-5xl font-black text-white mb-4 text-balance"
             style={{ fontFamily: 'var(--font-orbitron)' }}
           >
             FREQUENTLY ASKED <span className="text-[var(--brand-red)]">QUESTIONS</span>
-          </h2>
+          </SectionHeading>
           <div
             className="w-16 h-0.5 bg-[var(--brand-red)] mx-auto"
             style={{ boxShadow: '0 0 10px var(--brand-red-glow)' }}

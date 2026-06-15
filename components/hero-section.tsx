@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { ChevronDown, ShoppingBag, Wrench, ArrowRight } from 'lucide-react'
 import type { HeroData } from '@/lib/hero-types'
 import { DEFAULT_HERO } from '@/lib/hero-defaults'
-import { HERO_LOGO_SRC } from '@/lib/site-logo'
+import { HERO_LOGO_SRC, SITE_LOGO_ALT } from '@/lib/site-logo'
 import { WhatsAppCta } from '@/components/whatsapp-cta'
 
 interface HeroSectionProps {
@@ -73,18 +73,17 @@ export default function HeroSection({ onTabChange, initialHero }: HeroSectionPro
             <source src="/download%20(3).mp4" type="video/mp4" />
           </video>
         ) : (
-          <img
-            src="/hero-bg.jpg"
-            alt=""
-            className="w-full h-full object-cover opacity-[0.30]"
-            aria-hidden="true"
+          <div
+            className="w-full h-full bg-cover bg-center opacity-[0.30]"
+            style={{ backgroundImage: 'url(/hero-bg.jpg)' }}
+            role="img"
+            aria-label="Underwater diving scene"
           />
         )}
         {/* Static fallback under video */}
-        <img
-          src="/hero-dive-scene.jpg"
-          alt=""
-          className="absolute inset-0 w-full h-full object-cover opacity-25"
+        <div
+          className="absolute inset-0 w-full h-full bg-cover bg-center opacity-25"
+          style={{ backgroundImage: 'url(/hero-dive-scene.jpg)' }}
           aria-hidden="true"
         />
         {/* Dark overlay */}
@@ -116,13 +115,9 @@ export default function HeroSection({ onTabChange, initialHero }: HeroSectionPro
             loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
-          <span className="sr-only">
-            LOG-IT diving logbook and IDEST accredited scuba services
-          </span>
           <img
             src={HERO_LOGO_SRC}
-            alt=""
-            aria-hidden="true"
+            alt={`${SITE_LOGO_ALT} — IDEST accredited scuba servicing and diving logbooks`}
             className="mx-auto h-[17.6rem] sm:h-[22rem] md:h-[26.5rem] lg:h-[31rem] w-auto max-w-[min(100%,56rem)]"
           />
         </h1>

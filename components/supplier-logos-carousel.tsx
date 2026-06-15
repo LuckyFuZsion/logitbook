@@ -1,5 +1,9 @@
 import { SUPPLIER_LOGOS } from '@/lib/supplier-logos'
 
+function supplierLogoAlt(name: string) {
+  return `${name} logo`
+}
+
 export default function SupplierLogosCarousel() {
   const logos = [...SUPPLIER_LOGOS, ...SUPPLIER_LOGOS]
 
@@ -14,17 +18,20 @@ export default function SupplierLogosCarousel() {
       >
         Trusted Suppliers
       </p>
-      <div className="pointer-events-none select-none overflow-hidden" aria-hidden="true">
+      <div className="pointer-events-none select-none overflow-hidden">
         <div className="flex supplier-ticker w-max items-center gap-10 md:gap-16 px-6">
-          {logos.map((logo, index) => (
+          {logos.map((logo, index) => {
+            const isDuplicate = index >= SUPPLIER_LOGOS.length
+            return (
             <div
               key={`${logo.src}-${index}`}
               className="flex w-28 md:w-36 shrink-0 flex-col items-center gap-2"
+              aria-hidden={isDuplicate || undefined}
             >
               <div className="flex h-12 md:h-14 w-full items-center justify-center">
                 <img
                   src={logo.src}
-                  alt=""
+                  alt={supplierLogoAlt(logo.name)}
                   className="max-h-full max-w-full object-contain opacity-75 brightness-110"
                   loading="lazy"
                   draggable={false}
@@ -37,7 +44,8 @@ export default function SupplierLogosCarousel() {
                 {logo.name}
               </p>
             </div>
-          ))}
+            )
+          })}
         </div>
       </div>
     </section>

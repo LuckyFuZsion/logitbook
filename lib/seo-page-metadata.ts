@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { SITE_OG_IMAGE_PATH } from '@/lib/site-seo'
+import { SITE_OG_IMAGE_ALT, SITE_OG_IMAGE_PATH } from '@/lib/site-seo'
 import { siteUrl } from '@/lib/site-url'
 
 export function buildPageMetadata({
@@ -30,7 +30,7 @@ export function buildPageMetadata({
       siteName: 'LOGITSHOP',
       type: 'website',
       locale: 'en_GB',
-      images: [{ url: ogImage, alt: title }],
+      images: [{ url: ogImage, alt: SITE_OG_IMAGE_ALT }],
     },
     twitter: {
       card: 'summary_large_image',

@@ -9,6 +9,7 @@ import { productImageAlt } from '@/lib/product-image-alt'
 import { ProductImageCarousel } from '@/components/product-image-carousel'
 import { useIsDesktop } from '@/hooks/use-is-desktop'
 import { publicSiteUrl } from '@/lib/site-url'
+import { SectionHeading } from '@/components/section-heading'
 
 /** Normalized for UI (primary image convenience field). */
 export type Product = StoreProduct & { image: string }
@@ -92,6 +93,7 @@ export default function ShopSection({
   const displayProducts =
     layout === 'cards' ? homeDisplayProducts(filtered, homePreviewLimit) : filtered
 
+  const headingLevel = layout === 'tiles' ? 'h1' : 'h2'
   const jsonLdProducts = displayProducts
 
   return (
@@ -136,13 +138,14 @@ export default function ShopSection({
           >
             Premium Catalogue
           </p>
-          <h2
+          <SectionHeading
+            as={headingLevel}
             id="shop-heading"
             className="text-4xl md:text-5xl font-black text-white mb-4 text-balance"
             style={{ fontFamily: 'var(--font-orbitron)' }}
           >
             DIVING <span className="text-[var(--brand-red)]">GEAR</span>
-          </h2>
+          </SectionHeading>
           <div className="w-16 h-0.5 bg-[var(--brand-red)] mx-auto" style={{ boxShadow: '0 0 10px var(--brand-red-glow)' }} aria-hidden="true" />
         </div>
 
