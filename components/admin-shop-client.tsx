@@ -3,7 +3,8 @@
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useCallback, useMemo, useRef, useState } from 'react'
-import type { StoreProduct } from '@/lib/store-types'
+import type { StoreCategory, StoreData, StoreProduct } from '@/lib/store-types'
+import { newStoreCategory } from '@/lib/store-category-utils'
 import { AdminSaveBar } from '@/components/admin-save-bar'
 import { ConfirmModal, type ConfirmModalProps } from '@/components/admin-confirm-modal'
 import { cn } from '@/lib/utils'
@@ -19,7 +20,7 @@ function imagesToText(images: string[]): string {
   return images.join('\n')
 }
 
-function newProduct(): StoreProduct {
+function newProduct(categories: StoreCategory[]): StoreProduct {
   const id =
     typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `sku-${Date.now()}`
   return {
@@ -27,26 +28,27 @@ function newProduct(): StoreProduct {
     name: '',
     description: '',
     price: 0,
-    category: 'General',
+    categoryId: categories[0]?.id ?? 'accessories',
     images: [],
     stripeUrl: '',
   }
 }
 
 export default function AdminShopClient({
-  initialProducts,
+  initialData,
   persistenceBackend,
   cmsCollectionId,
 }: {
-  initialProducts: StoreProduct[]
+  initialData: StoreData
   persistenceBackend: 'firestore' | 'file'
   cmsCollectionId: string
 }) {
   const router = useRouter()
-  const [products, setProducts] = useState<StoreProduct[]>(initialProducts)
+  const [categories, setCategories] = useState<StoreCategory[]>(initialData.categories)
+  const [products, setProducts] = useState<StoreProduct[]>(initialData.products)
   const [imageTextById, setImageTextById] = useState<Record<string, string>>(() => {
     const m: Record<string, string> = {}
-    for (const p of initialProducts) {
+    for (const p of initialData.products) {
       m[p.id] = imagesToText(p.images)
     }
     return m
@@ -61,14 +63,15 @@ export default function AdminShopClient({
 
   const baseline = useMemo(() => {
     const imageMap: Record<string, string> = {}
-    for (const p of initialProducts) {
+    for (const p of initialData.products) {
       imageMap[p.id] = imagesToText(p.images)
     }
     return {
-      products: JSON.parse(JSON.stringify(initialProducts)) as StoreProduct[],
+      categories: JSON.parse(JSON.stringify(initialData.categories)) as StoreCategory[],
+      products: JSON.parse(JSON.stringify(initialData.products)) as StoreProduct[],
       imageMap,
     }
-  }, [initialProducts])
+  }, [initialData])
 
   const assembledSnapshot = useCallback((prods: StoreProduct[], imgMap: Record<string, string>) => {
     return prods.map((p) => ({
@@ -78,13 +81,15 @@ export default function AdminShopClient({
   }, [])
 
   const isDirty =
+    JSON.stringify(categories) !== JSON.stringify(baseline.categories) ||
     JSON.stringify(assembledSnapshot(products, imageTextById)) !==
-    JSON.stringify(assembledSnapshot(baseline.products, baseline.imageMap))
+      JSON.stringify(assembledSnapshot(baseline.products, baseline.imageMap))
 
   const discardChanges = useCallback(() => {
     if (!window.confirm('Discard all unsaved changes? This will restore the last saved catalogue.')) {
       return
     }
+    setCategories(JSON.parse(JSON.stringify(baseline.categories)))
     setProducts(JSON.parse(JSON.stringify(baseline.products)))
     setImageTextById({ ...baseline.imageMap })
     setMessage(null)
@@ -106,6 +111,14 @@ export default function AdminShopClient({
       ...p,
       images: parseImageLines(imageTextById[p.id] ?? ''),
     }))
+
+    for (const c of categories) {
+      if (!c.title.trim()) {
+        setError('Each category needs a display name.')
+        setSaving(false)
+        return
+      }
+    }
 
     for (const p of assembled) {
       if (!p.name.trim()) {
@@ -130,12 +143,24 @@ export default function AdminShopClient({
         method: 'PUT',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ products: assembled }),
+        body: JSON.stringify({ categories, products: assembled }),
       })
       const json = await res.json()
       if (!res.ok) {
         setError(typeof json.error === 'string' ? json.error : 'Save failed')
         return
+      }
+      const saved = json.data as StoreData | undefined
+      if (saved?.categories?.length) {
+        setCategories(saved.categories)
+      }
+      if (saved?.products?.length) {
+        setProducts(saved.products)
+        const imageMap: Record<string, string> = {}
+        for (const p of saved.products) {
+          imageMap[p.id] = imagesToText(p.images)
+        }
+        setImageTextById(imageMap)
       }
       setMessage('Saved. The shop and JSON-LD catalogue will use these products.')
       router.refresh()
@@ -144,10 +169,10 @@ export default function AdminShopClient({
     } finally {
       setSaving(false)
     }
-  }, [imageTextById, products, router])
+  }, [categories, imageTextById, products, router])
 
   const addProduct = () => {
-    const p = newProduct()
+    const p = newProduct(categories)
     setProducts((list) => [...list, p])
     setImageTextById((prev) => ({ ...prev, [p.id]: '' }))
   }
@@ -185,6 +210,51 @@ export default function AdminShopClient({
 
   const patch = (id: string, patch: Partial<StoreProduct>) => {
     setProducts((list) => list.map((p) => (p.id === id ? { ...p, ...patch } : p)))
+  }
+
+  const updateCategory = (index: number, updated: StoreCategory) => {
+    setCategories((list) => list.map((c, i) => (i === index ? updated : c)))
+  }
+
+  const moveCategory = (index: number, dir: -1 | 1) => {
+    setCategories((list) => {
+      const next = [...list]
+      const j = index + dir
+      if (j < 0 || j >= next.length) return list
+      ;[next[index], next[j]] = [next[j], next[index]]
+      return next
+    })
+  }
+
+  const addCategory = () => {
+    setCategories((list) => [...list, newStoreCategory(list.map((c) => c.id))])
+  }
+
+  const removeCategory = (index: number) => {
+    const cat = categories[index]
+    const inUse = products.some((p) => p.categoryId === cat.id)
+    if (inUse) {
+      setError(`Cannot remove "${cat.title}" — reassign its products to another category first.`)
+      return
+    }
+    setCategories((list) => list.filter((_, i) => i !== index))
+  }
+
+  const requestRemoveCategory = (index: number) => {
+    const cat = categories[index]
+    const inUse = products.some((p) => p.categoryId === cat.id)
+    if (inUse) {
+      setError(`Cannot remove "${cat.title}" — reassign its products to another category first.`)
+      return
+    }
+    setConfirm({
+      title: 'Remove category?',
+      description: cat.title
+        ? `"${cat.title}" will be removed. Changes won\u2019t apply until you save.`
+        : 'This category will be removed. Changes won\u2019t apply until you save.',
+      confirmLabel: 'Remove',
+      onConfirm: () => removeCategory(index),
+    })
   }
 
   const removeImage = (productId: string, index: number) => {
@@ -339,6 +409,84 @@ export default function AdminShopClient({
         </div>
       )}
 
+      <section className="mb-12 p-6 border border-[var(--charcoal-light)] bg-[var(--charcoal)] space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="text-lg font-black" style={{ fontFamily: 'var(--font-orbitron)' }}>
+              Categories
+            </h2>
+            <p className="text-white/50 text-sm mt-1">
+              Group products for the shop filter. Shoppers can filter by category on the shop page.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={addCategory}
+            className="px-3 py-2 border border-white/20 text-white/80 text-xs font-bold tracking-widest uppercase hover:text-white"
+            style={{ fontFamily: 'var(--font-orbitron)' }}
+          >
+            Add category
+          </button>
+        </div>
+
+        <ul className="space-y-4">
+          {categories.map((cat, index) => (
+            <li key={cat.id} className="p-4 border border-white/10 bg-black/20 space-y-3">
+              <div className="flex flex-wrap gap-2 items-center justify-between">
+                <span className="text-xs text-white/50">Category {index + 1}</span>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    className="text-xs px-2 py-1 border border-white/15 uppercase tracking-wider disabled:opacity-30"
+                    onClick={() => moveCategory(index, -1)}
+                    disabled={index === 0}
+                  >
+                    Up
+                  </button>
+                  <button
+                    type="button"
+                    className="text-xs px-2 py-1 border border-white/15 uppercase tracking-wider disabled:opacity-30"
+                    onClick={() => moveCategory(index, 1)}
+                    disabled={index === categories.length - 1}
+                  >
+                    Down
+                  </button>
+                  <button
+                    type="button"
+                    className="text-xs px-2 py-1 border border-red-500/50 text-red-300 uppercase tracking-wider"
+                    onClick={() => requestRemoveCategory(index)}
+                    disabled={categories.length <= 1}
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+              <div className="grid sm:grid-cols-2 gap-4">
+                <label className="block space-y-1">
+                  <span className="text-[10px] font-bold tracking-widest uppercase text-white/60">Display name</span>
+                  <input
+                    className="w-full px-3 py-2 bg-black/40 border border-white/15 text-sm text-white"
+                    value={cat.title}
+                    onChange={(e) => updateCategory(index, { ...cat, title: e.target.value })}
+                  />
+                </label>
+                <label className="block space-y-1">
+                  <span className="text-[10px] font-bold tracking-widest uppercase text-white/60">Internal id</span>
+                  <input
+                    className="w-full px-3 py-2 bg-black/40 border border-white/15 text-sm text-white/70 font-mono"
+                    value={cat.id}
+                    readOnly
+                  />
+                </label>
+              </div>
+              <p className="text-[10px] text-white/40">
+                {products.filter((p) => p.categoryId === cat.id).length} product(s) in this category
+              </p>
+            </li>
+          ))}
+        </ul>
+      </section>
+
       <div className="flex justify-end mb-6">
         <button
           type="button"
@@ -440,11 +588,17 @@ export default function AdminShopClient({
               </label>
               <label className="block space-y-1">
                 <span className="text-[10px] font-bold tracking-widest uppercase text-white/60">Category</span>
-                <input
+                <select
                   className="w-full px-3 py-2 bg-black/40 border border-white/15 text-sm text-white"
-                  value={p.category}
-                  onChange={(e) => patch(p.id, { category: e.target.value })}
-                />
+                  value={p.categoryId}
+                  onChange={(e) => patch(p.id, { categoryId: e.target.value })}
+                >
+                  {categories.map((cat) => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.title}
+                    </option>
+                  ))}
+                </select>
               </label>
               <label className="block space-y-1">
                 <span className="text-[10px] font-bold tracking-widest uppercase text-white/60">Badge (optional)</span>

@@ -17,7 +17,7 @@ export default function ShopPageClient() {
         </div>
       </div>
 
-      <ShopSection bgClassName="bg-background" showReturnsNotice layout="tiles" />
+      <ShopSection bgClassName="bg-background" showReturnsNotice layout="tiles" showCategoryFilter />
     </ShopPageShell>
   )
 }

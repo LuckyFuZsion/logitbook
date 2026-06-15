@@ -11,14 +11,13 @@ export default async function AdminShopPage() {
 
   const raw = await readStoreFile()
   const merged = mergeStoreData(raw)
-  const initialProducts = merged.products
   const stamp = raw?.updatedAt ?? merged.updatedAt
   const persistenceBackend = isFirestorePersistenceEnabled() ? 'firestore' : 'file'
 
   return (
     <AdminShopClient
       key={stamp}
-      initialProducts={initialProducts}
+      initialData={merged}
       persistenceBackend={persistenceBackend}
       cmsCollectionId={getCmsCollectionId()}
     />

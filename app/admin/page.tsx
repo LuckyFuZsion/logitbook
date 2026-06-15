@@ -50,11 +50,6 @@ const AREAS = [
     title: 'Change log',
     description: 'Firestore audit of every CMS save with before/after data. Revert a change if something went wrong.',
   },
-  {
-    href: '/admin/go-live',
-    title: 'Go-live',
-    description: 'Checklist for domain, env, data, Stripe, Cloudinary, and launch QA.',
-  },
 ] as const
 
 export default async function AdminIndexPage() {

@@ -25,6 +25,7 @@ function storePartialFromFirestore(data: Record<string, unknown> | undefined): P
   if (!data || typeof data !== 'object') return null
   if (!Array.isArray(data.products)) return null
   return {
+    categories: Array.isArray(data.categories) ? (data.categories as StoreData['categories']) : undefined,
     products: data.products as StoreData['products'],
     updatedAt: typeof data.updatedAt === 'string' ? data.updatedAt : undefined,
   }
@@ -60,6 +61,7 @@ export async function writeStoreFile(data: StoreData): Promise<void> {
   const db = getFirestoreDb()
   if (db) {
     await db.collection(getCmsCollectionId()).doc(DOC_ID).set({
+      categories: data.categories,
       products: data.products,
       updatedAt: data.updatedAt,
     })

@@ -10,9 +10,11 @@ function isPrestigiousLogbook(product: StoreProduct): boolean {
 
 export function ShopProductView({
   product,
+  categoryTitle,
   otherProducts = [],
 }: {
   product: StoreProduct
+  categoryTitle: string
   otherProducts?: StoreProduct[]
 }) {
   const images = product.images.filter(Boolean)
@@ -43,7 +45,7 @@ export function ShopProductView({
               </p>
             )}
             <p className="text-[10px] font-semibold tracking-widest uppercase text-[var(--brand-red)]">
-              {product.category}
+              {categoryTitle}
             </p>
             <h1 className="text-3xl md:text-4xl font-black text-white" style={{ fontFamily: 'var(--font-orbitron)' }}>
               {product.name}

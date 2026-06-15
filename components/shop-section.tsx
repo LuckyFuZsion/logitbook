@@ -2,9 +2,12 @@
 
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-import { ShoppingCart, BadgeCheck } from 'lucide-react'
-import type { StoreProduct } from '@/lib/store-types'
+import { ArrowRight, BadgeCheck } from 'lucide-react'
+import type { StoreCategory, StoreProduct } from '@/lib/store-types'
+import { getCategoryTitle } from '@/lib/store-category-utils'
 import { productImageAlt } from '@/lib/product-image-alt'
+import { ProductImageCarousel } from '@/components/product-image-carousel'
+import { publicSiteUrl } from '@/lib/site-url'
 
 /** Normalized for UI (primary image convenience field). */
 export type Product = StoreProduct & { image: string }
@@ -14,6 +17,8 @@ interface ShopSectionProps {
   showReturnsNotice?: boolean
   /** Full cards on home; square tiles linking to product pages on /shop */
   layout?: 'cards' | 'tiles'
+  /** Show category filter pills (shop page) */
+  showCategoryFilter?: boolean
 }
 
 function normalizeProducts(raw: StoreProduct[]): Product[] {
@@ -31,8 +36,11 @@ export default function ShopSection({
   bgClassName = 'bg-background',
   showReturnsNotice = false,
   layout = 'cards',
+  showCategoryFilter = false,
 }: ShopSectionProps) {
+  const [categories, setCategories] = useState<StoreCategory[]>([])
   const [products, setProducts] = useState<Product[]>([])
+  const [activeCategoryId, setActiveCategoryId] = useState<string | null>(null)
   const [loadError, setLoadError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -42,8 +50,11 @@ export default function ShopSection({
         if (!r.ok) throw new Error('Could not load shop')
         return r.json()
       })
-      .then((json: { products: StoreProduct[] }) => {
-        if (!cancelled) setProducts(normalizeProducts(json.products ?? []))
+      .then((json: { products: StoreProduct[]; categories?: StoreCategory[] }) => {
+        if (!cancelled) {
+          setCategories(json.categories ?? [])
+          setProducts(normalizeProducts(json.products ?? []))
+        }
       })
       .catch(() => {
         if (!cancelled) setLoadError('Shop catalogue could not be loaded.')
@@ -53,7 +64,9 @@ export default function ShopSection({
     }
   }, [])
 
-  const filtered = products
+  const filtered = activeCategoryId
+    ? products.filter((p) => p.categoryId === activeCategoryId)
+    : products
 
   return (
     <section
@@ -81,7 +94,7 @@ export default function ShopSection({
                   price: p.price,
                   priceCurrency: 'GBP',
                   availability: 'https://schema.org/InStock',
-                  url: p.stripeUrl,
+                  url: `${publicSiteUrl()}/shop/${encodeURIComponent(p.id)}`,
                 },
               },
             })),
@@ -114,16 +127,56 @@ export default function ShopSection({
         )}
 
         {!loadError && filtered.length === 0 && (
-          <p className="text-center text-white/50 text-sm">No products configured.</p>
+          <p className="text-center text-white/50 text-sm">
+            {activeCategoryId ? 'No products in this category.' : 'No products configured.'}
+          </p>
+        )}
+
+        {showCategoryFilter && categories.length > 0 && !loadError && (
+          <div
+            className="flex flex-wrap justify-center gap-2 mb-10"
+            role="group"
+            aria-label="Filter by category"
+          >
+            <button
+              type="button"
+              onClick={() => setActiveCategoryId(null)}
+              className={`px-4 py-2 text-xs font-bold tracking-widest uppercase border transition-colors ${
+                activeCategoryId === null
+                  ? 'border-[var(--brand-red)] bg-[var(--brand-red)] text-white'
+                  : 'border-[var(--charcoal-light)] text-white/70 hover:border-[var(--brand-red)]/50 hover:text-white'
+              }`}
+              style={{ fontFamily: 'var(--font-orbitron)' }}
+              aria-pressed={activeCategoryId === null}
+            >
+              All
+            </button>
+            {categories.map((cat) => (
+              <button
+                key={cat.id}
+                type="button"
+                onClick={() => setActiveCategoryId(cat.id)}
+                className={`px-4 py-2 text-xs font-bold tracking-widest uppercase border transition-colors ${
+                  activeCategoryId === cat.id
+                    ? 'border-[var(--brand-red)] bg-[var(--brand-red)] text-white'
+                    : 'border-[var(--charcoal-light)] text-white/70 hover:border-[var(--brand-red)]/50 hover:text-white'
+                }`}
+                style={{ fontFamily: 'var(--font-orbitron)' }}
+                aria-pressed={activeCategoryId === cat.id}
+              >
+                {cat.title}
+              </button>
+            ))}
+          </div>
         )}
 
         {layout === 'tiles' ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6" role="list">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 items-stretch" role="list">
             {filtered.map((product) => (
               <Link
                 key={product.id}
                 href={`/shop/${product.id}`}
-                className="group block"
+                className="group block h-full"
                 role="listitem"
               >
                 <article className="glass-card flex flex-col overflow-hidden border border-[var(--charcoal-light)] hover:border-[var(--brand-red)]/50 transition-all duration-300 h-full">
@@ -143,9 +196,9 @@ export default function ShopSection({
                       loading="lazy"
                     />
                   </div>
-                  <div className="flex flex-col gap-1 p-4 text-center">
+                  <div className="flex flex-col gap-1 p-4 text-center flex-1">
                     <h3
-                      className="text-sm md:text-base font-bold text-white leading-tight line-clamp-2"
+                      className="text-sm md:text-base font-bold text-white leading-tight line-clamp-2 min-h-[2.5rem]"
                       style={{ fontFamily: 'var(--font-orbitron)' }}
                     >
                       {product.name}
@@ -159,64 +212,69 @@ export default function ShopSection({
             ))}
           </div>
         ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" role="list">
-          {filtered.map((product) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch" role="list">
+          {filtered.map((product) => {
+            const productHref = `/shop/${product.id}`
+            const images = product.images.filter(Boolean)
+
+            return (
               <article
                 key={product.id}
-                className="glass-card group relative flex flex-col overflow-hidden border border-[var(--charcoal-light)] hover:border-[var(--brand-red)]/50 transition-all duration-300"
+                className="glass-card group relative flex h-full flex-col overflow-hidden border border-[var(--charcoal-light)] hover:border-[var(--brand-red)]/50 transition-all duration-300"
                 role="listitem"
               >
-                <div className="relative overflow-hidden aspect-video bg-[var(--charcoal)] flex items-center justify-center">
-                  {product.badge && (
-                    <span
-                      className="absolute top-2 left-2 z-10 px-2 py-1 text-[9px] font-bold tracking-widest uppercase bg-[var(--brand-red)] text-white"
-                      style={{ fontFamily: 'var(--font-orbitron)' }}
-                    >
-                      {product.badge}
-                    </span>
-                  )}
-                  <img
-                    src={product.image}
-                    alt={productImageAlt(product.name)}
-                    className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" aria-hidden="true" />
-                  {product.images.length > 1 && (
-                    <span
-                      className="absolute bottom-2 right-2 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-black/70 text-white/90 border border-white/10"
-                      style={{ fontFamily: 'var(--font-orbitron)' }}
-                      aria-hidden="true"
-                    >
-                      +{product.images.length - 1} photos
-                    </span>
-                  )}
-                </div>
-
-                <div className="flex flex-col flex-1 p-4 gap-3">
-                  <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <p className="text-[10px] font-semibold tracking-widest uppercase text-[var(--brand-red)] mb-1">
-                        {product.category}
-                      </p>
-                      <h3
-                        className="text-base font-bold text-white leading-tight"
+                <div className="relative shrink-0 aspect-video bg-[var(--charcoal)]">
+                  <div className="absolute inset-0 min-h-0">
+                    {product.badge && (
+                      <span
+                        className="absolute top-2 left-2 z-20 px-2 py-1 text-[9px] font-bold tracking-widest uppercase bg-[var(--brand-red)] text-white pointer-events-none"
                         style={{ fontFamily: 'var(--font-orbitron)' }}
                       >
-                        {product.name}
+                        {product.badge}
+                      </span>
+                    )}
+                    <ProductImageCarousel
+                      images={images}
+                      alt={product.name}
+                      variant="card"
+                      linkHref={productHref}
+                    />
+                    <div
+                      className="pointer-events-none absolute inset-x-0 bottom-0 top-1/3 bg-gradient-to-t from-black/40 to-transparent"
+                      aria-hidden="true"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-1 flex-col p-4 gap-3">
+                  <div className="flex items-start justify-between gap-2 min-h-[3.75rem]">
+                    <div className="min-w-0">
+                      <p className="text-[10px] font-semibold tracking-widest uppercase text-[var(--brand-red)] mb-1">
+                        {getCategoryTitle(categories, product.categoryId)}
+                      </p>
+                      <h3
+                        className="text-base font-bold text-white leading-tight line-clamp-2"
+                        style={{ fontFamily: 'var(--font-orbitron)' }}
+                      >
+                        <Link
+                          href={productHref}
+                          className="hover:text-[var(--brand-red)] transition-colors"
+                        >
+                          {product.name}
+                        </Link>
                       </h3>
                     </div>
                     <BadgeCheck size={16} className="text-[var(--brand-red)] mt-1 shrink-0" aria-label="Verified product" />
                   </div>
 
-                  <p className="text-sm text-white/60 leading-relaxed">{product.description}</p>
+                  <p className="text-sm text-white/60 leading-relaxed line-clamp-3 min-h-[3.75rem]">{product.description}</p>
 
                   <div className="mt-auto pt-2 border-t border-[var(--charcoal-light)] space-y-2">
-                    {isPrestigiousLogbook(product) && (
-                      <p className="text-[10px] text-white/50">
-                        20+ books qualify for wholesale pricing. Contact us for details.
-                      </p>
-                    )}
+                    <p className="text-[10px] text-white/50 min-h-[2.5rem]">
+                      {isPrestigiousLogbook(product)
+                        ? '20+ books qualify for wholesale pricing. Contact us for details.'
+                        : null}
+                    </p>
                     <div className="flex items-center justify-between flex-wrap gap-2">
                       <div className="flex items-baseline gap-2">
                         <span className="text-xl font-black text-white" style={{ fontFamily: 'var(--font-orbitron)' }}>
@@ -229,22 +287,20 @@ export default function ShopSection({
                         )}
                         <span className="text-xs text-white/50">+ delivery</span>
                       </div>
-                      <a
-                        href={product.stripeUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold tracking-widest uppercase bg-[var(--brand-red)] hover:bg-red-600 text-white transition-all duration-200 hover:glow-red"
+                      <Link
+                        href={productHref}
+                        className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold tracking-widest uppercase border border-[var(--brand-red)] text-[var(--brand-red)] hover:bg-[var(--brand-red)] hover:text-white transition-all duration-200"
                         style={{ fontFamily: 'var(--font-orbitron)' }}
-                        aria-label={`Buy ${product.name} on Stripe`}
                       >
-                        <ShoppingCart size={13} aria-hidden="true" />
-                        Buy now
-                      </a>
+                        View product
+                        <ArrowRight size={13} aria-hidden="true" />
+                      </Link>
                     </div>
                   </div>
                 </div>
               </article>
-          ))}
+            )
+          })}
         </div>
         )}
 

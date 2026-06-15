@@ -11,18 +11,19 @@ export function storeProductPrimaryImageUrl(product: StoreProduct, baseUrl = sit
   return `${baseUrl.replace(/\/+$/, '')}${path}`
 }
 
-export function buildStoreProductMetadata(product: StoreProduct): Metadata {
+export function buildStoreProductMetadata(product: StoreProduct, categoryTitle?: string): Metadata {
   const baseUrl = siteUrl()
   const canonical = `${baseUrl}/shop/${encodeURIComponent(product.id)}`
   const title = product.name.trim()
   const description = product.description.trim()
   const ogImage = storeProductPrimaryImageUrl(product, baseUrl)
+  const categoryKeyword = categoryTitle ?? product.categoryId
 
   return {
     title: `${title} | Shop | LOGITSHOP`,
     description,
     alternates: { canonical },
-    keywords: [product.category, product.name, 'LOGITSHOP', 'shop'].filter(Boolean),
+    keywords: [categoryKeyword, product.name, 'LOGITSHOP', 'shop'].filter(Boolean),
     openGraph: {
       title,
       description,

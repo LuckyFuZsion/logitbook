@@ -1,4 +1,10 @@
-/** Persisted catalog shape (file or future Firestore). */
+/** Shop catalogue category (managed in admin, stored in Firestore/file). */
+export interface StoreCategory {
+  id: string
+  title: string
+}
+
+/** Persisted catalog shape (file or Firestore). */
 export interface StoreProduct {
   id: string
   name: string
@@ -7,7 +13,7 @@ export interface StoreProduct {
   /** Display price in GBP for UI and schema.org */
   price: number
   originalPrice?: number
-  category: string
+  categoryId: string
   badge?: string
   /** Primary + optional extras — use Cloudinary `https://res.cloudinary.com/...` URLs */
   images: string[]
@@ -16,6 +22,7 @@ export interface StoreProduct {
 }
 
 export interface StoreData {
+  categories: StoreCategory[]
   products: StoreProduct[]
   updatedAt: string
 }
