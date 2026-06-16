@@ -396,15 +396,15 @@ export default function ShopSection({
               Returns &amp; refunds
             </h3>
             <p className="text-sm text-white/65 leading-relaxed mb-3">
-              Contact us within 14 days of purchase or receipt (whichever is later). We&apos;re happy to exchange or
-              refund on presentation of a valid receipt — goods must be returned within 30 days in original packaging.
+              Payment terms and returns policy apply to all invoices and shop purchases. Please read the full terms
+              before placing an order or booking a service.
             </p>
             <Link
               href="/returns"
               className="text-sm text-[var(--brand-red)] hover:text-red-400 underline underline-offset-4 decoration-[var(--brand-red)]/40 transition-colors"
               style={{ fontFamily: 'var(--font-rajdhani)' }}
             >
-              Read full return and refund policy
+              Read payment terms &amp; returns policy
             </Link>
           </aside>
         )}

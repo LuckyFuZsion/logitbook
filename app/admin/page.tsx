@@ -41,6 +41,11 @@ const AREAS = [
     description: 'Edit brand story text, feature bullets, timeline milestones, and company values.',
   },
   {
+    href: '/admin/returns',
+    title: 'Returns',
+    description: 'Payment terms and returns policy text shown on the public returns page.',
+  },
+  {
     href: '/admin/settings',
     title: 'Settings',
     description: 'Contact details, business hours, and site-wide announcement banner. Updates footer and schema.org.',
