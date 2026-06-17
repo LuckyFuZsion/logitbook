@@ -33,6 +33,7 @@ export default function HomePageClient({ cms }: { cms: HomeCmsData }) {
         <ShopSection
           bgClassName="section-strip-dark"
           initialStore={cms.store}
+          showReturnsNotice
         />
         <ServicesSection bgClassName="section-strip-blue" initialData={cms.services} />
         <TestimonialsSection

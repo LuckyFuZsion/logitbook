@@ -5,7 +5,7 @@ import { buildPageMetadata } from '@/lib/seo-page-metadata'
 import { SITE_META_DESCRIPTION, SITE_OG_DESCRIPTION, SITE_TITLE } from '@/lib/site-seo'
 
 /** Regenerate homepage when CMS data changes (shop, FAQ, etc.). */
-export const revalidate = 300
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = buildPageMetadata({
   title: SITE_TITLE,

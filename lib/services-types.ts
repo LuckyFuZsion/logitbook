@@ -12,8 +12,7 @@ export interface ServiceCategory {
   id: string
   title: string
   /**
-   * Lucide icon name: 'Droplet' | 'Wrench' | 'Zap' | 'LifeBuoy' | 'Shield' |
-   * 'Cpu' | 'Settings' | 'Anchor' | 'Compass' | 'Star'
+   * Category icon image — site path (e.g. /icons/cylinder.webp) or https URL.
    */
   icon: string
   description: string

@@ -22,6 +22,8 @@ const TABS = [
   { id: 'testimonials', label: 'Testimonials' },
   { id: 'story', label: 'Our Story' },
   { id: 'gallery', label: 'Gallery' },
+  { id: 'team', label: 'Meet the Team' },
+  { id: 'destinations', label: 'Dive Destinations' },
 ] as const
 
 export default function Navigation({ activeTab, onTabChange }: NavigationProps) {
@@ -45,6 +47,14 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
     }
     if (id === 'testimonials') {
       window.location.assign('/testimonials')
+      return
+    }
+    if (id === 'team') {
+      window.location.assign('/meet-the-team')
+      return
+    }
+    if (id === 'destinations') {
+      window.location.assign('/dive-destinations')
       return
     }
 
@@ -95,12 +105,12 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
           </button>
 
           {/* Tabs */}
-          <ul className="flex items-center gap-1" role="list">
+          <ul className="flex items-center gap-0.5 lg:gap-1 flex-wrap justify-end" role="list">
             {TABS.map((tab) => (
               <li key={tab.id}>
                 <button
                   onClick={() => handleTab(tab.id)}
-                  className={`relative px-4 py-2 text-sm font-semibold tracking-widest uppercase transition-all duration-200 ${
+                  className={`relative px-2.5 lg:px-4 py-2 text-xs lg:text-sm font-semibold tracking-widest uppercase transition-all duration-200 ${
                     activeTab === tab.id
                       ? 'text-[var(--brand-red)]'
                       : 'text-white/70 hover:text-white'

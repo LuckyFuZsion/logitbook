@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import type { GalleryBeforeAfter, GalleryData } from '@/lib/gallery-types'
 import { recordCmsAuditEntry } from '@/lib/cms-audit'
+import { traceCmsAdminSave } from '@/lib/cms-save-trace'
 import { getAdminSession } from '@/lib/admin-session'
 import { mergeGalleryData } from '@/lib/gallery-defaults'
 import { readGalleryFile, writeGalleryFile } from '@/lib/gallery-store'
@@ -106,5 +107,6 @@ export async function PUT(req: Request) {
 
   await recordCmsAuditEntry('gallery', previous, next)
   await writeGalleryFile(next)
+  traceCmsAdminSave('gallery', next.updatedAt)
   return NextResponse.json({ ok: true, data: mergeGalleryData(next) })
 }

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { recordCmsAuditEntry } from '@/lib/cms-audit'
+import { traceCmsAdminSave } from '@/lib/cms-save-trace'
 import { getAdminSession } from '@/lib/admin-session'
 import { mergeHeroData } from '@/lib/hero-defaults'
 import { readHeroFile, writeHeroFile } from '@/lib/hero-store'
@@ -19,5 +20,6 @@ export async function PUT(req: Request) {
   const next = { ...mergeHeroData(body), updatedAt: new Date().toISOString() }
   await recordCmsAuditEntry('hero', previous, next)
   await writeHeroFile(next)
+  traceCmsAdminSave('hero', next.updatedAt)
   return NextResponse.json({ ok: true, data: next })
 }

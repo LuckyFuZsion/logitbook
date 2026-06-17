@@ -2,6 +2,7 @@
 import { promises as fs } from 'fs'
 import path from 'path'
 import { getCmsCollectionId, getFirestoreDb } from '@/lib/firebase-admin'
+import { traceCmsRead } from '@/lib/cms-save-trace'
 import type { StoreData } from '@/lib/store-types'
 
 const DATA_PATH = path.join(process.cwd(), 'data', 'store.json')
@@ -44,6 +45,7 @@ export async function readStoreFile(): Promise<Partial<StoreData> | null> {
         const raw = snap.data() as Record<string, unknown> | undefined
         const parsed = storePartialFromFirestore(raw)
         if (parsed && Array.isArray(parsed.products)) {
+          traceCmsRead('shop', 'firestore', parsed.updatedAt)
           return parsed
         }
       }
@@ -51,7 +53,9 @@ export async function readStoreFile(): Promise<Partial<StoreData> | null> {
       console.error('[store-store] Firestore read failed, falling back to file:', e)
     }
   }
-  return readStoreFromDisk()
+  const fromDisk = await readStoreFromDisk()
+  traceCmsRead('shop', fromDisk ? 'file' : 'none', fromDisk?.updatedAt)
+  return fromDisk
 }
 
 /**

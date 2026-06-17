@@ -156,7 +156,9 @@ export async function listCmsAuditEntries(limit = 100): Promise<CmsAuditListEntr
   })
 }
 
-export async function revertCmsAuditEntry(entryId: string): Promise<{ ok: true } | { ok: false; error: string }> {
+export async function revertCmsAuditEntry(
+  entryId: string,
+): Promise<{ ok: true; resource: CmsAuditResource } | { ok: false; error: string }> {
   const db = getFirestoreDb()
   if (!db) return { ok: false, error: 'Firestore is not configured.' }
 
@@ -180,7 +182,7 @@ export async function revertCmsAuditEntry(entryId: string): Promise<{ ok: true }
   try {
     await applyCmsResourceSnapshot(resource, previous)
     await ref.update({ revertedAt: FieldValue.serverTimestamp() })
-    return { ok: true }
+    return { ok: true, resource }
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : 'Revert failed.' }
   }

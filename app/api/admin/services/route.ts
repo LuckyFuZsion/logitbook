@@ -1,19 +1,23 @@
 import { NextResponse } from 'next/server'
 import type { ServicesData, ServiceCategory, ServiceItem } from '@/lib/services-types'
 import { recordCmsAuditEntry } from '@/lib/cms-audit'
+import { traceCmsAdminSave } from '@/lib/cms-save-trace'
 import { getAdminSession } from '@/lib/admin-session'
 import { mergeServicesData } from '@/lib/services-defaults'
 import { readServicesFile, writeServicesFile } from '@/lib/services-store'
 
-const VALID_ICONS = [
-  'Droplet', 'Wrench', 'Zap', 'LifeBuoy', 'Shield',
-  'Cpu', 'Settings', 'Anchor', 'Compass', 'Star',
-]
+function isValidServiceIcon(icon: string): boolean {
+  if (icon.startsWith('/')) return true
+  if (/^https?:\/\//i.test(icon)) return true
+  return false
+}
 
 function validateCategory(cat: ServiceCategory): string | null {
   if (!cat.id || typeof cat.id !== 'string') return 'Category missing id'
   if (!cat.title || typeof cat.title !== 'string') return 'Category missing title'
-  if (!VALID_ICONS.includes(cat.icon)) return `Invalid icon: ${cat.icon}`
+  if (typeof cat.icon !== 'string' || !isValidServiceIcon(cat.icon)) {
+    return `Invalid icon: ${cat.icon}. Use a site path (/icons/...) or https URL.`
+  }
   if (typeof cat.description !== 'string') return 'Category missing description'
   if (!Array.isArray(cat.services)) return 'Category missing services array'
   for (const svc of cat.services) {
@@ -82,5 +86,6 @@ export async function PUT(req: Request) {
 
   await recordCmsAuditEntry('services', previous, next)
   await writeServicesFile(next)
+  traceCmsAdminSave('services', next.updatedAt)
   return NextResponse.json({ ok: true, data: next })
 }

@@ -28,6 +28,7 @@ import { mergeStoryData } from '@/lib/story-defaults'
 import { readStoryFile } from '@/lib/story-store'
 import { mergeTestimonialsData } from '@/lib/testimonials-defaults'
 import { readTestimonialsFile } from '@/lib/testimonials-store'
+import { traceHomeCmsRead } from '@/lib/cms-save-trace'
 
 export interface HomeCmsData {
   hero: HeroData
@@ -68,7 +69,7 @@ export async function loadHomeCmsData(): Promise<HomeCmsData> {
     readAnnouncementFile(),
   ])
 
-  return {
+  const cms: HomeCmsData = {
     hero: mergeHeroData(heroRaw),
     store: mergeStoreData(storeRaw),
     services: mergeServicesData(servicesRaw),
@@ -80,4 +81,19 @@ export async function loadHomeCmsData(): Promise<HomeCmsData> {
     hours: mergeHoursData(hoursRaw),
     announcement: mergeAnnouncementData(announcementRaw),
   }
+
+  traceHomeCmsRead({
+    hero: cms.hero.updatedAt,
+    shop: cms.store.updatedAt,
+    services: cms.services.updatedAt,
+    testimonials: cms.testimonials.updatedAt,
+    story: cms.story.updatedAt,
+    gallery: cms.gallery.updatedAt,
+    faq: cms.faq.updatedAt,
+    contact: cms.contact.updatedAt,
+    hours: cms.hours.updatedAt,
+    announcement: cms.announcement.updatedAt,
+  })
+
+  return cms
 }

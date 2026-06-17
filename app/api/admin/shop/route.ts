@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import type { StoreCategory, StoreData, StoreProduct } from '@/lib/store-types'
 import { recordCmsAuditEntry } from '@/lib/cms-audit'
+import { traceCmsAdminSave } from '@/lib/cms-save-trace'
 import { getAdminSession } from '@/lib/admin-session'
 import { mergeStoreData } from '@/lib/store-defaults'
 import { readStoreFile, writeStoreFile } from '@/lib/store-store'
@@ -98,5 +99,6 @@ export async function PUT(req: Request) {
 
   await recordCmsAuditEntry('shop', previous, next)
   await writeStoreFile(next)
+  traceCmsAdminSave('shop', next.updatedAt)
   return NextResponse.json({ ok: true, data: mergeStoreData(next) })
 }

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { recordCmsAuditEntry } from '@/lib/cms-audit'
+import { traceCmsAdminSave } from '@/lib/cms-save-trace'
 import { getAdminSession } from '@/lib/admin-session'
 import { mergeAnnouncementData } from '@/lib/announcement-defaults'
 import { readAnnouncementFile, writeAnnouncementFile } from '@/lib/announcement-store'
@@ -18,5 +19,6 @@ export async function PUT(req: Request) {
   const next = { ...mergeAnnouncementData(body), updatedAt: new Date().toISOString() }
   await recordCmsAuditEntry('announcement', previous, next)
   await writeAnnouncementFile(next)
+  traceCmsAdminSave('announcement', next.updatedAt)
   return NextResponse.json({ ok: true, data: next })
 }

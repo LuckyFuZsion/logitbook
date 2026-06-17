@@ -87,6 +87,18 @@ export async function buildSitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     },
     {
+      url: `${baseUrl}/meet-the-team`,
+      lastModified: homeUpdated,
+      changeFrequency: 'monthly',
+      priority: 0.65,
+    },
+    {
+      url: `${baseUrl}/dive-destinations`,
+      lastModified: homeUpdated,
+      changeFrequency: 'monthly',
+      priority: 0.65,
+    },
+    {
       url: `${baseUrl}/gallery`,
       lastModified: parseLastModified(gallery.updatedAt),
       changeFrequency: 'weekly',

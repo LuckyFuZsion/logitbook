@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { recordCmsAuditEntry } from '@/lib/cms-audit'
+import { traceCmsAdminSave } from '@/lib/cms-save-trace'
 import { getAdminSession } from '@/lib/admin-session'
 import { mergeContactData } from '@/lib/contact-defaults'
 import { readContactFile, writeContactFile } from '@/lib/contact-store'
@@ -20,5 +21,6 @@ export async function PUT(req: Request) {
   const next = { ...mergeContactData(body), updatedAt: new Date().toISOString() }
   await recordCmsAuditEntry('contact', previous, next)
   await writeContactFile(next)
+  traceCmsAdminSave('contact', next.updatedAt)
   return NextResponse.json({ ok: true, data: next })
 }

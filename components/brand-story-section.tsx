@@ -171,7 +171,7 @@ export default function BrandStorySection({
                   {/* Content */}
                   <div className="md:text-center flex flex-col gap-1 mb-8 md:mb-0 md:px-4">
                     <span
-                      className="text-xs font-black tracking-widest text-[var(--brand-red)]"
+                      className="text-sm md:text-base font-black tracking-widest text-[var(--brand-red)]"
                       style={{ fontFamily: 'var(--font-orbitron)' }}
                     >
                       {year}

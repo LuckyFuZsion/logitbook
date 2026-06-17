@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getAdminSession } from '@/lib/admin-session'
 import { revertCmsAuditEntry } from '@/lib/cms-audit'
+import { traceCmsAdminSave } from '@/lib/cms-save-trace'
 import { getFirestoreDb } from '@/lib/firebase-admin'
 
 export async function POST(req: Request) {
@@ -25,5 +26,6 @@ export async function POST(req: Request) {
   if (!result.ok) {
     return NextResponse.json({ error: result.error }, { status: 400 })
   }
+  traceCmsAdminSave(result.resource, new Date().toISOString(), 'post-fix')
   return NextResponse.json({ ok: true })
 }

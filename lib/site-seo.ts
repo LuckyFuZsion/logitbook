@@ -3,11 +3,11 @@ export const SITE_TITLE = 'LOGITSHOP | IDEST Scuba Servicing & Dive Gear'
 
 /** Meta description — keep under ~155 characters for Google SERP snippets. */
 export const SITE_META_DESCRIPTION =
-  'IDEST-accredited scuba servicing, logbooks and dive gear from LOGITSHOP. Regulator, BCD and cylinder maintenance trusted since 1988.'
+  'LOGITSHOP offers IDEST-accredited scuba servicing and UK-made LOG-IT logbooks. Regulators, BCDs, cylinders and dive gear from Grantham, Lincolnshire.'
 
 /** Open Graph / Twitter description — keep under ~125 characters for social previews. */
 export const SITE_OG_DESCRIPTION =
-  'IDEST-accredited scuba servicing, logbooks and dive gear. Trusted regulator, BCD and cylinder maintenance since 1988.'
+  'UK-made LOG-IT logbooks and IDEST-accredited scuba servicing. Regulators, BCDs, cylinders and dive gear from Grantham, UK.'
 
 /** @deprecated Use SITE_META_DESCRIPTION */
 export const SITE_DESCRIPTION = SITE_META_DESCRIPTION
@@ -19,4 +19,4 @@ export const SITE_OG_IMAGE_WIDTH = 1200
 export const SITE_OG_IMAGE_HEIGHT = 630
 
 export const SITE_OG_IMAGE_ALT =
-  'LOGITSHOP — IDEST accredited scuba servicing, diving logbooks and dive gear'
+  'LOGITSHOP — IDEST-accredited scuba servicing, UK-made LOG-IT logbooks and dive gear'

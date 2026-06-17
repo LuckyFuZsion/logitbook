@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import type { FaqData, FaqItem } from '@/lib/faq-types'
 import { recordCmsAuditEntry } from '@/lib/cms-audit'
+import { traceCmsAdminSave } from '@/lib/cms-save-trace'
 import { getAdminSession } from '@/lib/admin-session'
 import { mergeFaqData } from '@/lib/faq-defaults'
 import { readFaqFile, writeFaqFile } from '@/lib/faq-store'
@@ -49,5 +50,6 @@ export async function PUT(req: Request) {
 
   await recordCmsAuditEntry('faq', previous, next)
   await writeFaqFile(next)
+  traceCmsAdminSave('faq', next.updatedAt)
   return NextResponse.json({ ok: true, data: next })
 }
