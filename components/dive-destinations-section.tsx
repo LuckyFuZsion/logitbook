@@ -1,25 +1,28 @@
-import { DIVE_DESTINATIONS, DIVE_DESTINATIONS_INTRO } from '@/lib/dive-destinations'
+import type { DiveDestinationsData } from '@/lib/dive-destinations'
 import { siteUrl } from '@/lib/site-url'
 import { DiveDestinationCard } from '@/components/dive-destination-card'
 import { SectionHeading } from '@/components/section-heading'
 
 export function DiveDestinationsSection({
+  data,
   headingLevel = 'h1',
 }: {
+  data: DiveDestinationsData
   headingLevel?: 'h1' | 'h2'
 }) {
   const baseUrl = siteUrl()
+  const { intro, destinations } = data
 
   const destinationsJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
     name: "Log-It's Trusted Dive Destinations - LOGITSHOP",
-    description: DIVE_DESTINATIONS_INTRO.join(' '),
+    description: intro.join(' '),
     url: `${baseUrl}/dive-destinations`,
     mainEntity: {
       '@type': 'ItemList',
       name: "Log-It's Trusted Dive Destinations",
-      itemListElement: DIVE_DESTINATIONS.map((destination, index) => ({
+      itemListElement: destinations.map((destination, index) => ({
         '@type': 'ListItem',
         position: index + 1,
         item: {
@@ -68,7 +71,7 @@ export function DiveDestinationsSection({
             aria-hidden="true"
           />
           <div className="max-w-3xl mx-auto space-y-4 text-center text-white/65 text-base leading-relaxed mb-8 px-4">
-            {DIVE_DESTINATIONS_INTRO.map((paragraph, index) => (
+            {intro.map((paragraph, index) => (
               <p key={index} style={{ fontFamily: 'var(--font-rajdhani)' }}>
                 {paragraph}
               </p>
@@ -81,7 +84,7 @@ export function DiveDestinationsSection({
           role="list"
           aria-label="Trusted accessible dive destinations"
         >
-          {DIVE_DESTINATIONS.map((destination) => (
+          {destinations.map((destination) => (
             <li key={destination.id} className="min-h-0">
               <DiveDestinationCard destination={destination} />
             </li>

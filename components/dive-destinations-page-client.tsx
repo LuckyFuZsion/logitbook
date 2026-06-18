@@ -1,10 +1,11 @@
 'use client'
 
 import Link from 'next/link'
+import type { DiveDestinationsData } from '@/lib/dive-destinations'
 import { DiveDestinationsPageShell } from '@/components/dive-destinations-page-shell'
 import { DiveDestinationsSection } from '@/components/dive-destinations-section'
 
-export default function DiveDestinationsPageClient() {
+export default function DiveDestinationsPageClient({ data }: { data: DiveDestinationsData }) {
   return (
     <DiveDestinationsPageShell>
       <div className="px-4 pt-24">
@@ -20,7 +21,7 @@ export default function DiveDestinationsPageClient() {
         </div>
       </div>
 
-      <DiveDestinationsSection headingLevel="h1" />
+      <DiveDestinationsSection data={data} headingLevel="h1" />
     </DiveDestinationsPageShell>
   )
 }

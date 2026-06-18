@@ -90,6 +90,9 @@ export function DiveDestinationCard({ destination }: { destination: DiveDestinat
                 />
               ))}
             </div>
+            {destination.narrative.trim() ? (
+              <p className="mt-3 text-white/70 leading-relaxed text-base">{destination.narrative}</p>
+            ) : null}
           </dd>
         </div>
       </dl>

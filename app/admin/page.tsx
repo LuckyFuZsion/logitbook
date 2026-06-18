@@ -46,6 +46,11 @@ const AREAS = [
     description: 'Payment terms and returns policy text shown on the public returns page.',
   },
   {
+    href: '/admin/dive-destinations',
+    title: 'Dive destinations',
+    description: 'Brief narratives under each destination’s accessibility rating on the dive destinations page.',
+  },
+  {
     href: '/admin/settings',
     title: 'Settings',
     description: 'Contact details, business hours, and site-wide announcement banner. Updates footer and schema.org.',
