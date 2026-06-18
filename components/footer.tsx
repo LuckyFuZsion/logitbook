@@ -189,7 +189,7 @@ export default function Footer({ onTabChange, initialContact, initialHours }: Fo
           <div className="flex items-center gap-4">
             <a href="/privacy-policy" className="text-sm text-white/40 hover:text-white/70 transition-colors" style={{ fontFamily: 'var(--font-rajdhani)' }}>Privacy Policy</a>
             <a href="/returns" className="text-sm text-white/40 hover:text-white/70 transition-colors" style={{ fontFamily: 'var(--font-rajdhani)' }}>Returns</a>
-            <a href="#" className="text-sm text-white/40 hover:text-white/70 transition-colors" style={{ fontFamily: 'var(--font-rajdhani)' }}>Terms of Service</a>
+            <a href="/returns" className="text-sm text-white/40 hover:text-white/70 transition-colors" style={{ fontFamily: 'var(--font-rajdhani)' }}>Terms of Service</a>
             <a href="#" className="text-sm text-white/40 hover:text-white/70 transition-colors" style={{ fontFamily: 'var(--font-rajdhani)' }}>Cookie Policy</a>
           </div>
         </div>
