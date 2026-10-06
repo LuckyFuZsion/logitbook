@@ -65,7 +65,7 @@ export default function HeroSection({ onTabChange, initialHero }: HeroSectionPro
       className="relative min-h-screen flex flex-col overflow-hidden scanlines"
       aria-label="Hero - Welcome to Logitshop"
     >
-      {/* Background video placeholder / fallback image */}
+      {/* Background video with new still as poster / reduced-motion fallback */}
       <div className="absolute inset-0 z-0">
         {playVideo ? (
           <video
@@ -82,17 +82,20 @@ export default function HeroSection({ onTabChange, initialHero }: HeroSectionPro
             <source src="/download%20(3).mp4" type="video/mp4" />
           </video>
         ) : (
-          <div
-            className="w-full h-full bg-cover bg-center opacity-[0.30]"
-            style={{ backgroundImage: 'url(/hero-bg.jpg)' }}
-            role="img"
-            aria-label="Underwater diving scene"
+          <Image
+            src="/hero-bg.webp"
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover opacity-[0.30]"
+            aria-hidden="true"
           />
         )}
         {/* Static fallback under video */}
         <div
           className="absolute inset-0 w-full h-full bg-cover bg-center opacity-25"
-          style={{ backgroundImage: 'url(/hero-dive-scene.jpg)' }}
+          style={{ backgroundImage: 'url(/hero-bg.jpg)' }}
           aria-hidden="true"
         />
         {/* Dark overlay */}

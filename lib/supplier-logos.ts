@@ -10,7 +10,7 @@ export const SUPPLIER_LOGO_HEIGHT = 833
 export const SUPPLIER_LOGOS: SupplierLogo[] = [
   { src: '/SupplierLogos/Ap-Diving-Logo.webp', name: 'AP Diving' },
   { src: '/SupplierLogos/Beaver-Logo.webp', name: 'Beaver' },
-  { src: '/SupplierLogos/Dynamic-Logo.webp', name: 'Dynamic' },
+  { src: '/SupplierLogos/Dynamic-Logo.webp', name: 'Dynamic Nord' },
   { src: '/SupplierLogos/Kent-Tooling-Logo.webp', name: 'Kent Tooling' },
   { src: '/SupplierLogos/Kubi-Logo.webp', name: 'Kubi' },
   { src: '/SupplierLogos/MiFlex-Hoses-Logo.webp', name: 'MiFlex Hoses' },
