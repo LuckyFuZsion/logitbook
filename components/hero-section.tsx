@@ -70,7 +70,7 @@ export default function HeroSection({ onTabChange, initialHero }: HeroSectionPro
         {playVideo ? (
           <video
             ref={videoRef}
-            className="w-full h-full object-cover opacity-[0.30]"
+            className="h-full w-full object-cover object-[18%_center] opacity-[0.30] md:object-center"
             autoPlay
             muted
             loop
@@ -88,13 +88,13 @@ export default function HeroSection({ onTabChange, initialHero }: HeroSectionPro
             fill
             priority
             sizes="100vw"
-            className="object-cover opacity-[0.30]"
+            className="object-cover object-[18%_center] opacity-[0.30] md:object-center"
             aria-hidden="true"
           />
         )}
         {/* Static fallback under video */}
         <div
-          className="absolute inset-0 w-full h-full bg-cover bg-center opacity-25"
+          className="absolute inset-0 h-full w-full bg-cover bg-[position:18%_center] opacity-25 md:bg-center"
           style={{ backgroundImage: 'url(/hero-bg.jpg)' }}
           aria-hidden="true"
         />
