@@ -65,12 +65,31 @@ export default function HeroSection({ onTabChange, initialHero }: HeroSectionPro
       className="relative min-h-screen flex flex-col overflow-hidden scanlines"
       aria-label="Hero - Welcome to Logitshop"
     >
-      {/* Background video with new still as poster / reduced-motion fallback */}
-      <div className="absolute inset-0 z-0">
+      {/* Background: mobile still under video; desktop video */}
+      <div className="absolute inset-0 z-0 bg-[var(--background)]">
+        {/* Soft still under video on desktop */}
+        <div
+          className="absolute inset-0 hidden h-full w-full bg-cover bg-center opacity-25 md:block"
+          style={{ backgroundImage: 'url(/hero-bg.jpg)' }}
+          aria-hidden="true"
+        />
+
+        {/* Mobile still — under the video */}
+        <Image
+          src="/hero-bg-mobile.webp"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center opacity-[0.38] scale-[1.4] -translate-y-[12%] md:hidden"
+          aria-hidden="true"
+        />
+
+        {/* Video overlaid on all breakpoints (sits above the mobile still) */}
         {playVideo ? (
           <video
             ref={videoRef}
-            className="h-full w-full object-cover object-[18%_center] opacity-[0.30] md:object-center"
+            className="absolute inset-0 z-[1] h-full w-full object-cover object-[18%_center] opacity-[0.28] md:object-center md:opacity-[0.30]"
             autoPlay
             muted
             loop
@@ -88,19 +107,14 @@ export default function HeroSection({ onTabChange, initialHero }: HeroSectionPro
             fill
             priority
             sizes="100vw"
-            className="object-cover object-[18%_center] opacity-[0.30] md:object-center"
+            className="z-[1] object-cover object-[18%_center] opacity-[0.30] md:object-center"
             aria-hidden="true"
           />
         )}
-        {/* Static fallback under video */}
-        <div
-          className="absolute inset-0 h-full w-full bg-cover bg-[position:18%_center] opacity-25 md:bg-center"
-          style={{ backgroundImage: 'url(/hero-bg.jpg)' }}
-          aria-hidden="true"
-        />
+
         {/* Dark overlay */}
         <div
-          className="absolute inset-0"
+          className="absolute inset-0 z-[2]"
           style={{
             background:
               'linear-gradient(to bottom, rgba(11, 43, 91, 0.35) 0%, rgba(11, 43, 91, 0.15) 45%, rgba(0, 0, 0, 0.45) 100%)',
@@ -108,10 +122,10 @@ export default function HeroSection({ onTabChange, initialHero }: HeroSectionPro
           aria-hidden="true"
         />
         {/* Cyber grid overlay */}
-        <div className="absolute inset-0 cyber-grid opacity-45" aria-hidden="true" />
+        <div className="absolute inset-0 z-[2] cyber-grid opacity-45" aria-hidden="true" />
         {/* Red corner accent */}
         <div
-          className="absolute top-0 right-0 w-96 h-96 opacity-10"
+          className="absolute top-0 right-0 z-[2] w-96 h-96 opacity-10"
           style={{
             background: 'radial-gradient(circle at top right, var(--brand-red) 0%, transparent 70%)',
           }}
